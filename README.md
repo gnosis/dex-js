@@ -36,6 +36,16 @@ const dfusionContract = new DfusionContract({ web3 })
 const dfusionContract = new DfusionContract({ web3, address: '0x89593E017D4A88c60347257DAfB95384a422da09' })
 ```
 
+## Build
+
+```bash
+# Install dependencies
+yarn install
+
+# Build
+yarn build
+```
+
 ## Run test
 
 ```bash
