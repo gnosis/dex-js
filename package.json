@@ -3,20 +3,24 @@
   "version": "0.0.1",
   "description": "",
   "scripts": {
-    "sandbox": "DEBUG=ERROR-*,WARN-*,INFO-*,DEBUG-*,-DEBUG-helper*,-DEBUG-util* nodemon -r dotenv/config -r tsconfig-paths/register",
+    "build": "rimraf build && tsc",
     "test": "jest",
     "test-coverage": "jest --coverage && cat ./coverage/lcov.info | coveralls",
     "lint": "eslint src --ext .ts,.js",
     "lint:fix": "eslint --fix . --ext .ts,.js",
     "verify": "npm run lint && npm run test",
-    "build": "rimraf build && tsc",
-    "rpc": "ganache-cli -d --mnemonic 'candy maple cake sugar pudding cream honey rich smooth crumble sweet treat'"
+    "sandbox": "DEBUG=ERROR-*,WARN-*,INFO-*,DEBUG-*,-DEBUG-helper*,-DEBUG-util* nodemon -r dotenv/config -r tsconfig-paths/register"
   },
   "husky": {
     "hooks": {
       "pre-commit": "npm run verify"
     }
   },
+  "main": "build/src/index.js",
+  "files": [
+    "src",
+    "build"
+  ],
   "dependencies": {
     "web3": "^1.2.4"
   },
@@ -49,8 +53,5 @@
     "ts-node": "^8.4.1",
     "tsconfig-paths": "^3.9.0",
     "typescript": "^3.7.2"
-  },
-  "eslintIgnore": [
-    "src/contracts"
-  ]
+  }
 }
