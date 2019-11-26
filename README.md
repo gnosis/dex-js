@@ -25,7 +25,7 @@ npm install @gnosis.pm/dex-js --save
 Import the contract:
 
 ```js
-// TODO: Not yet, this is how it would be nice to us
+// TODO: Not yet, this is how it would be nice to use
 import { DfusionContract } from ' @gnosis.pm/dex-js'
 
 // Instanciate the sma
