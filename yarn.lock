@@ -138,6 +138,11 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
+"@gnosis.pm/dex-contracts@^0.0.1":
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/@gnosis.pm/dex-contracts/-/dex-contracts-0.0.1.tgz#e4557746658a59b12a3007f858a48fbb512514a8"
+  integrity sha512-bnFBNaQJSrk/RX3D8RO6vfhcugqlo4LNZliX7ghecfiwNZJLEKKCwmdvZQK7HZqFcAXiD7BFLPOv3vJVQC8kMA==
+
 "@jest/console@^24.7.1", "@jest/console@^24.9.0":
   version "24.9.0"
   resolved "https://registry.yarnpkg.com/@jest/console/-/console-24.9.0.tgz#79b1bc06fb74a8cfb01cbdedf945584b1b9707f0"
