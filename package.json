@@ -19,7 +19,6 @@
   },
   "main": "build/src/index.js",
   "files": [
-    "src",
     "build"
   ],
   "dependencies": {
