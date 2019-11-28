@@ -12,16 +12,6 @@ module.exports = {
     sourceType: 'module', // Allows for the use of imports
   },
   rules: {
-    // FIXME: https://github.com/gnosis/dex-telegram/issues/14
-    // // Place to specify ESLint rules. Can be used to overwrite rules specified from the extended configs
-    // // e.g. "@typescript-eslint/explicit-function-return-type": "off",
-    // '@typescript-eslint/explicit-function-return-type': [
-    //   'error',
-    //   {
-    //     allowTypedFunctionExpressions: true,
-    //   },
-    // ],
-
     // Disabled the 'no-unused-vars' error (typescript/no-unused-vars is used instead)
     'no-unused-vars': 'off',
   },
