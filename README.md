@@ -25,7 +25,7 @@ npm install @gnosis.pm/dex-js --save
 Import the contract:
 
 ```js
-// TODO: Not yet, this is how it would be nice to us
+// TODO: Not yet, this is how it would be nice to use
 import { DfusionContract } from ' @gnosis.pm/dex-js'
 
 // Instanciate the sma
@@ -34,6 +34,16 @@ const dfusionContract = new DfusionContract({ web3 })
 
 // alternativelly provide the address
 const dfusionContract = new DfusionContract({ web3, address: '0x89593E017D4A88c60347257DAfB95384a422da09' })
+```
+
+## Build
+
+```bash
+# Install dependencies
+yarn install
+
+# Build
+yarn build
 ```
 
 ## Run test
