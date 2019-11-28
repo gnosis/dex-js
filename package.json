@@ -6,6 +6,8 @@
   "scripts": {
     "build": "rimraf build && tsc",
     "test": "jest",
+    "clean": "rimraf build",
+    "prepublish": "npm run clean && npm run build",
     "test-coverage": "jest --coverage && cat ./coverage/lcov.info | coveralls",
     "lint": "eslint src --ext .ts,.js",
     "lint:fix": "eslint --fix . --ext .ts,.js",
