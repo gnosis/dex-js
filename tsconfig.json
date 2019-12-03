@@ -10,6 +10,7 @@
     "moduleResolution": "node",
     "allowJs": false,
     "checkJs": false,
+    "declaration": true,
     "resolveJsonModule": true,
     "lib": ["dom", "es2015", "es2016", "es2017", "esnext"],
     "forceConsistentCasingInFileNames": true,
