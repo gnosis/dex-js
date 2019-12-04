@@ -1,6 +1,6 @@
 {
   "name": "@gnosis.pm/dex-js",
-  "version": "0.0.2",
+  "version": "0.0.7",
   "description": "dFusion JS integration: utils, contracts and other goodies",
   "license": "MIT",
   "bugs": {
@@ -27,8 +27,9 @@
     }
   },
   "main": "build/src/index.js",
+  "types": "build/src/index.d.ts",
   "files": [
-    "build"
+    "build/src/**/*"
   ],
   "dependencies": {
     "@gnosis.pm/dex-contracts": "^0.0.1",
