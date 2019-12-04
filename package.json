@@ -1,11 +1,20 @@
 {
   "name": "@gnosis.pm/dex-js",
   "version": "0.0.7",
-  "description": "",
+  "description": "dFusion JS integration: utils, contracts and other goodies",
   "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/gnosis/dex-js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gnosis/dex-js.git"
+  },
   "scripts": {
     "build": "rimraf build && tsc",
     "test": "jest",
+    "clean": "rimraf build",
+    "prepublish": "npm run clean && npm run build",
     "test-coverage": "jest --coverage && cat ./coverage/lcov.info | coveralls",
     "lint": "eslint src --ext .ts,.js",
     "lint:fix": "eslint --fix . --ext .ts,.js",
@@ -23,6 +32,7 @@
     "build/src/**/*"
   ],
   "dependencies": {
+    "@gnosis.pm/dex-contracts": "^0.0.1",
     "web3": "^1.2.4"
   },
   "devDependencies": {
@@ -47,7 +57,7 @@
     "eslint-plugin-standard": "^4.0.1",
     "husky": "^3.0.9",
     "jest": "^24.9.0",
-    "nodemon": "^1.19.1",
+    "nodemon": "^2.0.1",
     "prettier": "^1.18.2",
     "rimraf": "^3.0.0",
     "ts-jest": "^24.1.0",

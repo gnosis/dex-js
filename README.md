@@ -36,6 +36,14 @@ const dfusionContract = new DfusionContract({ web3 })
 const dfusionContract = new DfusionContract({ web3, address: '0x89593E017D4A88c60347257DAfB95384a422da09' })
 ```
 
+# Issues
+
+If you find any issue, or you want to request a feature use [https://github.com/gnosis/dex-js/issues]()
+
+[Pull requests](https://github.com/gnosis/dex-js/pulls) are welcomed and are the best way to suggest new features.
+
+# Collaborate
+
 ## Build
 
 ```bash
