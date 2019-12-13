@@ -1,0 +1,17 @@
+{
+  "name": "@gnosis.pm/dex-js",
+  "version": "0.0.1",
+  "description": "Monorepo for dfusion JS modules",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/gnosis/dex-js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gnosis/dex-js.git"
+  },
+  "private": true,
+  "workspaces": [
+    "utils"
+  ]
+}

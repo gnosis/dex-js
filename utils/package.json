@@ -1,5 +1,5 @@
 {
-  "name": "@gnosis.pm/dex-js",
+  "name": "@gnosis.pm/dex-utils",
   "version": "0.0.8",
   "description": "dFusion JS integration: utils, contracts and other goodies",
   "license": "MIT",
