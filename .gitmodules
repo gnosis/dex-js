@@ -1,0 +1,9 @@
+[submodule "dex-contracts"]
+	path = packages/contracts
+	url = git@github.com:gnosis/dex-contracts.git
+[submodule "react"]
+	path = packages/react
+	url = git@github.com:gnosis/dex-react.git
+[submodule "telegram"]
+	path = packages/telegram
+	url = git@github.com:gnosis/dex-telegram.git
