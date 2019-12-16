@@ -138,10 +138,12 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@gnosis.pm/dex-contracts@^0.0.1":
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/@gnosis.pm/dex-contracts/-/dex-contracts-0.0.1.tgz#e4557746658a59b12a3007f858a48fbb512514a8"
-  integrity sha512-bnFBNaQJSrk/RX3D8RO6vfhcugqlo4LNZliX7ghecfiwNZJLEKKCwmdvZQK7HZqFcAXiD7BFLPOv3vJVQC8kMA==
+"@gnosis.pm/dex-contracts@^0.1.2":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@gnosis.pm/dex-contracts/-/dex-contracts-0.1.2.tgz#a824eabb1504d13daa6d3aad02feacfedc46df50"
+  integrity sha512-GSJ6kL/k5eSZy6ut8Rl6Bu57GLNUVzuiRS0+s7EZjlkDMJM1rb7hojio1MtXxkp0+mxSFSsL4ewPj+gyd4guVg==
+  dependencies:
+    bn.js "^5.0.0"
 
 "@jest/console@^24.7.1", "@jest/console@^24.9.0":
   version "24.9.0"
@@ -866,6 +868,11 @@ bn.js@4.11.8, bn.js@^4.0.0, bn.js@^4.1.0, bn.js@^4.1.1, bn.js@^4.11.0, bn.js@^4.
   version "4.11.8"
   resolved "https://registry.yarnpkg.com/bn.js/-/bn.js-4.11.8.tgz#2cde09eb5ee341f484746bb0309b3253b1b1442f"
   integrity sha512-ItfYfPLkWHUjckQCk8xC+LwxgK8NYcXywGigJgSwOP8Y2iyWT4f2vsZnoOXTTbo+o5yXmIUJ4gn5538SO5S3gA==
+
+bn.js@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/bn.js/-/bn.js-5.0.0.tgz#5c3d398021b3ddb548c1296a16f857e908f35c70"
+  integrity sha512-bVwDX8AF+72fIUNuARelKAlQUNtPOfG2fRxorbVvFk4zpHbqLrPdOGfVg5vrKwVzLLePqPBiATaOZNELQzmS0A==
 
 body-parser@1.19.0, body-parser@^1.16.0:
   version "1.19.0"
