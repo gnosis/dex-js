@@ -11,7 +11,7 @@ require('dotenv').config()
 const log = new Logger('sandbox:contract/printEventTopics')
 
 async function exec (): Promise<void> {
-  const abi = require('contracts/StablecoinConverter.json')
+  const abi = require('contracts/BatchExchange.json')
   const events = abi.filter((def: AbiItem) => def.type === 'event')
 
   log.info('Found %d events:', events.length)

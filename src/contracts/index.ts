@@ -9,7 +9,7 @@ function getStableConverterContract (): BatchExchangeContract {
 
   const stableCoinContractAddress = STABLE_COIN_CONTRACT_ADDRESS as string
 
-  const abi = require('./StablecoinConverter.json')
+  const abi = require('./BatchExchangeAbi.json')
 
   // FIXME: There's an issue with this conversion: https://github.com/gnosis/dex-telegram/issues/14
   const unknownContract = new web3.eth.Contract(abi, stableCoinContractAddress) as unknown

@@ -11,7 +11,7 @@ require('dotenv').config()
 const log = new Logger('sandbox:printEncodedFunctions')
 
 async function exec (): Promise<void> {
-  const abi = require('contracts/StablecoinConverter.json')
+  const abi = require('contracts/BatchExchange.json')
   const functions = abi.filter((def: AbiItem) => def.type === 'function')
 
   log.info('Found %d functions:', functions.length)

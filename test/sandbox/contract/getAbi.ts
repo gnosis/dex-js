@@ -1,5 +1,6 @@
 // import Logger from 'helpers/Logger'
 
+// TODO: Change to BatchExchange
 import { abi as abiItems } from '@gnosis.pm/dex-contracts/build/contracts/StablecoinConverter.json'
 require('dotenv').config()
 
@@ -10,7 +11,7 @@ require('dotenv').config()
 // const log = new Logger('sandbox:contracts:getAbi')
 
 async function exec (): Promise<void> {
-  console.log('StablecoinConverter has %d functions', abiItems.length)
+  console.log('BatchExchange has %d functions', abiItems.length)
   abiItems
     .filter(({ type }) => type === 'function')
     .forEach(({ name }) => {
