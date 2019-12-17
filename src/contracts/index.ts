@@ -1,14 +1,9 @@
 import assert from 'assert'
 import { web3 } from 'helpers/web3'
-import { StablecoinConverter } from './StablecoinConverter'
-import { Erc20Contract } from './Erc20Contract'
-import Erc20ABI from './Erc20ABI'
+import { BatchExchange } from './BatchExchange'
+import { Erc20 } from './Erc20'
 
-export * from './StablecoinConverter'
-export * from './Erc20Contract'
-export * from './types'
-
-function getStableConverterContract (): StablecoinConverter {
+function getStableConverterContract (): BatchExchange {
   const { STABLE_COIN_CONTRACT_ADDRESS } = process.env
   assert(STABLE_COIN_CONTRACT_ADDRESS, 'STABLE_COIN_CONTRACT_ADDRESS env is required')
 
@@ -18,15 +13,16 @@ function getStableConverterContract (): StablecoinConverter {
 
   // FIXME: There's an issue with this conversion: https://github.com/gnosis/dex-telegram/issues/14
   const unknownContract = new web3.eth.Contract(abi, stableCoinContractAddress) as unknown
-  return unknownContract as StablecoinConverter
+  return unknownContract as BatchExchange
 }
 
-function getErc20Contract (): Erc20Contract {
+function getErc20Contract (): Erc20 {
   // FIXME: There's an issue with this conversion: https://github.com/gnosis/dex-telegram/issues/14
-  const unknownContract = new web3.eth.Contract(Erc20ABI) as any
-  return unknownContract as Erc20Contract
+  const abi = require('./Erc20Abi')
+  const unknownContract = new web3.eth.Contract(abi) as any
+  return unknownContract as Erc20
 }
 
 // Create contracts
-export const stableCoinConverterContract: StablecoinConverter = getStableConverterContract()
-export const erc20Contract: Erc20Contract = getErc20Contract()
+export const stableCoinConverterContract: BatchExchange = getStableConverterContract()
+export const erc20Contract: Erc20 = getErc20Contract()

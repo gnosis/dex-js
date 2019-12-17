@@ -3,8 +3,8 @@ import BN from 'bn.js'
 import { TransactionObject } from 'contracts/types'
 import { Contract } from 'web3-eth-contract'
 
-export interface Erc20Contract extends Contract {
-  clone(): Erc20Contract
+export interface Erc20 extends Contract {
+  clone(): Erc20
 
   methods: {
     totalSupply(): TransactionObject<string>
