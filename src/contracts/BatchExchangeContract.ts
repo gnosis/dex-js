@@ -56,11 +56,11 @@ export interface OrderPlacement {
   priceDenominator: string
 }
 
-export interface BatchExchange extends Contract {
+export interface BatchExchangeContract extends Contract {
   // constructor(jsonInterface: any[], address?: string, options?: ContractOptions)
   // constructor (jsonInterface: AbiItem[], address?: string, options?: ContractOptions): StablecoinConverter;
 
-  clone(): BatchExchange
+  clone(): BatchExchangeContract
 
   methods: {
     getSecondsRemainingInBatch(): TransactionObject<string>
