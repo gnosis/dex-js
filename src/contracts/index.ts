@@ -24,5 +24,5 @@ function getErc20Contract (): Erc20Contract {
 }
 
 // Create contracts
-export const stableCoinConverterContract: BatchExchangeContract = getStableConverterContract()
+export const batchExchangeContract: BatchExchangeContract = getStableConverterContract()
 export const erc20Contract: Erc20Contract = getErc20Contract()

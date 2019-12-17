@@ -1,4 +1,4 @@
-import { stableCoinConverterContract } from 'contracts'
+import { batchExchangeContract } from 'contracts'
 import Logger from 'helpers/Logger'
 import { tokenList } from 'index'
 
@@ -16,7 +16,7 @@ async function exec (): Promise<void> {
   const getAllTokenIds = tokenList.map(async token => {
     const { symbol, name, addressByNetwork } = token
     const tokenAddress = addressByNetwork[networkId]
-    const tokenId = await stableCoinConverterContract.methods.tokenAddressToIdMap(tokenAddress).call()
+    const tokenId = await batchExchangeContract.methods.tokenAddressToIdMap(tokenAddress).call()
     log.info(`${name} (${symbol}): ${tokenAddress}  ---->  ${tokenId}`)
   })
 

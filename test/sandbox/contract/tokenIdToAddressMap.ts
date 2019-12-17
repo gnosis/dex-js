@@ -1,4 +1,4 @@
-import { stableCoinConverterContract } from 'contracts'
+import { batchExchangeContract } from 'contracts'
 import Logger from 'helpers/Logger'
 
 require('dotenv').config()
@@ -12,7 +12,7 @@ const log = new Logger('sandbox:contract/tokenIdToAddressMap')
 async function exec (): Promise<void> {
   const tokenId = 1
   log.info('Get token address for token: %d', tokenId)
-  const tokenAddress = await stableCoinConverterContract.methods.tokenIdToAddressMap(tokenId).call()
+  const tokenAddress = await batchExchangeContract.methods.tokenIdToAddressMap(tokenId).call()
   log.info('Address: %s', tokenAddress)
 }
 

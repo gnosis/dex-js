@@ -1,4 +1,4 @@
-import { stableCoinConverterContract } from 'contracts'
+import { batchExchangeContract } from 'contracts'
 import Logger from 'helpers/Logger'
 
 require('dotenv').config()
@@ -10,8 +10,8 @@ require('dotenv').config()
 const log = new Logger('sandbox:contract/getPastDeposits')
 
 async function exec (): Promise<void> {
-  log.info('Get past deposits for contract: %s', stableCoinConverterContract.options.address)
-  const events = await stableCoinConverterContract.getPastEvents('Deposit', { fromBlock: 0, toBlock: 'latest' })
+  log.info('Get past deposits for contract: %s', batchExchangeContract.options.address)
+  const events = await batchExchangeContract.getPastEvents('Deposit', { fromBlock: 0, toBlock: 'latest' })
 
   log.info('Found %d deposits', events.length)
   events.forEach(depositEvent => {
