@@ -5,7 +5,7 @@ require('dotenv').config()
 
 /**
  *  SANDBOX: Get ABI from the contracts
- *  RUN:     yarn sandbox test/sandbox/contracts/getAbi.ts
+ *  RUN:     yarn sandbox test/sandbox/contract/getAbi.ts
  */
 // const log = new Logger('sandbox:contracts:getAbi')
 

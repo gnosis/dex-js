@@ -1,4 +1,6 @@
-export const DfusionContract = 12345
-export const sayHi = () => console.log('Hi')
+import { TokenDetailsConfig } from 'types'
 
-export default DfusionContract
+// TODO: For now the contract definitions are declared in dex-js. But they will be defined in dex-contracts
+export * from './contracts'
+export * from './helpers'
+export const tokenList: TokenDetailsConfig[] = require('tokenList.json')
