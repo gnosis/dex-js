@@ -1,7 +1,8 @@
 import { TokenDetailsConfig } from 'types'
 
-// Types
+// Types & constants
 export * from './types'
+export * from './const'
 
 // Helper/util functions
 export * from './helpers'
