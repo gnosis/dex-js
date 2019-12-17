@@ -1,6 +1,6 @@
 {
   "name": "@gnosis.pm/dex-js",
-  "version": "0.1.0-RC9",
+  "version": "0.1.0-RC10",
   "description": "dFusion JS integration: utils, contracts and other goodies",
   "license": "MIT",
   "bugs": {
