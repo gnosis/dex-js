@@ -18,7 +18,7 @@ function getStableConverterContract (): BatchExchangeContract {
 
 function getErc20Contract (): Erc20Contract {
   // FIXME: There's an issue with this conversion: https://github.com/gnosis/dex-telegram/issues/14
-  const abi = require('./Erc20Abi')
+  const abi = require('./Erc20Abi.json')
   const unknownContract = new web3.eth.Contract(abi) as any
   return unknownContract as Erc20Contract
 }
