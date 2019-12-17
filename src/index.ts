@@ -3,8 +3,9 @@ import { TokenDetailsConfig } from 'types'
 // Types
 export * from './types'
 
-// Helper functions
+// Helper/util functions
 export * from './helpers'
+export * from './utils'
 
 // Contracts
 // TODO: For now the contract definitions are declared in dex-js. But they will be defined in dex-contracts
