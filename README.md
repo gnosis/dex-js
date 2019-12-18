@@ -25,15 +25,14 @@ npm install @gnosis.pm/dex-js --save
 Import the contract:
 
 ```js
-// TODO: Not yet, this is how it would be nice to use
-import { DfusionContract } from ' @gnosis.pm/dex-js'
+import { BatchExchangeContract } from ' @gnosis.pm/dex-js'
 
-// Instanciate the sma
+// Instanciate the smart contract
 const web3 = new Web3()
-const dfusionContract = new DfusionContract({ web3 })
+const batchExchangeContract = new BatchExchangeContract({ web3 })
 
-// alternativelly provide the address
-const dfusionContract = new DfusionContract({ web3, address: '0x89593E017D4A88c60347257DAfB95384a422da09' })
+// Alternativelly provide the address
+const batchExchangeContract = new BatchExchangeContract({ web3, address: '0x89593E017D4A88c60347257DAfB95384a422da09' })
 ```
 
 # Issues
