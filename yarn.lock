@@ -6474,7 +6474,7 @@ type@^2.0.0:
   resolved "https://registry.yarnpkg.com/type/-/type-2.0.0.tgz#5f16ff6ef2eb44f260494dae271033b29c09a9c3"
   integrity sha512-KBt58xCHry4Cejnc2ISQAF7QY+ORngsWfxezO68+12hKV6lQY8P/psIkcbjeHWn7MqcgciWJyCCevFMJdIXpow==
 
-typechain-target-web3-v1@^1.0.0:
+typechain-target-web3-v1@^1.0.4:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/typechain-target-web3-v1/-/typechain-target-web3-v1-1.0.4.tgz#0157359e534737c07fc62529d5d8570a2047a2da"
   integrity sha512-jQ6eCfY7QorBq6kQDjSy5LMuImZGkp6IXR6FXZp7/ulITIxAfb6Dxh+yvh0NN/zboLnMPvvSJi6tHWCqlwfSDA==
