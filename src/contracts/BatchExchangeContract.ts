@@ -1,8 +1,6 @@
 import { Contract, EventOptions } from 'web3-eth-contract'
 import { TransactionObject, ContractEvent, Callback } from './types'
 import { EventLog } from 'web3-core'
-// import { AbiItem } from 'web3-utils'
-// import { Contract, EventOptions, ContractOptions } from 'web3-eth-contract'
 
 export interface Order {
   buyToken: string
