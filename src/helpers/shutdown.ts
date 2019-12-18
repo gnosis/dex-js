@@ -1,9 +1,10 @@
 import Logger from 'helpers/Logger'
 import { Command, AsyncCommand } from '../types'
 
-const log = new Logger('helpers:shutdown')
 type QuitSignal = 'SIGINT' | 'SIGTERM' | 'SIGQUIT'
 const POSIX_SIGNALS: QuitSignal[] = ['SIGINT', 'SIGTERM', 'SIGQUIT']
+
+const log = new Logger('helpers:shutdown')
 const listeners: Command[] = []
 let isRunning = true
 
