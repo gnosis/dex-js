@@ -57,9 +57,6 @@ export interface OrderPlacement {
 }
 
 export interface BatchExchangeContract extends Contract {
-  // constructor(jsonInterface: any[], address?: string, options?: ContractOptions)
-  // constructor (jsonInterface: AbiItem[], address?: string, options?: ContractOptions): BatchExchange;
-
   clone(): BatchExchangeContract
 
   methods: {
