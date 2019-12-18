@@ -1,5 +1,4 @@
 import { TokenDetailsConfig } from 'types'
-import * as genTypes from './contracts/gen/types'
 
 // Types & constants
 export * from './types'
