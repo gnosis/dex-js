@@ -1,7 +1,6 @@
 import Logger from 'helpers/Logger'
 
-// TODO: Change to BatchExchange
-import { abi as abiItems } from '@gnosis.pm/dex-contracts/build/contracts/StablecoinConverter.json'
+import { abi as abiItems } from '@gnosis.pm/dex-contracts/build/contracts/BatchExchange.json'
 require('dotenv').config()
 
 /**
