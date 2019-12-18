@@ -33,6 +33,7 @@
   "files": [
     "build/src/**/*"
   ],
+  "eslintIgnore": ["src/contracts/gen"],
   "dependencies": {
     "@gnosis.pm/dex-contracts": "^0.1.2",
     "web3": "^1.2.4"
