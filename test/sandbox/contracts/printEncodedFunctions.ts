@@ -6,11 +6,11 @@ require('dotenv').config()
 
 /**
  *  SANDBOX: Print the encoded version for the functions
- *  RUN:     yarn sandbox test/sandbox/contract/printEncodedFunctions.ts
+ *  RUN:     yarn sandbox test/sandbox/contracts/printEncodedFunctions.ts
  */
 const log = new Logger('sandbox:printEncodedFunctions')
 
-async function exec (): Promise<void> {
+async function exec(): Promise<void> {
   const abi = require('contracts/BatchExchange.json')
   const functions = abi.filter((def: AbiItem) => def.type === 'function')
 

@@ -5,9 +5,9 @@ require('dotenv').config()
 
 /**
  *  SANDBOX: Get token address from token id
- *  RUN:     yarn sandbox test/sandbox/contract/tokenIdToAddressMap.ts
+ *  RUN:     yarn sandbox test/sandbox/contracts/tokenIdToAddressMap.ts
  */
-const log = new Logger('sandbox:contract/tokenIdToAddressMap')
+const log = new Logger('sandbox:contracts/tokenIdToAddressMap')
 
 async function exec (): Promise<void> {
   const tokenId = 1

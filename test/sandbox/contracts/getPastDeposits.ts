@@ -5,9 +5,9 @@ require('dotenv').config()
 
 /**
  *  SANDBOX: Prints events topics
- *  RUN:     yarn sandbox test/sandbox/contract/getPastDeposits.ts
+ *  RUN:     yarn sandbox test/sandbox/contracts/getPastDeposits.ts
  */
-const log = new Logger('sandbox:contract/getPastDeposits')
+const log = new Logger('sandbox:contracts/getPastDeposits')
 
 async function exec (): Promise<void> {
   log.info('Get past deposits for contract: %s', batchExchangeContract.options.address)

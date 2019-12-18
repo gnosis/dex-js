@@ -6,9 +6,9 @@ require('dotenv').config()
 
 /**
  *  SANDBOX: Prints events topics
- *  RUN:     yarn sandbox test/sandbox/contract/printEventTopics.ts
+ *  RUN:     yarn sandbox test/sandbox/contracts/printEventTopics.ts
  */
-const log = new Logger('sandbox:contract/printEventTopics')
+const log = new Logger('sandbox:contracts/printEventTopics')
 
 async function exec (): Promise<void> {
   const abi = require('contracts/BatchExchange.json')

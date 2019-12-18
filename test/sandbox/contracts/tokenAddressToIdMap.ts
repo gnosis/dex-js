@@ -6,9 +6,9 @@ require('dotenv').config()
 
 /**
  *  SANDBOX: Get token id from token addresses
- *  RUN:     yarn sandbox test/sandbox/contract/tokenAddressToIdMap.ts
+ *  RUN:     yarn sandbox test/sandbox/contracts/tokenAddressToIdMap.ts
  */
-const log = new Logger('sandbox:contract/tokenAddressToIdMap')
+const log = new Logger('sandbox:contracts/tokenAddressToIdMap')
 
 async function exec (): Promise<void> {
   const networkId = 4
