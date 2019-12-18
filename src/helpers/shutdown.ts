@@ -38,7 +38,7 @@ export async function shutDown (reason: string) {
 
 function _doShutDown (reason: string) {
   function _doExit (returnCode: number | undefined) {
-    log.debug('The app is ready to shutdown! Good bye! :)')
+    log.debug('The app is ready to shutdown! Goodbye! :)')
     process.exit(returnCode)
   }
 
