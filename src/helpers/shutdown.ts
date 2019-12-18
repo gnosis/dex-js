@@ -48,7 +48,7 @@ function _doShutDown (reason: string) {
     })
     .catch(error => {
       log.error({
-        msg: 'Error while shut down the app: ' + error.toString(),
+        msg: 'Error while shutting down the app: ' + error.toString(),
         error
       })
       _doExit(2)
