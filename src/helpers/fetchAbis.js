@@ -5,7 +5,7 @@ const path = require('path')
 
 const CONTRACTS = ['BatchExchange']
 const { abi } = require('@gnosis.pm/dex-contracts/build/contracts/BatchExchange.json')
-var ABI_DIR = path.join(__dirname, '../contracts/abi')
+const ABI_DIR = path.join(__dirname, '../contracts/abi')
 
 if (!fs.existsSync(ABI_DIR)) {
   fs.mkdirSync(ABI_DIR)
