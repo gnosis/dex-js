@@ -1,6 +1,11 @@
-import { Contract, EventOptions } from 'web3-eth-contract'
-import { TransactionObject, ContractEvent, Callback } from './types'
+import { EventOptions } from 'web3-eth-contract'
 import { EventLog } from 'web3-core'
+
+// Doesn't use ContractEvent on purpose since the mapping of events in typechain is broken
+// TODO: Update when typechain fix the issue
+import { /* ContractEvent, */ Callback } from './gen/types'
+import { BatchExchange } from './gen/BatchExchange'
+import { ContractEvent } from './types'
 
 export interface Order {
   buyToken: string
@@ -54,99 +59,10 @@ export interface OrderPlacement {
   priceDenominator: string
 }
 
-export interface BatchExchangeContract extends Contract {
+export interface BatchExchangeContract extends Omit<BatchExchange, 'events' | 'clone'> {
   clone(): BatchExchangeContract
 
-  methods: {
-    getSecondsRemainingInBatch(): TransactionObject<string>
-
-    feeDenominator(): TransactionObject<string>
-
-    getPendingWithdrawAmount(user: string, token: string): TransactionObject<string>
-
-    requestWithdraw(token: string, amount: number | string): TransactionObject<void>
-
-    getPendingDepositAmount(user: string, token: string): TransactionObject<string>
-
-    deposit(token: string, amount: number | string): TransactionObject<void>
-
-    getPendingWithdrawBatchNumber(user: string, token: string): TransactionObject<string>
-
-    TOKEN_ADDITION_FEE_IN_OWL(): TransactionObject<string>
-
-    feeToken(): TransactionObject<string>
-
-    currentPrices(arg0: number | string): TransactionObject<string>
-
-    orders(arg0: string, arg1: number | string): TransactionObject<Order>
-
-    numTokens(): TransactionObject<string>
-
-    lastCreditBatchId(arg0: string, arg1: string): TransactionObject<string>
-
-    latestSolution(): TransactionObject<SolutionData>
-
-    getBalance(user: string, token: string): TransactionObject<string>
-
-    BATCH_TIME(): TransactionObject<string>
-
-    getCurrentBatchId(): TransactionObject<string>
-
-    requestFutureWithdraw(token: string, amount: number | string, batchId: number | string): TransactionObject<void>
-
-    hasValidWithdrawRequest(user: string, token: string): TransactionObject<boolean>
-
-    MAX_TOKENS(): TransactionObject<string>
-
-    getPendingDepositBatchNumber(user: string, token: string): TransactionObject<string>
-
-    withdraw(user: string, token: string): TransactionObject<void>
-
-    MAX_TOUCHED_ORDERS(): TransactionObject<string>
-
-    addToken(token: string): TransactionObject<void>
-
-    placeValidFromOrder(
-      buyToken: number | string,
-      sellToken: number | string,
-      validFrom: number | string,
-      validUntil: number | string,
-      buyAmount: number | string,
-      sellAmount: number | string,
-    ): TransactionObject<string>
-
-    placeOrder(
-      buyToken: number | string,
-      sellToken: number | string,
-      validUntil: number | string,
-      buyAmount: number | string,
-      sellAmount: number | string,
-    ): TransactionObject<string>
-
-    cancelOrder(id: number | string): TransactionObject<void>
-
-    freeStorageOfOrder(ids: (number | string)[]): TransactionObject<void>
-
-    submitSolution(
-      batchIndex: number | string,
-      owners: string[],
-      orderIds: (number | string)[],
-      volumes: (number | string)[],
-      prices: (number | string)[],
-      tokenIdsForPrice: (number | string)[],
-    ): TransactionObject<void>
-
-    tokenAddressToIdMap(addr: string): TransactionObject<string>
-
-    tokenIdToAddressMap(id: number | string): TransactionObject<string>
-
-    getEncodedAuctionElements(): TransactionObject<string>
-
-    acceptingSolutions(batchIndex: number | string): TransactionObject<boolean>
-
-    getCurrentObjectiveValue(): TransactionObject<string>
-  }
-
+  // Redefine "events" because it's not correctly generated using typechain
   events: {
     OrderPlacement: ContractEvent<OrderPlacement>
     OrderCancelation: ContractEvent<OrderCancelation>
@@ -154,8 +70,9 @@ export interface BatchExchangeContract extends Contract {
     WithdrawRequest: ContractEvent<WithdrawRequest>
     Withdraw: ContractEvent<Withdraw>
 
-    allEvents: (options?: EventOptions, cb?: Callback<EventLog>) => ContractEvent<AnyEvent>
+    allEvents: (
+      options?: EventOptions,
+      cb?: Callback<EventLog>,
+    ) => ContractEvent<OrderPlacement | OrderCancelation | Deposit | WithdrawRequest | Withdraw>
   }
 }
-
-type AnyEvent = OrderPlacement | OrderCancelation | Deposit | WithdrawRequest | Withdraw
