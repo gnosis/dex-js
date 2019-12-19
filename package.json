@@ -20,7 +20,8 @@
     "lint:fix": "eslint --fix . --ext .ts,.js",
     "verify": "npm run lint && npm run test",
     "sandbox": "DEBUG=ERROR-*,WARN-*,INFO-*,DEBUG-*,-DEBUG-helper*,-DEBUG-util* nodemon -r dotenv/config -r tsconfig-paths/register",
-    "contracts": "rimraf \"src/contracts/gen\" && npx typechain --target=web3-v1 --outDir src/contracts/gen \"src/contracts/abi/*.json\" && prettier --write src/contracts/gen/*.ts"
+    "abi": "node src/helpers/fetchAbis.js",
+    "contracts": "rimraf \"src/contracts/gen\" && npm run abi && npx typechain --target=web3-v1 --outDir src/contracts/gen \"src/contracts/abi/*.json\" && prettier --write src/contracts/gen/*.ts"
   },
   "husky": {
     "hooks": {
