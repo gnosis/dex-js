@@ -11,4 +11,6 @@ export {
   BlockType
 } from './gen/types'
 
+export { EventOptions }
+
 export type ContractEvent<T> = (options?: EventOptions, cb?: Callback<ContractEventLog<T>>) => ContractEventEmitter<T>
