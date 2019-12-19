@@ -19,7 +19,9 @@ export interface Transfer {
   value: string
 }
 
-export interface Erc20Contract extends Omit<Erc20, 'events'> {
+export interface Erc20Contract extends Omit<Erc20, 'events' | 'clone'> {
+  clone(): Erc20Contract
+
   // Redefine "events" because it's not correctly generated using typechain
   events: {
     Approval: ContractEvent<Approval>

@@ -59,7 +59,9 @@ export interface OrderPlacement {
   priceDenominator: string
 }
 
-export interface BatchExchangeContract extends Omit<BatchExchange, 'events'> {
+export interface BatchExchangeContract extends Omit<BatchExchange, 'events' | 'clone'> {
+  clone(): BatchExchangeContract
+
   // Redefine "events" because it's not correctly generated using typechain
   events: {
     OrderPlacement: ContractEvent<OrderPlacement>
