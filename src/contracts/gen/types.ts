@@ -7,13 +7,13 @@ import { EventEmitter } from 'events'
 // @ts-ignore
 import PromiEvent from 'web3/promiEvent'
 
-interface EstimateGasOptions {
+export interface EstimateGasOptions {
   from?: string
   gas?: number
   value?: number | string | BN
 }
 
-interface EventOptions {
+export interface EventOptions {
   filter?: object
   fromBlock?: BlockType
   topics?: string[]
