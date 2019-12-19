@@ -1,6 +1,6 @@
-export * from 'contracts/types'
-export * from 'contracts/BatchExchangeContract'
-export * from 'contracts/Erc20Contract'
+export * from '../contracts/types'
+export * from '../contracts/BatchExchangeContract'
+export * from '../contracts/Erc20Contract'
 
 export type Command = () => void
 export type AsyncCommand = () => Promise<void>
