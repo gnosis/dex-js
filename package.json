@@ -28,10 +28,10 @@
       "pre-commit": "npm run verify"
     }
   },
-  "main": "build/src/index.js",
-  "types": "build/src/index.d.ts",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
   "files": [
-    "build/src/**/*"
+    "build/**/*"
   ],
   "eslintIgnore": [
     "src/contracts/gen"
