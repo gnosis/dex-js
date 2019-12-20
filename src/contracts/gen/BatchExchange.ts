@@ -19,7 +19,7 @@ export interface BatchExchange extends Contract {
   methods: {
     getSecondsRemainingInBatch(): TransactionObject<string>
 
-    feeDenominator(): TransactionObject<string>
+    FEE_DENOMINATOR(): TransactionObject<string>
 
     placeOrder(
       buyToken: number | string,
