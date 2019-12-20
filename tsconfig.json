@@ -23,9 +23,16 @@
     "strict": true,
     "suppressImplicitAnyIndexErrors": true,
     "types": ["jest", "node"],
-    "baseUrl": "./src/",
+    "baseUrl": "src",
     "outDir": "./build",
-    "plugins": [{ "transform": "typescript-transform-paths" }]
+    "paths": {
+      "*": [
+        "*"
+      ]
+    },
+    "plugins": [ {
+      "transform": "@zerollup/ts-transform-paths"
+  }]
   },
   "include": ["src/**/*.ts", "src/**/*.json", "test/**/*.ts"],
   "exclude": ["node_modules", "coverage", "build"]
