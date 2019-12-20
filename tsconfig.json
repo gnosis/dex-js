@@ -32,8 +32,10 @@
     },
     "plugins": [ {
       "transform": "typescript-transform-paths",
-      "afterDeclarations": true
-  }]
+      "afterDeclarations": true 
+    },
+      {"transform": "typescript-transform-paths"}
+    ]
   },
   "include": ["src/index.ts"],
   "exclude": ["node_modules", "coverage", "build"]
