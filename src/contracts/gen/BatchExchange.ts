@@ -30,7 +30,7 @@ export interface BatchExchange extends Contract {
     ): TransactionObject<string>
 
     submitSolution(
-      batchIndex: number | string,
+      batchId: number | string,
       claimedObjectiveValue: number | string,
       owners: string[],
       orderIds: (number | string)[],
@@ -107,7 +107,7 @@ export interface BatchExchange extends Contract {
 
     cancelOrders(ids: (number | string)[]): TransactionObject<void>
 
-    acceptingSolutions(batchIndex: number | string): TransactionObject<boolean>
+    acceptingSolutions(batchId: number | string): TransactionObject<boolean>
 
     getEncodedAuctionElements(): TransactionObject<string>
 
@@ -164,7 +164,7 @@ export interface BatchExchange extends Contract {
       user: string
       token: string
       amount: string
-      stateIndex: string
+      batchId: string
       0: string
       1: string
       2: string
@@ -174,7 +174,7 @@ export interface BatchExchange extends Contract {
       user: string
       token: string
       amount: string
-      stateIndex: string
+      batchId: string
       0: string
       1: string
       2: string

@@ -15,13 +15,13 @@ async function exec (): Promise<void> {
 
   log.info('Found %d deposits', events.length)
   events.forEach(depositEvent => {
-    const { user, token, amount, stateIndex } = depositEvent.returnValues
+    const { user, token, amount, batchId } = depositEvent.returnValues
     log.info(
-      'New Deposit of user %s\n\tAmount: %s\n\tToken: %s\n\tState index: %s\n\tTransaction: %s',
+      'New Deposit of user %s\n\tAmount: %s\n\tToken: %s\n\tBatch ID: %s\n\tTransaction: %s',
       user,
       amount,
       token,
-      stateIndex,
+      batchId,
       depositEvent.transactionHash
     )
   })

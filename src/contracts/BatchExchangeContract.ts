@@ -33,14 +33,14 @@ export interface Deposit {
   user: string
   token: string
   amount: string
-  stateIndex: string
+  batchId: string
 }
 
 export interface WithdrawRequest {
   user: string
   token: string
   amount: string
-  stateIndex: string
+  batchId: string
 }
 
 export interface Withdraw {
