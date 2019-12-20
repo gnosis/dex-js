@@ -51,7 +51,7 @@ export interface BatchExchange extends Contract {
 
     getPendingWithdrawBatchNumber(user: string, token: string): TransactionObject<string>
 
-    TOKEN_ADDITION_FEE_IN_OWL(): TransactionObject<string>
+    FEE_FOR_LISTING_TOKEN_IN_OWL(): TransactionObject<string>
 
     AMOUNT_MINIMUM(): TransactionObject<string>
 
