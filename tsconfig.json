@@ -34,6 +34,6 @@
       "transform": "@zerollup/ts-transform-paths"
   }]
   },
-  "include": ["src/**/*.ts", "src/**/*.json", "test/**/*.ts"],
+  "include": ["src/index.ts"],
   "exclude": ["node_modules", "coverage", "build"]
 }
