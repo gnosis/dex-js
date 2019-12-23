@@ -11,7 +11,7 @@
     "url": "git+https://github.com/gnosis/dex-js.git"
   },
   "scripts": {
-    "build": "rimraf build && ttsc",
+    "build": "rimraf build && ttsc && cp -r src/contracts/gen build/contracts/",
     "test": "jest",
     "clean": "rimraf build",
     "prepublish": "npm run clean && npm run build",
@@ -28,10 +28,10 @@
       "pre-commit": "npm run verify"
     }
   },
-  "main": "build/src/index.js",
-  "types": "build/src/index.d.ts",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
   "files": [
-    "build/src/**/*"
+    "build/**/*"
   ],
   "eslintIgnore": [
     "src/contracts/gen"
@@ -69,9 +69,9 @@
     "ts-node": "^8.4.1",
     "tsconfig-paths": "^3.9.0",
     "ttypescript": "^1.5.8",
-    "typescript": "^3.7.2",
-    "typescript-transform-paths": "^1.1.13",
     "typechain": "^1.0.3",
-    "typechain-target-web3-v1": "^1.0.4"
+    "typechain-target-web3-v1": "^1.0.4",
+    "typescript": "^3.7.3",
+    "typescript-transform-paths": "^1.1.13"
   }
 }
