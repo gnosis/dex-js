@@ -29,6 +29,25 @@ export interface OrderCancelation {
   id: string
 }
 
+export interface OrderDeletion {
+  owner: string
+  id: string
+}
+
+export interface Trade {
+  owner: string
+  orderIds: string
+  executedSellAmount: string
+  executedBuyAmount: string
+}
+
+export interface TradeReversion {
+  owner: string
+  orderIds: string
+  executedSellAmount: string
+  executedBuyAmount: string
+}
+
 export interface Deposit {
   user: string
   token: string
@@ -51,6 +70,7 @@ export interface Withdraw {
 
 export interface OrderPlacement {
   owner: string
+  index: string
   buyToken: string
   sellToken: string
   validFrom: string
@@ -66,6 +86,9 @@ export interface BatchExchangeContract extends Omit<BatchExchange, 'events' | 'c
   events: {
     OrderPlacement: ContractEvent<OrderPlacement>
     OrderCancelation: ContractEvent<OrderCancelation>
+    OrderDeletion: ContractEvent<OrderDeletion>
+    Trade: ContractEvent<Trade>
+    TradeReversion: ContractEvent<TradeReversion>
     Deposit: ContractEvent<Deposit>
     WithdrawRequest: ContractEvent<WithdrawRequest>
     Withdraw: ContractEvent<Withdraw>
