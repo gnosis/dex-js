@@ -21,8 +21,6 @@ export class BatchExchange extends Contract {
 
     getSecondsRemainingInBatch(): TransactionObject<string>
 
-    feeDenominator(): TransactionObject<string>
-
     requestWithdraw(token: string, amount: number | string): TransactionObject<void>
 
     FEE_FOR_LISTING_TOKEN_IN_OWL(): TransactionObject<string>
@@ -88,6 +86,8 @@ export class BatchExchange extends Contract {
 
     getBalance(user: string, token: string): TransactionObject<string>
 
+    FEE_DENOMINATOR(): TransactionObject<string>
+
     BATCH_TIME(): TransactionObject<string>
 
     getCurrentBatchId(): TransactionObject<string>
@@ -121,7 +121,7 @@ export class BatchExchange extends Contract {
       sellAmounts: (number | string)[],
     ): TransactionObject<string[]>
 
-    cancelOrders(ids: (number | string)[]): TransactionObject<void>
+    cancelOrders(orderIds: (number | string)[]): TransactionObject<void>
 
     replaceOrders(
       cancellations: (number | string)[],
@@ -134,7 +134,7 @@ export class BatchExchange extends Contract {
     ): TransactionObject<string[]>
 
     submitSolution(
-      batchIndex: number | string,
+      batchId: number | string,
       claimedObjectiveValue: number | string,
       owners: string[],
       orderIds: (number | string)[],
@@ -149,11 +149,17 @@ export class BatchExchange extends Contract {
 
     hasToken(addr: string): TransactionObject<boolean>
 
+    getEncodedUserOrdersPaginated(
+      user: string,
+      offset: number | string,
+      pageSize: number | string,
+    ): TransactionObject<string>
+
     getEncodedUserOrders(user: string): TransactionObject<string>
 
     getEncodedOrders(): TransactionObject<string>
 
-    acceptingSolutions(batchIndex: number | string): TransactionObject<boolean>
+    acceptingSolutions(batchId: number | string): TransactionObject<boolean>
 
     getCurrentObjectiveValue(): TransactionObject<string>
   }
@@ -190,7 +196,7 @@ export class BatchExchange extends Contract {
     }>
     Trade: ContractEvent<{
       owner: string
-      orderIds: string
+      orderId: string
       executedSellAmount: string
       executedBuyAmount: string
       0: string
@@ -200,7 +206,7 @@ export class BatchExchange extends Contract {
     }>
     TradeReversion: ContractEvent<{
       owner: string
-      orderIds: string
+      orderId: string
       executedSellAmount: string
       executedBuyAmount: string
       0: string
@@ -212,7 +218,7 @@ export class BatchExchange extends Contract {
       user: string
       token: string
       amount: string
-      stateIndex: string
+      batchId: string
       0: string
       1: string
       2: string
@@ -222,7 +228,7 @@ export class BatchExchange extends Contract {
       user: string
       token: string
       amount: string
-      stateIndex: string
+      batchId: string
       0: string
       1: string
       2: string
