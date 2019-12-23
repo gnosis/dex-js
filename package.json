@@ -1,6 +1,6 @@
 {
   "name": "@gnosis.pm/dex-js",
-  "version": "0.1.0-RC.19",
+  "version": "0.1.0-RC.24",
   "description": "dFusion JS integration: utils, contracts and other goodies",
   "license": "MIT",
   "bugs": {
@@ -37,7 +37,7 @@
     "src/contracts/gen"
   ],
   "dependencies": {
-    "@gnosis.pm/dex-contracts": "^0.1.2",
+    "@gnosis.pm/dex-contracts": "^0.1.3",
     "web3": "^1.2.4"
   },
   "devDependencies": {
