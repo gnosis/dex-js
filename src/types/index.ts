@@ -6,6 +6,7 @@ export type Command = () => void
 export type AsyncCommand = () => Promise<void>
 
 export interface TokenDetails {
+  id: number,
   name?: string
   symbol?: string
   decimals?: number
