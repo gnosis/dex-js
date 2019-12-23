@@ -37,7 +37,7 @@
     "src/contracts/gen"
   ],
   "dependencies": {
-    "@gnosis.pm/dex-contracts": "^0.1.2",
+    "@gnosis.pm/dex-contracts": "^0.1.3",
     "web3": "^1.2.4"
   },
   "devDependencies": {
