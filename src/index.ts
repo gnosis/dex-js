@@ -9,7 +9,5 @@ export * from './const'
 export * from './helpers'
 export * from './utils'
 
-export * from './contracts'
-
 // Json list
 export const tokenList: TokenDetailsConfig[] = tokenListJson
