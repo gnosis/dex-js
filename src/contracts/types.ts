@@ -21,7 +21,7 @@ type EventsExceptAllEvents<T extends Contract> = Omit<T['events'], 'allEvents'>
 type AllValues<T extends object> = T[keyof T]
 
 type ChangedEvents<T extends Contract> = {
-  [E in keyof EventsExceptAllEvents<T>]: ContractEvent<EventArgs<E>>
+  [E in keyof EventsExceptAllEvents<T>]: ContractEvent<EventArgs<T['events'][E]>>
 } & {allEvents: ContractEvent<AllValues<EventsExceptAllEvents<T>>>}
 
 export type ExtendedContract<T extends Contract> = Omit<T, 'events' | 'clone'> & {
