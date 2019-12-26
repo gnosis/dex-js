@@ -6,20 +6,20 @@ require('dotenv').config()
 
 /**
  *  SANDBOX: Prints events topics
- *  RUN:     yarn sandbox test/sandbox/contracts/getOrderPlacements.ts
+ *  RUN:     yarn sandbox test/sandbox/contracts/getTrades.ts
  */
-const log = new Logger('sandbox:contracts/getOrderPlacements')
+const log = new Logger('sandbox:contracts/getTrades')
 
 async function exec (): Promise<void> {
-  log.info('Get new order placements for contract: %s', batchExchangeContract.options.address)
+  log.info('Get new trades for contract: %s', batchExchangeContract.options.address)
   ;(batchExchangeContract as BatchExchangeContract).events
-    .OrderPlacement({ fromBlock: 0, toBlock: 'latest' })
+    .Trade({ fromBlock: 0, toBlock: 'latest' })
     .on('connected', subscriptionId => log.info('Connected with subscription: %s', subscriptionId))
-    .on('data', orderPlacement => {
-      log.info('New order placement: %o', orderPlacement)
+    .on('data', trade => {
+      log.info('New Trade: %o', trade)
     })
-    .on('changed', orderPlacement => {
-      log.info('Order placement: %o', orderPlacement)
+    .on('changed', trade => {
+      log.info('Trade changed: %o', trade)
     })
     .on('error', log.errorHandler)
 }
