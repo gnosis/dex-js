@@ -11,17 +11,19 @@ export * from './BatchExchangeContract'
 export * from './Erc20Contract'
 export { erc20Abi, batchExchangeAbi }
 
-export function getBatchExchange (): BatchExchangeContract {
-  const { STABLE_COIN_CONTRACT_ADDRESS } = process.env
-  assert(STABLE_COIN_CONTRACT_ADDRESS, 'STABLE_COIN_CONTRACT_ADDRESS env is required')
-  const stableCoinContractAddress = STABLE_COIN_CONTRACT_ADDRESS as string
+export function getBatchExchangeContract (address?: string): BatchExchangeContract {
+  const batchExchangeAddress = address || process.env.STABLE_COIN_CONTRACT_ADDRESS
 
+  assert(batchExchangeAddress, 'address param, or STABLE_COIN_CONTRACT_ADDRESS env is required')
   // FIXME: There's an issue with this conversion: https://github.com/gnosis/dex-telegram/issues/14
-  const unknownContract = new web3.eth.Contract(batchExchangeAbi as AbiItem[], stableCoinContractAddress) as unknown
+  const unknownContract = new web3.eth.Contract(
+    batchExchangeAbi as AbiItem[],
+    batchExchangeAddress as string
+  ) as unknown
   return unknownContract as BatchExchangeContract
 }
 
-export function getErc20 (): Erc20Contract {
+export function getErc20Contract (): Erc20Contract {
   // FIXME: There's an issue with this conversion: https://github.com/gnosis/dex-telegram/issues/14
   const unknownContract = new web3.eth.Contract(erc20Abi as AbiItem[]) as any
   return unknownContract as Erc20Contract
