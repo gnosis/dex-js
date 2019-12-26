@@ -6,7 +6,12 @@ import { abi as batchExchangeAbi } from '@gnosis.pm/dex-contracts/build/contract
 import erc20Abi from './abi/Erc20.json'
 import { AbiItem } from 'web3-utils'
 
-export function getBatchExchange(): BatchExchangeContract {
+export * from './types'
+export * from './BatchExchangeContract'
+export * from './Erc20Contract'
+export { erc20Abi, batchExchangeAbi }
+
+export function getBatchExchange (): BatchExchangeContract {
   const { STABLE_COIN_CONTRACT_ADDRESS } = process.env
   assert(STABLE_COIN_CONTRACT_ADDRESS, 'STABLE_COIN_CONTRACT_ADDRESS env is required')
   const stableCoinContractAddress = STABLE_COIN_CONTRACT_ADDRESS as string

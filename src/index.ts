@@ -1,6 +1,9 @@
 import { TokenDetailsConfig } from 'types'
 import tokenListJson from 'tokenList.json'
 
+// Contracts
+export * from './contracts'
+
 // Types & constants
 export * from './types'
 export * from './const'
