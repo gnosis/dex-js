@@ -1,16 +1,17 @@
 import assert from 'assert'
 import Web3 from 'web3'
+import { AbiItem } from 'web3-utils'
 
 import { BatchExchangeContract } from './BatchExchangeContract'
 import { Erc20Contract } from './Erc20Contract'
-import { abi as batchExchangeAbi } from '@gnosis.pm/dex-contracts/build/contracts/BatchExchange.json'
-import erc20Abi from './abi/Erc20.json'
-import { AbiItem } from 'web3-utils'
+import { abi as batchExchangeAbiJson } from '@gnosis.pm/dex-contracts/build/contracts/BatchExchange.json'
+import erc20AbiJson from './abi/Erc20.json'
 
 export * from './types'
 export * from './BatchExchangeContract'
 export * from './Erc20Contract'
-export { erc20Abi, batchExchangeAbi }
+export const erc20Abi = erc20AbiJson as AbiItem[]
+export const batchExchangeAbi = batchExchangeAbiJson as AbiItem[]
 
 export function getBatchExchangeContract (web3: Web3, address?: string): BatchExchangeContract {
   const batchExchangeAddress = address || process.env.STABLE_COIN_CONTRACT_ADDRESS
