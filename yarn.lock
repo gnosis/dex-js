@@ -138,7 +138,7 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@gnosis.pm/dex-contracts@^0.1.3":
+"@gnosis.pm/dex-contracts@^0.1.2":
   version "0.1.3"
   resolved "https://registry.yarnpkg.com/@gnosis.pm/dex-contracts/-/dex-contracts-0.1.3.tgz#8474ed83c879a3c3a22ce13741e3ad43dac6dd68"
   integrity sha512-HRRw+AGZYe6almCQRj8pNL1AELLnkvB1jqLs20faaoISy+5f9I4nsgHbkw9qzxi/R8NQ8pAc/wIx4rvH7hSeCw==

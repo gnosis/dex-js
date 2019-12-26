@@ -1,6 +1,6 @@
-import { web3 } from 'helpers/web3'
 import Logger from 'helpers/Logger'
 import { AbiItem } from 'web3-utils'
+import { web3 } from '../../helpers/web3'
 
 require('dotenv').config()
 
