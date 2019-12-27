@@ -19,7 +19,7 @@ export function createBatchExchangeContract (web3: Web3, address?: string): Batc
   assert(batchExchangeAddress, 'address param, or STABLE_COIN_CONTRACT_ADDRESS env is required')
   // FIXME: There's an issue with this conversion: https://github.com/gnosis/dex-telegram/issues/14
   const unknownContract = new web3.eth.Contract(
-    batchExchangeAbi as AbiItem[],
+    batchExchangeAbi,
     batchExchangeAddress as string,
   ) as unknown
   return unknownContract as BatchExchangeContract
@@ -27,6 +27,6 @@ export function createBatchExchangeContract (web3: Web3, address?: string): Batc
 
 export function createErc20Contract (web3: Web3): Erc20Contract {
   // FIXME: There's an issue with this conversion: https://github.com/gnosis/dex-telegram/issues/14
-  const unknownContract = new web3.eth.Contract(erc20Abi as AbiItem[]) as any
+  const unknownContract = new web3.eth.Contract(erc20Abi) as any
   return unknownContract as Erc20Contract
 }
