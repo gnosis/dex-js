@@ -5,21 +5,21 @@ import { TokenDetails } from 'types'
 const DEFAULT_DECIMALS = 4
 const ELLIPSIS = '...'
 
-function _getLocaleSymbols (): { thousands: string; decimals: string } {
+function _getLocaleSymbols(): { thousands: string; decimals: string } {
   // Check number representation in default locale
   const formattedNumber = new Intl.NumberFormat(undefined).format(1000.1)
   return {
     thousands: formattedNumber[1],
-    decimals: formattedNumber[5]
+    decimals: formattedNumber[5],
   }
 }
 const { thousands: THOUSANDS_SYMBOL, decimals: DECIMALS_SYMBOL } = _getLocaleSymbols()
 
-function _formatNumber (num: string): string {
+function _formatNumber(num: string): string {
   return num.replace(/(\d)(?=(?:\d{3})+(?!\d))/g, '$1' + THOUSANDS_SYMBOL)
 }
 
-function _decomposeBn (amount: BN, amountPrecision: number, decimals: number): { integerPart: BN; decimalPart: BN } {
+function _decomposeBn(amount: BN, amountPrecision: number, decimals: number): { integerPart: BN; decimalPart: BN } {
   // Discard the decimals we don't need
   //  i.e. for WETH (precision=18, decimals=4) --> amount / 1e14
   //        16.5*1e18 ---> 165000
@@ -37,11 +37,11 @@ function _decomposeBn (amount: BN, amountPrecision: number, decimals: number): {
   return { integerPart, decimalPart }
 }
 
-export function formatAmount (
+export function formatAmount(
   amount: BN | null | undefined,
   amountPrecision: number,
   decimals = DEFAULT_DECIMALS,
-  thousandSeparator: boolean = true
+  thousandSeparator = true,
 ): string | null {
   if (!amount) {
     return null
@@ -65,10 +65,10 @@ export function formatAmount (
   }
 }
 
-export function formatAmountFull (
+export function formatAmountFull(
   amount: BN | null | undefined,
   amountPrecision: number,
-  thousandSeparator: boolean = true
+  thousandSeparator = true,
 ): string | null {
   if (!amount) {
     return null
@@ -87,7 +87,7 @@ export function formatAmountFull (
  * @param value The decimal value to be adjusted as a string
  * @param precision How many decimals should be kept
  */
-export function adjustPrecision (value: string | undefined | null, precision: number): string {
+export function adjustPrecision(value: string | undefined | null, precision: number): string {
   if (!value) {
     return ''
   }
@@ -96,7 +96,7 @@ export function adjustPrecision (value: string | undefined | null, precision: nu
   return value.replace(regexp, '$1')
 }
 
-export function parseAmount (amountFmt: string, amountPrecision: number): BN | null {
+export function parseAmount(amountFmt: string, amountPrecision: number): BN | null {
   if (!amountFmt) {
     return null
   }
@@ -114,7 +114,7 @@ export function parseAmount (amountFmt: string, amountPrecision: number): BN | n
   }
 }
 
-export function abbreviateString (inputString: string, prefixLength: number, suffixLength: number = 0): string {
+export function abbreviateString(inputString: string, prefixLength: number, suffixLength = 0): string {
   // abbreviate only if it makes sense, and make sure ellipsis fits into word
   // 1. always add ellipsis
   // 2. do not shorten words in case ellipsis will make the word longer
@@ -129,6 +129,6 @@ export function abbreviateString (inputString: string, prefixLength: number, suf
   return prefix + ELLIPSIS + suffix
 }
 
-export function safeTokenName (token: TokenDetails): string {
+export function safeTokenName(token: TokenDetails): string {
   return token.symbol || token.name || abbreviateString(token.address, 6, 4)
 }

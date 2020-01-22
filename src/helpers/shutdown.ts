@@ -14,12 +14,12 @@ POSIX_SIGNALS.forEach(signal => {
   })
 })
 
-export function onShutdown (listener: Command | AsyncCommand) {
+export function onShutdown(listener: Command | AsyncCommand) {
   log.debug('Registering a new listener')
   listeners.push(listener)
 }
 
-export async function shutDown (reason: string) {
+export async function shutDown(reason: string) {
   if (!isRunning) {
     return
   }
@@ -32,12 +32,12 @@ export async function shutDown (reason: string) {
   await Promise.all(
     listeners.map(listener => {
       return listener()
-    })
+    }),
   )
 }
 
-function _doShutDown (reason: string) {
-  function _doExit (returnCode: number | undefined) {
+function _doShutDown(reason: string) {
+  function _doExit(returnCode: number | undefined) {
     log.debug('The app is ready to shutdown! Goodbye! :)')
     process.exit(returnCode)
   }
@@ -49,7 +49,7 @@ function _doShutDown (reason: string) {
     .catch(error => {
       log.error({
         msg: 'Error while shutting down the app: ' + error.toString(),
-        error
+        error,
       })
       _doExit(2)
     })

@@ -5,37 +5,37 @@ export class Logger {
   private _namespace: string
   public errorHandler: (formatter: any, ...args: any[]) => any
 
-  constructor (namespace: string) {
+  constructor(namespace: string) {
     this._namespace = namespace
     this.errorHandler = this.error.bind(this)
   }
 
-  public info (formatter: any, ...args: any[]) {
+  public info(formatter: any, ...args: any[]) {
     this._log('INFO', formatter, ...args)
   }
 
-  public trace (formatter: any, ...args: any[]) {
+  public trace(formatter: any, ...args: any[]) {
     this._log('TRACE', formatter, ...args)
   }
 
-  public debug (formatter: any, ...args: any[]) {
+  public debug(formatter: any, ...args: any[]) {
     this._log('DEBUG', formatter, ...args)
   }
 
-  public warn (formatter: any, ...args: any[]) {
+  public warn(formatter: any, ...args: any[]) {
     this._log('WARN', formatter, ...args)
   }
 
-  public error (formatter: any, ...args: any[]) {
+  public error(formatter: any, ...args: any[]) {
     this._log('ERROR', formatter, ...args)
   }
 
-  public _log (level: string, formatter: any, ...args: any[]) {
+  public _log(level: string, formatter: any, ...args: any[]) {
     const logger = this._getLogger(level, this._namespace)
     logger(formatter, ...args)
   }
 
-  private _getLogger (logLevel: string, namespace: string) {
+  private _getLogger(logLevel: string, namespace: string) {
     const loggerName = logLevel + '-' + namespace
 
     let logger: Debugger = this._loggers[loggerName]

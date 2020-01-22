@@ -9,7 +9,7 @@ require('dotenv').config()
  */
 const log = new Logger('sandbox:contracts:getAbi')
 
-async function exec (): Promise<void> {
+async function exec(): Promise<void> {
   console.log('BatchExchange has %d functions', abiItems.length)
   abiItems
     .filter(({ type }) => type === 'function')
