@@ -12,6 +12,7 @@
   },
   "scripts": {
     "build": "rimraf build && ttsc && cp -r src/contracts/gen build/contracts/",
+    "build:watch": "npx ttsc --watch",
     "test": "jest",
     "clean": "rimraf build",
     "prepublish": "npm run clean && npm run build",
