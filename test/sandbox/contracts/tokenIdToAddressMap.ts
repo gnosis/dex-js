@@ -9,7 +9,7 @@ require('dotenv').config()
  */
 const log = new Logger('sandbox:contracts/tokenIdToAddressMap')
 
-async function exec (): Promise<void> {
+async function exec(): Promise<void> {
   const tokenId = 1
   log.info('Get token address for token: %d', tokenId)
   const tokenAddress = await batchExchangeContract.methods.tokenIdToAddressMap(tokenId).call()

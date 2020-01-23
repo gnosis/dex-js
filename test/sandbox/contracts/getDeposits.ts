@@ -10,7 +10,7 @@ require('dotenv').config()
  */
 const log = new Logger('sandbox:contracts/getDeposits')
 
-async function exec (): Promise<void> {
+async function exec(): Promise<void> {
   log.info('Get new deposits for contract: %s', batchExchangeContract.options.address)
   ;(batchExchangeContract as BatchExchangeContract).events
     .Deposit({ fromBlock: 0, toBlock: 'latest' })

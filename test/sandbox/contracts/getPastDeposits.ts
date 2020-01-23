@@ -9,7 +9,7 @@ require('dotenv').config()
  */
 const log = new Logger('sandbox:contracts/getPastDeposits')
 
-async function exec (): Promise<void> {
+async function exec(): Promise<void> {
   log.info('Get past deposits for contract: %s', batchExchangeContract.options.address)
   const events = await batchExchangeContract.getPastEvents('Deposit', { fromBlock: 0, toBlock: 'latest' })
 
@@ -22,7 +22,7 @@ async function exec (): Promise<void> {
       amount,
       token,
       stateIndex,
-      depositEvent.transactionHash
+      depositEvent.transactionHash,
     )
   })
 }

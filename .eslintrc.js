@@ -14,6 +14,11 @@ module.exports = {
   rules: {
     // Disabled the 'no-unused-vars' error (typescript/no-unused-vars is used instead)
     'no-unused-vars': 'off',
+    // Applying same rules as dex-react.
+    // For some reason I don't find anything specific for this in dex-react
+    // But here I have to set this manually...
+    'space-before-function-paren': 'off',
+    'comma-dangle': ['error', 'always-multiline'],
   },
   plugins: [],
   env: {
@@ -22,8 +27,10 @@ module.exports = {
     es6: true,
     node: true,
   },
+  globals: {
+    VERSION: true,
+  },
   extends: ['standard'],
-  globals: {},
   overrides: [
     {
       files: ['**/*.test.ts'],

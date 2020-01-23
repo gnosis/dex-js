@@ -10,7 +10,7 @@ require('dotenv').config()
  */
 const log = new Logger('sandbox:contracts/tokenAddressToIdMap')
 
-async function exec (): Promise<void> {
+async function exec(): Promise<void> {
   const networkId = 4
   log.info('Get token address for network id: %d', networkId)
   const getAllTokenIds = tokenList.map(async token => {
