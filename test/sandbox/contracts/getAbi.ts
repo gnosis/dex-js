@@ -1,6 +1,6 @@
 import Logger from 'helpers/Logger'
 
-import { abi as abiItems } from '@gnosis.pm/dex-contracts/build/contracts/BatchExchange.json'
+import { batchExchangeAbi } from 'contracts'
 require('dotenv').config()
 
 /**
@@ -9,9 +9,9 @@ require('dotenv').config()
  */
 const log = new Logger('sandbox:contracts:getAbi')
 
-async function exec(): Promise<void> {
-  console.log('BatchExchange has %d functions', abiItems.length)
-  abiItems
+async function exec (): Promise<void> {
+  console.log('BatchExchange has %d functions', batchExchangeAbi.length)
+  batchExchangeAbi
     .filter(({ type }) => type === 'function')
     .forEach(({ name }) => {
       console.log('- ' + name)

@@ -1,6 +1,6 @@
 import assert from 'assert'
-import { web3 } from 'helpers/web3'
 import Logger from 'helpers/Logger'
+import { web3 } from '../../helpers/web3'
 
 require('dotenv').config()
 

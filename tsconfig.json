@@ -37,6 +37,6 @@
       {"transform": "typescript-transform-paths"}
     ]
   },
-  "include": ["src/index.ts", "src/helpers/web3.ts", "src/contracts/index.ts"],
+  "include": ["src/index.ts"],
   "exclude": ["node_modules", "coverage", "build"]
 }

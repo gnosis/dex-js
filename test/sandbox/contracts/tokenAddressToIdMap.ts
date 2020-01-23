@@ -1,6 +1,6 @@
-import { batchExchangeContract } from 'contracts'
 import Logger from 'helpers/Logger'
 import { tokenList } from 'index'
+import { batchExchangeContract } from '../../helpers/contracts'
 
 require('dotenv').config()
 
