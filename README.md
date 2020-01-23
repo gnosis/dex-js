@@ -51,6 +51,9 @@ yarn install
 
 # Build
 yarn build
+
+# Build and watch (useful when using "npm link")
+yarn build:watch
 ```
 
 ## Run test
