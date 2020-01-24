@@ -20,3 +20,6 @@ export const FEE_PERCENTAGE = (1 / FEE_DENOMINATOR) * 100 // syntatic sugar for 
 
 // Amount for an order to be considered unlimited, from contract's point of view: https://github.com/gnosis/dex-contracts/blob/master/contracts/BatchExchange.sol#L35
 export const UNLIMITED_ORDER_AMOUNT = TWO.pow(new BN(128)).sub(ONE)
+
+// Batch ID of orders without expiration date set
+export const MAX_BATCH_ID = 2 ** 32 - 1
