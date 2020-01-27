@@ -19,7 +19,7 @@ async function exec (): Promise<void> {
     log.info(
       'New order\n\tSell Token: %s\n\tBuy Token: %s\n\tNumerator: %s\n\tDenominator: %s\n\tValid From: %s\n\tValid until: %s\n\tTransaction: %s',
       sellToken, buyToken, priceNumerator, priceDenominator, validFrom, validUntil,
-      orderPlacementEvent.transactionHash
+      orderPlacementEvent.transactionHash,
     )
   })
 }
