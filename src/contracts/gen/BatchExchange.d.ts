@@ -53,6 +53,8 @@ export class BatchExchange extends Contract {
       6: string
     }>
 
+    UNLIMITED_ORDER_AMOUNT(): TransactionObject<string>
+
     numTokens(): TransactionObject<string>
 
     lastCreditBatchId(arg0: string, arg1: string): TransactionObject<string>
@@ -87,6 +89,8 @@ export class BatchExchange extends Contract {
     getBalance(user: string, token: string): TransactionObject<string>
 
     FEE_DENOMINATOR(): TransactionObject<string>
+
+    ENCODED_AUCTION_ELEMENT_WIDTH(): TransactionObject<string>
 
     BATCH_TIME(): TransactionObject<string>
 
@@ -155,7 +159,15 @@ export class BatchExchange extends Contract {
       pageSize: number | string,
     ): TransactionObject<string>
 
+    getUsersPaginated(previousPageUser: string, pageSize: number | string): TransactionObject<string>
+
     getEncodedUserOrders(user: string): TransactionObject<string>
+
+    getEncodedUsersPaginated(
+      previousPageUser: string,
+      previousPageUserOffset: number | string,
+      pageSize: number | string,
+    ): TransactionObject<string>
 
     getEncodedOrders(): TransactionObject<string>
 
@@ -182,7 +194,13 @@ export class BatchExchange extends Contract {
       6: string
       7: string
     }>
-    OrderCancelation: ContractEvent<{
+    TokenListing: ContractEvent<{
+      token: string
+      id: string
+      0: string
+      1: string
+    }>
+    OrderCancellation: ContractEvent<{
       owner: string
       id: string
       0: string
@@ -197,22 +215,46 @@ export class BatchExchange extends Contract {
     Trade: ContractEvent<{
       owner: string
       orderId: string
+      sellToken: string
+      buyToken: string
       executedSellAmount: string
       executedBuyAmount: string
       0: string
       1: string
       2: string
       3: string
+      4: string
+      5: string
     }>
     TradeReversion: ContractEvent<{
       owner: string
       orderId: string
+      sellToken: string
+      buyToken: string
       executedSellAmount: string
       executedBuyAmount: string
       0: string
       1: string
       2: string
       3: string
+      4: string
+      5: string
+    }>
+    SolutionSubmission: ContractEvent<{
+      submitter: string
+      utility: string
+      disregardedUtility: string
+      burntFees: string
+      lastAuctionBurntFees: string
+      prices: string[]
+      tokenIdsForPrice: string[]
+      0: string
+      1: string
+      2: string
+      3: string
+      4: string
+      5: string[]
+      6: string[]
     }>
     Deposit: ContractEvent<{
       user: string
