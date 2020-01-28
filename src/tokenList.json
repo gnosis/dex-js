@@ -89,5 +89,18 @@
     "website": "https://makerdao.com/",
     "description": "crypto-collateralized cryptocurrency: stable coin which is pegged to USD",
     "rinkeby_faucet": "https://app.compound.finance/asset/cDAI"
+  },
+  {
+    "id": 9,
+    "name": "Synth sUSD",
+    "symbol": "sUSD",
+    "decimals": 18,
+    "addressByNetwork": {
+      "1": "0x57Ab1E02fEE23774580C119740129eAC7081e9D3",
+      "4": "0xe109da5361299eD96D91146B8Cc12F682D21964e"
+    },
+    "website": "https://www.synthetix.io/ ",
+    "description": "Tracks the price of a single US Dollar (USD). This Synth always remains constant at 1.",
+    "rinkeby_faucet": ""
   }
 ]
