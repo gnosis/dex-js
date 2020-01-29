@@ -101,6 +101,6 @@
     },
     "website": "https://www.synthetix.io/ ",
     "description": "Tracks the price of a single US Dollar (USD). This Synth always remains constant at 1.",
-    "rinkeby_faucet": ""
+    "rinkeby_faucet": "https://rinkeby.etherscan.io/address/0xDFd3CAde426Fc6A014fd2e0E1Cb3158F972A1A0D. Instructions: https://github.com/Synthetixio/synthetix/issues/382#issuecomment-579518740"
   }
 ]
