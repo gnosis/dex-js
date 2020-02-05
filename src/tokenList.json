@@ -127,5 +127,18 @@
     "website": "https://www.synthetix.io",
     "description": "Tracks the price of Ether (ETH) through price feeds supplied by an oracle",
     "rinkeby_faucet": null
+  },
+  {
+    "id": 12,
+    "name": "OWL",
+    "symbol": "OWL",
+    "decimals": 18,
+    "addressByNetwork": {
+      "1": "0x1A5F9352Af8aF974bFC03399e3767DF6370d82e4",
+      "4": "0xa7D1C04fAF998F9161fC9F800a99A809b84cfc9D"
+    },
+    "website": "https://gnosis.io/tokens",
+    "description": "OWL can be used to pay 1 USD in fees on Gnosis platforms",
+    "rinkeby_faucet": null
   }
 ]
