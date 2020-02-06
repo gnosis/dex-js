@@ -122,7 +122,8 @@
     "symbol": "sETH",
     "decimals": 18,
     "addressByNetwork": {
-      "1": "0x5e74C9036fb86BD7eCdcb084a0673EFc32eA31cb"
+      "1": "0x5e74C9036fb86BD7eCdcb084a0673EFc32eA31cb",
+      "4": "0xA83AbFdC9E8Ee990C3C6C0f56a4B06e0faAd583C"
     },
     "website": "https://www.synthetix.io",
     "description": "Tracks the price of Ether (ETH) through price feeds supplied by an oracle",
