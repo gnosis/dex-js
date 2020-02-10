@@ -146,9 +146,9 @@
     minimist "^1.2.0"
 
 "@gnosis.pm/dex-contracts@^0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@gnosis.pm/dex-contracts/-/dex-contracts-0.2.0.tgz#1649e2efdb818158db79569e9375d6bf9405c63f"
-  integrity sha512-9zMT7XaveDJ5L52o0RNRcFL0Vf2nOpX1lGsWimIZCZBnCL1HyvKHvX4W4mfcItkScNVNgvJ9EWSNVXQjS+pK5g==
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/@gnosis.pm/dex-contracts/-/dex-contracts-0.2.1.tgz#c36c8538568168526fc951e7ba78f7754610b519"
+  integrity sha512-6s4dJbgdX57cSgbXIUL1vnAN/B8gNqmZwb4w0LgDtunVMPj1AdhuIi1umdLqmFvsyPhYngDhhqbLJmdbn7YGrg==
   dependencies:
     bn.js "^5.1.1"
 
