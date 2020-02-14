@@ -1,7 +1,7 @@
 import BN from 'bn.js'
 import BigNumber from 'bignumber.js'
 
-import { UNLIMITED_ORDER_AMOUNT, isOrderUnlimited } from '../../src'
+import { UNLIMITED_ORDER_AMOUNT, isOrderUnlimited } from '../../../src'
 
 describe('Compare string values', () => {
   const unlimitedValue = UNLIMITED_ORDER_AMOUNT.toString()
