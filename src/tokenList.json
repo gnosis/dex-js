@@ -141,5 +141,17 @@
     "website": "https://gnosis.io/tokens",
     "description": "OWL can be used to pay 1 USD in fees on Gnosis platforms",
     "rinkeby_faucet": null
+  },
+  {
+    "id": 16,
+    "name": "Chai",
+    "symbol": "CHAI",
+    "decimals": 18,
+    "addressByNetwork": {
+      "1": "0x06AF07097C9Eeb7fD685c692751D5C66dB49c215"
+    },
+    "website": "https://chai.money/",
+    "description": "ERC20 wrapper over the Dai Savings Rate",
+    "rinkeby_faucet": null
   }
 ]
