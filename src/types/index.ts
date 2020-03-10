@@ -12,5 +12,5 @@ export interface TokenDetails {
 }
 
 export interface TokenDetailsConfig extends Omit<TokenDetails, 'address'> {
-  addressByNetwork: { [networkId: string]: string }
+  addressByNetwork: { [networkId: string]: string | undefined }
 }
