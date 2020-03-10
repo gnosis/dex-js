@@ -11,6 +11,6 @@ export interface TokenDetails {
   image?: string
 }
 
-export interface TokenDetailsConfig extends TokenDetails {
+export interface TokenDetailsConfig extends Omit<TokenDetails, 'address'> {
   addressByNetwork: { [networkId: string]: string }
 }
