@@ -1,5 +1,6 @@
 import BigNumber from 'bignumber.js'
 import BN from 'bn.js'
+import { ONE_BIG_NUMBER } from 'const'
 
 interface Token {
   amount: BN | BigNumber | string
@@ -36,4 +37,13 @@ export function calculatePrice({
     const precisionFactor = 10 ** (sellDecimals - buyDecimals)
     return numerator.multipliedBy(precisionFactor).dividedBy(denominator)
   }
+}
+
+/**
+ * Convenience function to invert price
+ *
+ * @param price Price to be inverted as BigNumber
+ */
+export function invertPrice(price: BigNumber): BigNumber {
+  return ONE_BIG_NUMBER.div(price)
 }

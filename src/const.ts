@@ -1,10 +1,12 @@
 import BN from 'bn.js'
+import BigNumber from 'bignumber.js'
 
 // Some convenient numeric constant
 export const ZERO = new BN(0)
 export const ONE = new BN(1)
 export const TWO = new BN(2)
 export const TEN = new BN(10)
+export const ONE_BIG_NUMBER = new BigNumber(1)
 
 // Max allowance value for ERC20 approve
 export const ALLOWANCE_MAX_VALUE = TWO.pow(new BN(256)).sub(ONE) // 115792089237316195423570985008687907853269984665640564039457584007913129639935
