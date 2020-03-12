@@ -135,17 +135,55 @@ export function safeFilledToken<T extends TokenDetails>(token: T): T {
     symbol: token.symbol || token.name || abbreviateString(token.address, 6, 4),
   }
 }
-export function calculatePriceBigNumber(numerator?: BigNumber, denominator?: BigNumber): BigNumber | null {
-  if (!numerator || !denominator || denominator.isZero()) {
-    return null
-  }
-  return numerator.dividedBy(denominator)
-}
+
+/**
+ * Formats given BigNumber price to a locale aware string.
+ *
+ * Rounds price if price decimals > decimals parameter.
+ * Pads right zeros if price decimals < decimals parameter.
+ * Returns no decimals if decimals paramter == 0.
+ * Adds thousands separator if price >= 1000 and thousands parameter is set.
+ *
+ * @param price Price as BigNumber
+ * @param decimals Optional amount of decimals to show the price. Defaults to `4`
+ * @param thousands Whether thousands separator should be included. Defaults to `false`
+ */
 export function formatPrice(
-  numerator?: BigNumber,
-  denominator?: BigNumber,
+  price: BigNumber,
   decimals = DEFAULT_DECIMALS,
-): string | null {
-  const price = calculatePriceBigNumber(numerator, denominator)
-  return price ? price.toFixed(decimals) : null
+  thousands = false,
+): string {
+  // No much to be done regarding an infinite number
+  if (!price.isFinite()) {
+    return price.toString()
+  }
+
+  // truncate all decimals away: 5.516 => 5
+  const integerPart = price.integerValue(BigNumber.ROUND_FLOOR)
+
+  const decimalPart = price
+    // adjust decimal precision: 5.516; decimals 2 => 5.52
+    // keep in mind there's rounding
+    .decimalPlaces(decimals, BigNumber.ROUND_HALF_CEIL)
+    // remove integer part: 5.52 => 0.52
+    .minus(integerPart)
+    // turn decimals into integer: 0.52 -> 52
+    .shiftedBy(decimals)
+
+  // add thousand separator, if set
+  const integerPartFmt = thousands ? _formatNumber(integerPart.toString()) : integerPart.toString()
+
+  if (decimals <= 0) {
+    // decimals == 0, ignore decimal part
+    return integerPartFmt
+  } else {
+    let decimalPartFmt = decimalPart.toString()
+
+    if (decimalPartFmt.length < decimals) {
+      // less decimals than what was asked for, pad right: 5.5; decimals 2 => 5.50
+      decimalPartFmt = decimalPartFmt.padEnd(decimals, '0')
+    }
+
+    return integerPartFmt + DECIMALS_SYMBOL + decimalPartFmt
+  }
 }

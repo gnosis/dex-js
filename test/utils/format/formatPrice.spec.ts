@@ -1,0 +1,62 @@
+import BigNumber from 'bignumber.js'
+
+import { formatPrice } from '../../../src'
+
+describe('No thousands separator', () => {
+  test('price without decimals, zero decimals expected', () => {
+    const price = new BigNumber('132')
+
+    const actual = formatPrice(price, 0)
+
+    expect(actual).toEqual('132')
+  })
+  test('price without decimals, 2 decimals expected', () => {
+    const price = new BigNumber('132')
+
+    const actual = formatPrice(price, 2)
+
+    expect(actual).toEqual('132.00')
+  })
+
+  test('could have decimals separator', () => {
+    const price = new BigNumber('1328')
+
+    const actual = formatPrice(price, 2)
+
+    expect(actual).toEqual('1328.00')
+  })
+
+  test('decimals rounded', () => {
+    const price = new BigNumber('1.666')
+
+    const actual = formatPrice(price, 2)
+
+    expect(actual).toEqual('1.67')
+  })
+
+  test('zero', () => {
+    const price = new BigNumber('0')
+
+    const actual = formatPrice(price)
+
+    expect(actual).toEqual('0.0000')
+  })
+
+  test('infinity price', () => {
+    const price = new BigNumber(Infinity)
+
+    const actual = formatPrice(price)
+
+    expect(actual).toEqual('Infinity')
+  })
+})
+
+describe('with thousands separator', () => {
+  test('adds separator', () => {
+    const price = new BigNumber(9000.1)
+
+    const actual = formatPrice(price, 2, true)
+
+    expect(actual).toEqual('9,000.10')
+  })
+})
