@@ -6,14 +6,14 @@ describe('No thousands separator', () => {
   test('price without decimals, zero decimals expected', () => {
     const price = new BigNumber('132')
 
-    const actual = formatPrice(price, 0)
+    const actual = formatPrice({ price, decimals: 0 })
 
     expect(actual).toEqual('132')
   })
   test('price without decimals, 2 decimals expected', () => {
     const price = new BigNumber('132')
 
-    const actual = formatPrice(price, 2)
+    const actual = formatPrice({ price, decimals: 2 })
 
     expect(actual).toEqual('132.00')
   })
@@ -21,7 +21,7 @@ describe('No thousands separator', () => {
   test('could have decimals separator', () => {
     const price = new BigNumber('1328')
 
-    const actual = formatPrice(price, 2)
+    const actual = formatPrice({ price, decimals: 2 })
 
     expect(actual).toEqual('1328.00')
   })
@@ -29,7 +29,7 @@ describe('No thousands separator', () => {
   test('decimals rounded', () => {
     const price = new BigNumber('1.666')
 
-    const actual = formatPrice(price, 2)
+    const actual = formatPrice({ price, decimals: 2 })
 
     expect(actual).toEqual('1.67')
   })
@@ -37,7 +37,7 @@ describe('No thousands separator', () => {
   test('zero', () => {
     const price = new BigNumber('0')
 
-    const actual = formatPrice(price)
+    const actual = formatPrice({ price })
 
     expect(actual).toEqual('0.0000')
   })
@@ -45,7 +45,7 @@ describe('No thousands separator', () => {
   test('infinity price', () => {
     const price = new BigNumber(Infinity)
 
-    const actual = formatPrice(price)
+    const actual = formatPrice({ price })
 
     expect(actual).toEqual('Infinity')
   })
@@ -53,7 +53,7 @@ describe('No thousands separator', () => {
   test('without zero padding, no decimals', () => {
     const price = new BigNumber(1)
 
-    const actual = formatPrice(price, undefined, undefined, false)
+    const actual = formatPrice({ price, zeroPadding: false })
 
     expect(actual).toEqual('1')
   })
@@ -61,7 +61,7 @@ describe('No thousands separator', () => {
   test('without zero padding, with decimals and zeros to remove', () => {
     const price = new BigNumber('0.123000')
 
-    const actual = formatPrice(price, 7, undefined, false)
+    const actual = formatPrice({ price, decimals: 7, zeroPadding: false })
 
     expect(actual).toEqual('0.123')
   })
@@ -69,7 +69,7 @@ describe('No thousands separator', () => {
   test('without zero padding, with decimals and no zeros to remove', () => {
     const price = new BigNumber('0.123000')
 
-    const actual = formatPrice(price, 3, undefined, false)
+    const actual = formatPrice({ price, decimals: 3, zeroPadding: false })
 
     expect(actual).toEqual('0.123')
   })
@@ -79,8 +79,18 @@ describe('with thousands separator', () => {
   test('adds separator', () => {
     const price = new BigNumber(9000.1)
 
-    const actual = formatPrice(price, 2, true)
+    const actual = formatPrice({ price, decimals: 2, thousands: true })
 
     expect(actual).toEqual('9,000.10')
+  })
+})
+
+describe('with single parameter', () => {
+  test('formats with all defaults', () => {
+    const price = new BigNumber(9000.10601)
+
+    const actual = formatPrice(price)
+
+    expect(actual).toEqual('9000.1060')
   })
 })
