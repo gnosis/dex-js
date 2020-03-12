@@ -49,6 +49,30 @@ describe('No thousands separator', () => {
 
     expect(actual).toEqual('Infinity')
   })
+
+  test('without zero padding, no decimals', () => {
+    const price = new BigNumber(1)
+
+    const actual = formatPrice(price, undefined, undefined, false)
+
+    expect(actual).toEqual('1')
+  })
+
+  test('without zero padding, with decimals and zeros to remove', () => {
+    const price = new BigNumber('0.123000')
+
+    const actual = formatPrice(price, 7, undefined, false)
+
+    expect(actual).toEqual('0.123')
+  })
+
+  test('without zero padding, with decimals and no zeros to remove', () => {
+    const price = new BigNumber('0.123000')
+
+    const actual = formatPrice(price, 3, undefined, false)
+
+    expect(actual).toEqual('0.123')
+  })
 })
 
 describe('with thousands separator', () => {

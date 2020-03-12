@@ -152,6 +152,7 @@ export function formatPrice(
   price: BigNumber,
   decimals = DEFAULT_DECIMALS,
   thousands = false,
+  zeroPadding = true,
 ): string {
   // No much to be done regarding an infinite number
   if (!price.isFinite()) {
@@ -173,13 +174,15 @@ export function formatPrice(
   // add thousand separator, if set
   const integerPartFmt = thousands ? _formatNumber(integerPart.toString()) : integerPart.toString()
 
-  if (decimals <= 0) {
-    // decimals == 0, ignore decimal part
+  if (decimals <= 0 || (!zeroPadding && decimalPart.isZero())) {
+    // decimals == 0 or no zeroPadding and decimal part is 0, ignore decimal part
     return integerPartFmt
   } else {
     let decimalPartFmt = decimalPart.toString()
 
-    if (decimalPartFmt.length < decimals) {
+    if (!zeroPadding) {
+      decimalPartFmt = decimalPartFmt.replace(/0+$/, '')
+    } else if (decimalPartFmt.length < decimals) {
       // less decimals than what was asked for, pad right: 5.5; decimals 2 => 5.50
       decimalPartFmt = decimalPartFmt.padEnd(decimals, '0')
     }
