@@ -6,7 +6,7 @@ import { calculatePrice } from '../../../src/utils/price'
 describe('BN', () => {
   test('same amount of decimals', () => {
     const expected = new BigNumber('1.55')
-    const params = { buyToken: { amount: new BN(155), decimals: 2 }, sellToken: { amount: new BN(100), decimals: 2 } }
+    const params = { numerator: { amount: new BN(155), decimals: 2 }, denominator: { amount: new BN(100), decimals: 2 } }
 
     const actual = calculatePrice(params)
 
@@ -15,7 +15,7 @@ describe('BN', () => {
 
   test('buy token has more decimals', () => {
     const expected = new BigNumber('1.55')
-    const params = { buyToken: { amount: new BN(1550), decimals: 3 }, sellToken: { amount: new BN(100), decimals: 2 } }
+    const params = { numerator: { amount: new BN(1550), decimals: 3 }, denominator: { amount: new BN(100), decimals: 2 } }
 
     const actual = calculatePrice(params)
 
@@ -24,7 +24,7 @@ describe('BN', () => {
 
   test('sell token has more decimals', () => {
     const expected = new BigNumber('1.55')
-    const params = { buyToken: { amount: new BN(155), decimals: 2 }, sellToken: { amount: new BN(1000), decimals: 3 } }
+    const params = { numerator: { amount: new BN(155), decimals: 2 }, denominator: { amount: new BN(1000), decimals: 3 } }
 
     const actual = calculatePrice(params)
 
@@ -36,8 +36,8 @@ describe('BigNumber', () => {
   test('same amount of decimals', () => {
     const expected = new BigNumber('1.55')
     const params = {
-      buyToken: { amount: new BigNumber(155), decimals: 2 },
-      sellToken: { amount: new BigNumber(100), decimals: 2 },
+      numerator: { amount: new BigNumber(155), decimals: 2 },
+      denominator: { amount: new BigNumber(100), decimals: 2 },
     }
 
     const actual = calculatePrice(params)
@@ -48,8 +48,8 @@ describe('BigNumber', () => {
   test('buy token has more decimals', () => {
     const expected = new BigNumber('1.55')
     const params = {
-      buyToken: { amount: new BigNumber(1550), decimals: 3 },
-      sellToken: { amount: new BigNumber(100), decimals: 2 },
+      numerator: { amount: new BigNumber(1550), decimals: 3 },
+      denominator: { amount: new BigNumber(100), decimals: 2 },
     }
 
     const actual = calculatePrice(params)
@@ -60,8 +60,8 @@ describe('BigNumber', () => {
   test('sell token has more decimals', () => {
     const expected = new BigNumber('1.55')
     const params = {
-      buyToken: { amount: new BigNumber(155), decimals: 2 },
-      sellToken: { amount: new BigNumber(1000), decimals: 3 },
+      numerator: { amount: new BigNumber(155), decimals: 2 },
+      denominator: { amount: new BigNumber(1000), decimals: 3 },
     }
 
     const actual = calculatePrice(params)
@@ -74,8 +74,8 @@ describe('string', () => {
   test('decimals not provided', () => {
     const expected = new BigNumber('1.55')
     const params = {
-      buyToken: { amount: '1.55' },
-      sellToken: { amount: '1' },
+      numerator: { amount: '1.55' },
+      denominator: { amount: '1' },
     }
 
     const actual = calculatePrice(params)

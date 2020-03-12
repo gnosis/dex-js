@@ -8,13 +8,13 @@ interface Token {
 }
 
 interface CalculatePriceParams {
-  buyToken: Token
-  sellToken: Token
+  numerator: Token
+  denominator: Token
 }
 
 /**
  * Calculates price from either BN, BigNumber or string amounts
- * based on decimal precision of each token.
+ * based on decimal precision of each part.
  *
  * Decimals defaults to 0.
  * Use case is to calculate the price when values already in the same unit
@@ -22,13 +22,15 @@ interface CalculatePriceParams {
  *
  * Returns price in BigNumber and leave formatting up to the caller
  */
-export function calculatePrice({
-  buyToken: { amount: buyAmount, decimals: buyDecimals = 0 },
-  sellToken: { amount: sellAmount, decimals: sellDecimals = 0 },
-}: CalculatePriceParams): BigNumber {
+export function calculatePrice(params: CalculatePriceParams): BigNumber {
+  const {
+    numerator: { amount: denominatorAmount, decimals: buyDecimals = 0 },
+    denominator: { amount: numeratorAmount, decimals: sellDecimals = 0 },
+  } = params
+
   // convert to BigNumber
-  const numerator = new BigNumber(buyAmount.toString())
-  const denominator = new BigNumber(sellAmount.toString())
+  const numerator = new BigNumber(denominatorAmount.toString())
+  const denominator = new BigNumber(numeratorAmount.toString())
 
   if (buyDecimals >= sellDecimals) {
     const precisionFactor = 10 ** (buyDecimals - sellDecimals)
