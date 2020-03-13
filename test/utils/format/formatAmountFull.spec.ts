@@ -87,3 +87,10 @@ describe('Big amounts', () => {
     expect(formatAmountFull(new BN(new BN(ALLOWANCE_MAX_VALUE)))).toEqual(expected)
   })
 })
+
+describe('Not locale aware', () => {
+  test('12,345.123 units', async () => {
+    const amount = new BN('12345123000')
+    expect(formatAmountFull({ amount, precision: 6, isLocaleAware: false })).toEqual('12,345.123')
+  })
+})

@@ -15,9 +15,11 @@ function _getLocaleSymbols(): { thousands: string; decimals: string } {
 }
 
 const { thousands: THOUSANDS_SYMBOL, decimals: DECIMALS_SYMBOL } = _getLocaleSymbols()
+const DEFAULT_THOUSANDS_SYMBOL = ','
+const DEFAULT_DECIMALS_SYMBOL = '.'
 
-function _formatNumber(num: string): string {
-  return num.replace(/(\d)(?=(?:\d{3})+(?!\d))/g, '$1' + THOUSANDS_SYMBOL)
+function _formatNumber(num: string, thousandsSymbol: string = THOUSANDS_SYMBOL): string {
+  return num.replace(/(\d)(?=(?:\d{3})+(?!\d))/g, '$1' + thousandsSymbol)
 }
 
 function _decomposeBn(amount: BN, amountPrecision: number, decimals: number): { integerPart: BN; decimalPart: BN } {
@@ -41,47 +43,50 @@ interface FormatAmountParams<T> {
   precision: number,
   decimals?: number,
   thousandSeparator?: boolean,
+  isLocaleAware?: boolean,
 }
 
 // For backward compatibility, keep form with required params only
-export function formatAmount(
-  amount: BN,
-  amountPrecision: number,
-): string
-export function formatAmount(
-  amount: null | undefined,
-  amountPrecision: number,
-): null
-export function formatAmount(
-  params: FormatAmountParams<BN>
-): string
-export function formatAmount(
-  params: FormatAmountParams<null | undefined>
-): null
+export function formatAmount(amount: BN, amountPrecision: number): string
+export function formatAmount(amount: null | undefined, amountPrecision: number): null
+export function formatAmount(params: FormatAmountParams<BN>): string
+export function formatAmount(params: FormatAmountParams<null | undefined>): null
 export function formatAmount(
   params: FormatAmountParams<BN | null | undefined> | BN | null | undefined, _amountPrecision?: number,
 ): string | null {
   let amount: BN
-  let amountPrecision: number
+  let precision: number
 
   let decimals = DEFAULT_DECIMALS
   let thousandSeparator = true
+  let isLocaleAware = true
 
   if (!params || ('amount' in params && !params.amount)) {
     return null
   } else if (BN.isBN(params)) {
     amount = params
-    amountPrecision = _amountPrecision as number
+    precision = _amountPrecision as number
   } else {
     amount = params.amount as BN
-    amountPrecision = params.precision
+    precision = params.precision
     decimals = params.decimals ?? decimals
     thousandSeparator = params.thousandSeparator ?? thousandSeparator
+    isLocaleAware = params.isLocaleAware ?? isLocaleAware
   }
 
-  const actualDecimals = Math.min(amountPrecision, decimals)
-  const { integerPart, decimalPart } = _decomposeBn(amount, amountPrecision, actualDecimals)
-  const integerPartFmt = thousandSeparator ? _formatNumber(integerPart.toString()) : integerPart.toString()
+  let thousandSymbol: string
+  let decimalSymbol: string
+  if (isLocaleAware) {
+    thousandSymbol = THOUSANDS_SYMBOL
+    decimalSymbol = DECIMALS_SYMBOL
+  } else {
+    thousandSymbol = DEFAULT_THOUSANDS_SYMBOL
+    decimalSymbol = DEFAULT_DECIMALS_SYMBOL
+  }
+
+  const actualDecimals = Math.min(precision, decimals)
+  const { integerPart, decimalPart } = _decomposeBn(amount, precision, actualDecimals)
+  const integerPartFmt = thousandSeparator ? _formatNumber(integerPart.toString(), thousandSymbol) : integerPart.toString()
   if (decimalPart.isZero()) {
     // Return just the integer part
     return integerPartFmt
@@ -91,7 +96,7 @@ export function formatAmount(
       .padStart(actualDecimals, '0') // Pad the decimal part with leading zeros
       .replace(/0+$/, '') // Remove the right zeros
     // Return the formatted integer plus the decimal
-    return integerPartFmt + DECIMALS_SYMBOL + decimalFmt
+    return integerPartFmt + decimalSymbol + decimalFmt
   }
 }
 
@@ -105,8 +110,9 @@ export function formatAmountFull(
   params?: BN | null | undefined | FormatAmountFullParams<BN | null | undefined>,
 ): string | null {
   let amount: BN
-  let amountPrecision = DEFAULT_PRECISION
+  let precision = DEFAULT_PRECISION
   let thousandSeparator = true
+  let isLocaleAware = true
 
   if (!params || ('amount' in params && !params.amount)) {
     return null
@@ -114,11 +120,12 @@ export function formatAmountFull(
     amount = params
   } else {
     amount = params.amount as BN
-    amountPrecision = params.precision ?? amountPrecision
+    precision = params.precision ?? precision
     thousandSeparator = params.thousandSeparator ?? thousandSeparator
+    isLocaleAware = params.isLocaleAware ?? isLocaleAware
   }
 
-  return formatAmount({ amount, precision: amountPrecision, decimals: amountPrecision, thousandSeparator })
+  return formatAmount({ amount, precision, decimals: precision, thousandSeparator, isLocaleAware })
 }
 
 /**

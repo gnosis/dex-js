@@ -187,3 +187,10 @@ describe('Edge cases', () => {
     expect(formatAmount({ amount, precision: 2, decimals: 4 })).toEqual('12,345.67')
   })
 })
+
+describe('Not locale aware', () => {
+  test('12,345.67 - More decimals, than precision', async () => {
+    const amount = new BN('1234567')
+    expect(formatAmount({ amount, precision: 2, decimals: 4, isLocaleAware: false })).toEqual('12,345.67')
+  })
+})
