@@ -136,23 +136,46 @@ export function safeFilledToken<T extends TokenDetails>(token: T): T {
   }
 }
 
+interface FormatPriceParams {
+  price: BigNumber
+  decimals?: number
+  thousands?: boolean
+  zeroPadding?: boolean
+}
+
 /**
  * Formats given BigNumber price to a locale aware string.
  *
  * Rounds price if price decimals > decimals parameter.
- * Pads right zeros if price decimals < decimals parameter.
+ * Pads right zeros if price decimals < decimals parameter if zeroPadding is set. Removes otherwise.
  * Returns no decimals if decimals paramter == 0.
  * Adds thousands separator if price >= 1000 and thousands parameter is set.
+ *
+ * Accepts either a single price BigNumber parameter and uses the defaults,
+ * or an object containing all parameters, also using defaults if any is omitted.
  *
  * @param price Price as BigNumber
  * @param decimals Optional amount of decimals to show the price. Defaults to `4`
  * @param thousands Whether thousands separator should be included. Defaults to `false`
+ * @param zeroPadding Whether formatted value should be zero padded to the right. Defaults to `true`
  */
-export function formatPrice(
-  price: BigNumber,
-  decimals = DEFAULT_DECIMALS,
-  thousands = false,
-): string {
+export function formatPrice(params: FormatPriceParams | BigNumber): string {
+  let price: BigNumber
+
+  // defaults
+  let decimals = DEFAULT_DECIMALS
+  let thousands = false
+  let zeroPadding = true
+
+  if (params instanceof BigNumber) {
+    price = params
+  } else {
+    price = params.price
+    decimals = params.decimals ?? decimals
+    thousands = params.thousands ?? thousands
+    zeroPadding = params.zeroPadding ?? zeroPadding
+  }
+
   // No much to be done regarding an infinite number
   if (!price.isFinite()) {
     return price.toString()
@@ -173,13 +196,16 @@ export function formatPrice(
   // add thousand separator, if set
   const integerPartFmt = thousands ? _formatNumber(integerPart.toString()) : integerPart.toString()
 
-  if (decimals <= 0) {
-    // decimals == 0, ignore decimal part
+  if (decimals <= 0 || (!zeroPadding && decimalPart.isZero())) {
+    // decimals == 0 or no zeroPadding and decimal part is 0, ignore decimal part
     return integerPartFmt
   } else {
     let decimalPartFmt = decimalPart.toString()
 
-    if (decimalPartFmt.length < decimals) {
+    if (!zeroPadding) {
+      // no zero padding, remove if any
+      decimalPartFmt = decimalPartFmt.replace(/0+$/, '')
+    } else if (decimalPartFmt.length < decimals) {
       // less decimals than what was asked for, pad right: 5.5; decimals 2 => 5.50
       decimalPartFmt = decimalPartFmt.padEnd(decimals, '0')
     }
