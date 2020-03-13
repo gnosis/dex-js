@@ -127,44 +127,44 @@ describe('Tokens with precision 2', () => {
 describe('2 decimals', () => {
   test('1 unit', async () => {
     const amount = new BN('1000000')
-    expect(formatAmount(amount, 6, 2)).toEqual('1')
+    expect(formatAmount({ amount, precision: 6, decimals: 2 })).toEqual('1')
   })
 
   test('12.34 units', async () => {
     const amount = new BN('12340000')
-    expect(formatAmount(amount, 6, 2)).toEqual('12.34')
+    expect(formatAmount({ amount, precision: 6, decimals: 2 })).toEqual('12.34')
   })
 
   test('4,567,890.123333 units, round down', async () => {
     const amount = new BN('4567890123333')
-    expect(formatAmount(amount, 6, 2)).toEqual('4,567,890.12')
+    expect(formatAmount({ amount, precision: 6, decimals: 2 })).toEqual('4,567,890.12')
   })
 
   test('4,567,890.125555 units, round up', async () => {
     const amount = new BN('4567890125555')
-    expect(formatAmount(amount, 6, 2)).toEqual('4,567,890.13')
+    expect(formatAmount({ amount, precision: 6, decimals: 2 })).toEqual('4,567,890.13')
   })
 })
 
 describe('0 decimals', () => {
   test('1 unit', async () => {
     const amount = new BN('1000000')
-    expect(formatAmount(amount, 6, 0)).toEqual('1')
+    expect(formatAmount({ amount, precision: 6, decimals: 0 })).toEqual('1')
   })
 
   test('12.34 units', async () => {
     const amount = new BN('12340000')
-    expect(formatAmount(amount, 6, 0)).toEqual('12')
+    expect(formatAmount({ amount, precision: 6, decimals: 0 })).toEqual('12')
   })
 
   test('4,567,890.123333 units, round down', async () => {
     const amount = new BN('4567890123333')
-    expect(formatAmount(amount, 6, 0)).toEqual('4,567,890')
+    expect(formatAmount({ amount, precision: 6, decimals: 0 })).toEqual('4,567,890')
   })
 
   test('4,567,890.125555 units, round up', async () => {
     const amount = new BN('4567890125555')
-    expect(formatAmount(amount, 6, 0)).toEqual('4,567,890')
+    expect(formatAmount({ amount, precision: 6, decimals: 0 })).toEqual('4,567,890')
   })
 })
 
@@ -182,8 +182,8 @@ describe('Big amounts', () => {
 })
 
 describe('Edge cases', () => {
-  test('12,345.67 - More decimals, than precission', async () => {
+  test('12,345.67 - More decimals, than precision', async () => {
     const amount = new BN('1234567')
-    expect(formatAmount(amount, 2, 4)).toEqual('12,345.67')
+    expect(formatAmount({ amount, precision: 2, decimals: 4 })).toEqual('12,345.67')
   })
 })

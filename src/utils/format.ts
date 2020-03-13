@@ -36,27 +36,49 @@ function _decomposeBn(amount: BN, amountPrecision: number, decimals: number): { 
   return { integerPart, decimalPart }
 }
 
+interface FormatAmountParams<T> {
+  amount: T
+  precision: number,
+  decimals?: number,
+  thousandSeparator?: boolean,
+}
+
+// For backward compatibility, keep form with required params only
 export function formatAmount(
   amount: BN,
   amountPrecision: number,
-  decimals?: number,
-  thousandSeparator?: boolean,
 ): string
 export function formatAmount(
   amount: null | undefined,
   amountPrecision: number,
-  decimals?: number,
-  thousandSeparator?: boolean,
 ): null
 export function formatAmount(
-  amount: BN | null | undefined,
-  amountPrecision: number,
-  decimals = DEFAULT_DECIMALS,
-  thousandSeparator = true,
+  params: FormatAmountParams<BN>
+): string
+export function formatAmount(
+  params: FormatAmountParams<null | undefined>
+): null
+export function formatAmount(
+  params: FormatAmountParams<BN | null | undefined> | BN | null | undefined, _amountPrecision?: number,
 ): string | null {
-  if (!amount) {
+  let amount: BN
+  let amountPrecision: number
+
+  let decimals = DEFAULT_DECIMALS
+  let thousandSeparator = true
+
+  if (!params || ('amount' in params && !params.amount)) {
     return null
+  } else if (BN.isBN(params)) {
+    amount = params
+    amountPrecision = _amountPrecision as number
+  } else {
+    amount = params.amount as BN
+    amountPrecision = params.precision
+    decimals = params.decimals ?? decimals
+    thousandSeparator = params.thousandSeparator ?? thousandSeparator
   }
+
   const actualDecimals = Math.min(amountPrecision, decimals)
   const { integerPart, decimalPart } = _decomposeBn(amount, amountPrecision, actualDecimals)
   const integerPartFmt = thousandSeparator ? _formatNumber(integerPart.toString()) : integerPart.toString()
@@ -68,22 +90,35 @@ export function formatAmount(
       .toString()
       .padStart(actualDecimals, '0') // Pad the decimal part with leading zeros
       .replace(/0+$/, '') // Remove the right zeros
-    // Return the formated integer plus the decimal
+    // Return the formatted integer plus the decimal
     return integerPartFmt + DECIMALS_SYMBOL + decimalFmt
   }
 }
 
-export function formatAmountFull(amount: BN, amountPrecision?: number, thousandSeparator?: boolean): string
-export function formatAmountFull(amount?: undefined): null
+interface FormatAmountFullParams<T> extends Omit<FormatAmountParams<T>, 'decimals'> {}
+
+export function formatAmountFull(amount: BN): string
+export function formatAmountFull(amount?: undefined | null): null
+export function formatAmountFull(params: FormatAmountFullParams<BN>): string
+export function formatAmountFull(params: FormatAmountFullParams<null | undefined>): null
 export function formatAmountFull(
-  amount?: BN,
-  amountPrecision = DEFAULT_PRECISION,
-  thousandSeparator = true,
+  params?: BN | null | undefined | FormatAmountFullParams<BN | null | undefined>,
 ): string | null {
-  if (!amount) {
+  let amount: BN
+  let amountPrecision = DEFAULT_PRECISION
+  let thousandSeparator = true
+
+  if (!params || ('amount' in params && !params.amount)) {
     return null
+  } else if (BN.isBN(params)) {
+    amount = params
+  } else {
+    amount = params.amount as BN
+    amountPrecision = params.precision ?? amountPrecision
+    thousandSeparator = params.thousandSeparator ?? thousandSeparator
   }
-  return formatAmount(amount, amountPrecision, amountPrecision, thousandSeparator)
+
+  return formatAmount({ amount, precision: amountPrecision, decimals: amountPrecision, thousandSeparator })
 }
 
 /**
