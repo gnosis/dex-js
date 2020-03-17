@@ -1,6 +1,6 @@
 {
   "name": "@gnosis.pm/dex-js",
-  "version": "0.1.14",
+  "version": "0.1.15-RC.0",
   "description": "dFusion JS integration: utils, contracts and other goodies",
   "license": "MIT",
   "bugs": {
@@ -13,7 +13,7 @@
   "scripts": {
     "build": "npm run build:commonjs && npm run build:esm",
     "build:commonjs": "rimraf build && ttsc && cp -r src/contracts/gen build/contracts/",
-    "build:esm": "rimraf build-esm && ttsc -m es6 -t esnext --outDir build-esm && cp -r src/contracts/gen build-esm/contracts/",
+    "build:esm": "rimraf build-esm && ttsc -m esnext -t es2015 --outDir build-esm && cp -r src/contracts/gen build-esm/contracts/",
     "build:watch": "npx ttsc --watch",
     "test": "jest",
     "clean": "rimraf build",

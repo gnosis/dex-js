@@ -4,6 +4,7 @@ import { TokenDetails } from 'types'
 import BigNumber from 'bignumber.js'
 const DEFAULT_DECIMALS = 4
 const ELLIPSIS = '...'
+
 function _getLocaleSymbols(): { thousands: string; decimals: string } {
   // Check number representation in default locale
   const formattedNumber = new Intl.NumberFormat(undefined).format(1000.1)
@@ -12,10 +13,15 @@ function _getLocaleSymbols(): { thousands: string; decimals: string } {
     decimals: formattedNumber[5],
   }
 }
+
 const { thousands: THOUSANDS_SYMBOL, decimals: DECIMALS_SYMBOL } = _getLocaleSymbols()
-function _formatNumber(num: string): string {
-  return num.replace(/(\d)(?=(?:\d{3})+(?!\d))/g, '$1' + THOUSANDS_SYMBOL)
+const DEFAULT_THOUSANDS_SYMBOL = ','
+const DEFAULT_DECIMALS_SYMBOL = '.'
+
+function _formatNumber(num: string, thousandsSymbol: string = THOUSANDS_SYMBOL): string {
+  return num.replace(/(\d)(?=(?:\d{3})+(?!\d))/g, '$1' + thousandsSymbol)
 }
+
 function _decomposeBn(amount: BN, amountPrecision: number, decimals: number): { integerPart: BN; decimalPart: BN } {
   // Discard the decimals we don't need
   //  i.e. for WETH (precision=18, decimals=4) --> amount / 1e14
@@ -31,30 +37,56 @@ function _decomposeBn(amount: BN, amountPrecision: number, decimals: number): { 
   //        1, 18:  16.5*1e18 ---> 165000
   return { integerPart, decimalPart }
 }
-export function formatAmount(
-  amount: BN,
-  amountPrecision: number,
+
+interface FormatAmountParams<T> {
+  amount: T
+  precision: number,
   decimals?: number,
   thousandSeparator?: boolean,
-): string
+  isLocaleAware?: boolean,
+}
+
+// For backward compatibility, keep form with required params only
+export function formatAmount(amount: BN, amountPrecision: number): string
+export function formatAmount(amount: null | undefined, amountPrecision: number): null
+export function formatAmount(params: FormatAmountParams<BN>): string
+export function formatAmount(params: FormatAmountParams<null | undefined>): null
 export function formatAmount(
-  amount: null | undefined,
-  amountPrecision: number,
-  decimals?: number,
-  thousandSeparator?: boolean,
-): null
-export function formatAmount(
-  amount: BN | null | undefined,
-  amountPrecision: number,
-  decimals = DEFAULT_DECIMALS,
-  thousandSeparator = true,
+  params: FormatAmountParams<BN | null | undefined> | BN | null | undefined, _amountPrecision?: number,
 ): string | null {
-  if (!amount) {
+  let amount: BN
+  let precision: number
+
+  let decimals = DEFAULT_DECIMALS
+  let thousandSeparator = true
+  let isLocaleAware = true
+
+  if (!params || ('amount' in params && !params.amount)) {
     return null
+  } else if (BN.isBN(params)) {
+    amount = params
+    precision = _amountPrecision as number
+  } else {
+    amount = params.amount as BN
+    precision = params.precision
+    decimals = params.decimals ?? decimals
+    thousandSeparator = params.thousandSeparator ?? thousandSeparator
+    isLocaleAware = params.isLocaleAware ?? isLocaleAware
   }
-  const actualDecimals = Math.min(amountPrecision, decimals)
-  const { integerPart, decimalPart } = _decomposeBn(amount, amountPrecision, actualDecimals)
-  const integerPartFmt = thousandSeparator ? _formatNumber(integerPart.toString()) : integerPart.toString()
+
+  let thousandSymbol: string
+  let decimalSymbol: string
+  if (isLocaleAware) {
+    thousandSymbol = THOUSANDS_SYMBOL
+    decimalSymbol = DECIMALS_SYMBOL
+  } else {
+    thousandSymbol = DEFAULT_THOUSANDS_SYMBOL
+    decimalSymbol = DEFAULT_DECIMALS_SYMBOL
+  }
+
+  const actualDecimals = Math.min(precision, decimals)
+  const { integerPart, decimalPart } = _decomposeBn(amount, precision, actualDecimals)
+  const integerPartFmt = thousandSeparator ? _formatNumber(integerPart.toString(), thousandSymbol) : integerPart.toString()
   if (decimalPart.isZero()) {
     // Return just the integer part
     return integerPartFmt
@@ -63,22 +95,39 @@ export function formatAmount(
       .toString()
       .padStart(actualDecimals, '0') // Pad the decimal part with leading zeros
       .replace(/0+$/, '') // Remove the right zeros
-    // Return the formated integer plus the decimal
-    return integerPartFmt + DECIMALS_SYMBOL + decimalFmt
+    // Return the formatted integer plus the decimal
+    return integerPartFmt + decimalSymbol + decimalFmt
   }
 }
-export function formatAmountFull(amount: BN, amountPrecision?: number, thousandSeparator?: boolean): string
-export function formatAmountFull(amount?: undefined): null
+
+interface FormatAmountFullParams<T> extends Omit<FormatAmountParams<T>, 'decimals'> {}
+
+export function formatAmountFull(amount: BN): string
+export function formatAmountFull(amount?: undefined | null): null
+export function formatAmountFull(params: FormatAmountFullParams<BN>): string
+export function formatAmountFull(params: FormatAmountFullParams<null | undefined>): null
 export function formatAmountFull(
-  amount?: BN,
-  amountPrecision = DEFAULT_PRECISION,
-  thousandSeparator = true,
+  params?: BN | null | undefined | FormatAmountFullParams<BN | null | undefined>,
 ): string | null {
-  if (!amount) {
+  let amount: BN
+  let precision = DEFAULT_PRECISION
+  let thousandSeparator = true
+  let isLocaleAware = true
+
+  if (!params || ('amount' in params && !params.amount)) {
     return null
+  } else if (BN.isBN(params)) {
+    amount = params
+  } else {
+    amount = params.amount as BN
+    precision = params.precision ?? precision
+    thousandSeparator = params.thousandSeparator ?? thousandSeparator
+    isLocaleAware = params.isLocaleAware ?? isLocaleAware
   }
-  return formatAmount(amount, amountPrecision, amountPrecision, thousandSeparator)
+
+  return formatAmount({ amount, precision, decimals: precision, thousandSeparator, isLocaleAware })
 }
+
 /**
  * Adjust the decimal precision of the given decimal value, without converting to/from BN or Number
  * Takes in a string and returns a string
@@ -96,6 +145,7 @@ export function adjustPrecision(value: string | undefined | null, precision: num
   const regexp = new RegExp(`(\\.\\d{${precision}})\\d+$`)
   return value.replace(regexp, '$1')
 }
+
 export function parseAmount(amountFmt: string, amountPrecision: number): BN | null {
   if (!amountFmt) {
     return null
@@ -111,6 +161,7 @@ export function parseAmount(amountFmt: string, amountPrecision: number): BN | nu
     return null
   }
 }
+
 export function abbreviateString(inputString: string, prefixLength: number, suffixLength = 0): string {
   // abbreviate only if it makes sense, and make sure ellipsis fits into word
   // 1. always add ellipsis
@@ -125,9 +176,11 @@ export function abbreviateString(inputString: string, prefixLength: number, suff
   const suffix = suffixLength > 0 ? inputString.slice(-suffixLength) : ''
   return prefix + ELLIPSIS + suffix
 }
+
 export function safeTokenName(token: TokenDetails): string {
   return token.symbol || token.name || abbreviateString(token.address, 6, 4)
 }
+
 export function safeFilledToken<T extends TokenDetails>(token: T): T {
   return {
     ...token,
