@@ -117,6 +117,42 @@
     "rinkeby_faucet": "https://rinkeby.etherscan.io/address/0xDFd3CAde426Fc6A014fd2e0E1Cb3158F972A1A0D. Instructions: https://github.com/Synthetixio/synthetix/issues/382#issuecomment-579518740"
   },
   {
+    "id": 10,
+    "name": "Synth sBTC",
+    "symbol": "sBTC",
+    "decimals": 18,
+    "addressByNetwork": {
+      "1": "0xfE18be6b3Bd88A2D2A7f928d00292E7a9963CfC6"
+    },
+    "website": "https://www.synthetix.io",
+    "description": "Tracks the price of Bitcoin (BTC) through price feeds supplied by an oracle.",
+    "rinkeby_faucet": null
+  },
+  {
+    "id": 11,
+    "name": "Wrapped BTC",
+    "symbol": "WBTC",
+    "decimals": 18,
+    "addressByNetwork": {
+      "1": "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599"
+    },
+    "website": "https://www.wbtc.network",
+    "description": "ERC20 token backed 1:1 with Bitcoin",
+    "rinkeby_faucet": null
+  },
+  {
+    "id": 13,
+    "name": "Compound Dai",
+    "symbol": "cDAI",
+    "decimals": "8",
+    "addressByNetwork": {
+      "1": "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643"
+    },
+    "website": "https://compound.finance/",
+    "description": "Money market protocol to earn interest",
+    "rinkeby_faucet": null
+  },
+  {
     "id": 15,
     "name": "Synthetix Network",
     "symbol": "SNX",
@@ -130,6 +166,42 @@
     "rinkeby_faucet": "https://rinkeby.etherscan.io/address/0xDFd3CAde426Fc6A014fd2e0E1Cb3158F972A1A0D. Instructions: https://github.com/Synthetixio/synthetix/issues/382#issuecomment-579518740"
   },
   {
+    "id": 16,
+    "name": "Chai",
+    "symbol": "CHAI",
+    "decimals": 18,
+    "addressByNetwork": {
+      "1": "0x06AF07097C9Eeb7fD685c692751D5C66dB49c215"
+    },
+    "website": "https://chai.money/",
+    "description": "ERC20 wrapper over the Dai Savings Rate",
+    "rinkeby_faucet": null
+  },
+  {
+    "id": 18,
+    "name": "Gnosis Token",
+    "symbol": "GNO",
+    "decimals": "18",
+    "addressByNetwork": {
+      "1": "0x6810e776880C02933D47DB1b9fc05908e5386b96"
+    },
+    "website": "https://gnosis.io",
+    "description": "Native token of the Gnosis ecosystem primary used for generating OWL",
+    "rinkeby_faucet": null
+  },
+  {
+    "id": 19,
+    "name": "Panvala pan",
+    "symbol": "PAN",
+    "decimals": "18",
+    "addressByNetwork": {
+      "1": "0xD56daC73A4d6766464b38ec6D91eB45Ce7457c44"
+    },
+    "website": "https://panvala.com",
+    "description": "Allows to subsidize public goods",
+    "rinkeby_faucet": null
+  },
+  {
     "id": 0,
     "name": "OWL",
     "symbol": "OWL",
@@ -140,18 +212,6 @@
     },
     "website": "https://gnosis.io/tokens",
     "description": "OWL can be used to pay 1 USD in fees on Gnosis platforms",
-    "rinkeby_faucet": null
-  },
-  {
-    "id": 16,
-    "name": "Chai",
-    "symbol": "CHAI",
-    "decimals": 18,
-    "addressByNetwork": {
-      "1": "0x06AF07097C9Eeb7fD685c692751D5C66dB49c215"
-    },
-    "website": "https://chai.money/",
-    "description": "ERC20 wrapper over the Dai Savings Rate",
     "rinkeby_faucet": null
   }
 ]
