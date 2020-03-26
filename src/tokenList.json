@@ -183,7 +183,8 @@
     "symbol": "GNO",
     "decimals": "18",
     "addressByNetwork": {
-      "1": "0x6810e776880C02933D47DB1b9fc05908e5386b96"
+      "1": "0x6810e776880C02933D47DB1b9fc05908e5386b96",
+      "4": "0xd0Dab4E640D95E9E8A47545598c33e31bDb53C7c"
     },
     "website": "https://gnosis.io",
     "description": "Native token of the Gnosis ecosystem primary used for generating OWL",
