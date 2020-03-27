@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js'
 import BN from 'bn.js'
-import { ONE_BIG_NUMBER } from 'const'
+import { ONE_BIG_NUMBER, TEN_BIG_NUMBER, DEFAULT_PRECISION } from 'const'
 
 interface Token {
   amount: BN | BigNumber | string
@@ -24,19 +24,19 @@ interface CalculatePriceParams {
  */
 export function calculatePrice(params: CalculatePriceParams): BigNumber {
   const {
-    numerator: { amount: denominatorAmount, decimals: buyDecimals = 0 },
-    denominator: { amount: numeratorAmount, decimals: sellDecimals = 0 },
+    numerator: { amount: numeratorAmount, decimals: numeratorDecimals = DEFAULT_PRECISION },
+    denominator: { amount: denominatorAmount, decimals: denominatorDecimals = DEFAULT_PRECISION },
   } = params
 
   // convert to BigNumber
-  const numerator = new BigNumber(denominatorAmount.toString())
-  const denominator = new BigNumber(numeratorAmount.toString())
+  const numerator = new BigNumber(numeratorAmount.toString())
+  const denominator = new BigNumber(denominatorAmount.toString())
 
-  if (buyDecimals >= sellDecimals) {
-    const precisionFactor = 10 ** (buyDecimals - sellDecimals)
+  if (numeratorDecimals >= denominatorDecimals) {
+    const precisionFactor = TEN_BIG_NUMBER.exponentiatedBy(numeratorDecimals - denominatorDecimals)
     return numerator.dividedBy(denominator.multipliedBy(precisionFactor))
   } else {
-    const precisionFactor = 10 ** (sellDecimals - buyDecimals)
+    const precisionFactor = TEN_BIG_NUMBER.exponentiatedBy(denominatorDecimals - numeratorDecimals)
     return numerator.multipliedBy(precisionFactor).dividedBy(denominator)
   }
 }
