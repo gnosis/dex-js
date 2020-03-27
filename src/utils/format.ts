@@ -254,6 +254,12 @@ export function formatPrice(params: FormatPriceParams | BigNumber): string {
     return integerPartFmt
   } else {
     let decimalPartFmt = decimalPart.toString()
+      // Why padStart, you might ask? Funny story.
+      // If the price has zeros at the start of the decimal places, they need to be added back!
+      // Price 1.0003457, decimals 4: to precision => 1.0003
+      // Decomposing: integer part '1', decimal part '0003' == 3
+      // Putting it back: '1' + '.' + <add zeros back, if any> + '3'
+      .padStart(decimals, '0')
 
     if (!zeroPadding) {
       // no zero padding, remove if any

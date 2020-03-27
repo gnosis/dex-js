@@ -73,6 +73,14 @@ describe('No thousands separator', () => {
 
     expect(actual).toEqual('0.123')
   })
+
+  test('zeros after decimal separator', () => {
+    const price = new BigNumber('0.00737')
+
+    const actual = formatPrice({ price, decimals: 6 })
+
+    expect(actual).toEqual('0.007370')
+  })
 })
 
 describe('with thousands separator', () => {
@@ -92,5 +100,13 @@ describe('with single parameter', () => {
     const actual = formatPrice(price)
 
     expect(actual).toEqual('9000.1060')
+  })
+
+  test('zeros after decimal separator', () => {
+    const price = new BigNumber('0.00737')
+
+    const actual = formatPrice(price)
+
+    expect(actual).toEqual('0.0074')
   })
 })
