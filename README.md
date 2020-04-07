@@ -10,7 +10,21 @@ Develop:
 &nbsp;
 [![Coverage Status](https://coveralls.io/repos/github/gnosis/dex-js/badge.svg?branch=develop)](https://coveralls.io/github/gnosis/dex-js?branch=develop)
 
-# dFusion JS
+# Gnosis Protocol JS
+
+Gnosis Protocol JS it's library, with typescrupt support for [Gnosis Protocol](https://docs.gnosis.io/protocol).
+
+Gnosis Protocol introduces a new, fully decentralized exchange mechanism for ERC20 tokens with the following
+properties:
+
+- Batch auctions
+- Multidimensional order books with ring trades
+- Uniform clearing prices in every batch
+
+This library provides:
+
+- Typescrypt version of the contracts of Gnosis Protocol
+- Some handy utils and constants
 
 ## Usage
 
