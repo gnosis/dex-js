@@ -97,7 +97,7 @@
     "decimals": 18,
     "addressByNetwork": {
       "1": "0x5e74C9036fb86BD7eCdcb084a0673EFc32eA31cb",
-      "4": "0xA83AbFdC9E8Ee990C3C6C0f56a4B06e0faAd583C"
+      "4": "0x0647b2c7a2a818276154b0fc79557f512b165bc1"
     },
     "website": "https://www.synthetix.io",
     "description": "Tracks the price of Ether (ETH) through price feeds supplied by an oracle",
@@ -110,7 +110,7 @@
     "decimals": 18,
     "addressByNetwork": {
       "1": "0x57Ab1E02fEE23774580C119740129eAC7081e9D3",
-      "4": "0xe109da5361299eD96D91146B8Cc12F682D21964e"
+      "4": "0x1b642a124cdfa1e5835276a6ddaa6cfc4b35d52c"
     },
     "website": "https://www.synthetix.io/ ",
     "description": "Tracks the price of a single US Dollar (USD). This Synth always remains constant at 1.",
