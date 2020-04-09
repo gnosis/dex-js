@@ -1,7 +1,7 @@
 {
   "name": "@gnosis.pm/dex-js",
   "version": "0.1.16",
-  "description": "dFusion JS integration: utils, contracts and other goodies",
+  "description": "Gnosis Protocol JS integration: utils, contracts and other goodies",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/gnosis/dex-js/issues"
