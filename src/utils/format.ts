@@ -7,10 +7,10 @@ const ELLIPSIS = '...'
 
 function _getLocaleSymbols(): { thousands: string; decimals: string } {
   // Check number representation in default locale
-  const formattedNumber = new Intl.NumberFormat(undefined).format(1000.1)
+  const formattedNumber = new Intl.NumberFormat(undefined).format(10000.1)
   return {
-    thousands: formattedNumber[1],
-    decimals: formattedNumber[5],
+    thousands: formattedNumber[2],
+    decimals: formattedNumber[6],
   }
 }
 
@@ -40,10 +40,10 @@ function _decomposeBn(amount: BN, amountPrecision: number, decimals: number): { 
 
 interface FormatAmountParams<T> {
   amount: T
-  precision: number,
-  decimals?: number,
-  thousandSeparator?: boolean,
-  isLocaleAware?: boolean,
+  precision: number
+  decimals?: number
+  thousandSeparator?: boolean
+  isLocaleAware?: boolean
 }
 
 // For backward compatibility, keep form with required params only
@@ -52,7 +52,8 @@ export function formatAmount(amount: null | undefined, amountPrecision: number):
 export function formatAmount(params: FormatAmountParams<BN>): string
 export function formatAmount(params: FormatAmountParams<null | undefined>): null
 export function formatAmount(
-  params: FormatAmountParams<BN | null | undefined> | BN | null | undefined, _amountPrecision?: number,
+  params: FormatAmountParams<BN | null | undefined> | BN | null | undefined,
+  _amountPrecision?: number,
 ): string | null {
   let amount: BN
   let precision: number
@@ -86,7 +87,9 @@ export function formatAmount(
 
   const actualDecimals = Math.min(precision, decimals)
   const { integerPart, decimalPart } = _decomposeBn(amount, precision, actualDecimals)
-  const integerPartFmt = thousandSeparator ? _formatNumber(integerPart.toString(), thousandSymbol) : integerPart.toString()
+  const integerPartFmt = thousandSeparator
+    ? _formatNumber(integerPart.toString(), thousandSymbol)
+    : integerPart.toString()
   if (decimalPart.isZero()) {
     // Return just the integer part
     return integerPartFmt
@@ -253,7 +256,8 @@ export function formatPrice(params: FormatPriceParams | BigNumber): string {
     // decimals == 0 or no zeroPadding and decimal part is 0, ignore decimal part
     return integerPartFmt
   } else {
-    let decimalPartFmt = decimalPart.toString()
+    let decimalPartFmt = decimalPart
+      .toString()
       // Why padStart, you might ask? Funny story.
       // If the price has zeros at the start of the decimal places, they need to be added back!
       // Price 1.0003457, decimals 4: to precision => 1.0003
