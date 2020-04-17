@@ -4,8 +4,8 @@
 // 3. Even if we encode dashes to `%2D`, browsers auto convert them back to `-`
 // For these reasons, we are picking a symbol that is not ambiguous with a dash
 // and it have very little chance to be used as part of a token symbol.
-// Meet, the question mark symbol https://www.fileformat.info/info/unicode/char/fffd/index.htm
-const encodedDashSymbol = '�'
+// Meet, the question circle dash ⊝ https://www.fileformat.info/info/unicode/char/229d/index.htm
+const encodedDashSymbol = '\u229D'
 
 const dashRegex = /-/g
 const encodedDashRegex = new RegExp(encodedDashSymbol, 'g')
