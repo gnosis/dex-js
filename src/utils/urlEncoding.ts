@@ -1,3 +1,8 @@
+const encodedDashSymbol = '%_'
+
+const dashRegex = /-/g
+const encodedDashRegex = new RegExp(encodedDashSymbol, 'g')
+
 /**
  * Decodes symbol which is URL encoded.
  * Trims trailing and leading spaces.
@@ -5,10 +10,8 @@
  * @param symbol URL encoded symbol
  */
 export function decodeSymbol(symbol: string): string {
-  return decodeURIComponent(symbol).trim()
+  return decodeURIComponent(symbol.replace(encodedDashRegex, '-')).trim()
 }
-
-const dashRegex = /-/g
 
 /**
  * Encodes given symbol into a URL friendly string.
@@ -18,7 +21,7 @@ const dashRegex = /-/g
  * @param symbol Symbol to URL encode
  */
 export function encodeSymbol(symbol: string): string {
-  return encodeURIComponent(symbol.trim()).replace(dashRegex, '%2D')
+  return encodeURIComponent(symbol.trim()).replace(dashRegex, encodedDashSymbol)
 }
 
 /**

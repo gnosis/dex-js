@@ -7,12 +7,12 @@ describe('Encoding symbol', () => {
 
   test('Special chars symbol', () => {
     expect(encodeSymbol('Token /21 - 55? ** |-=+#@%^&`\'"')).toBe(
-      "Token%20%2F21%20%2D%2055%3F%20**%20%7C%2D%3D%2B%23%40%25%5E%26%60'%22",
+      "Token%20%2F21%20%_%2055%3F%20**%20%7C%_%3D%2B%23%40%25%5E%26%60'%22",
     )
   })
 
   test('Should encode dash char "-"', () => {
-    expect(encodeSymbol('-')).toBe('%2D')
+    expect(encodeSymbol('-')).toBe('%_')
   })
 
   test('Unicode emojis symbol', () => {
