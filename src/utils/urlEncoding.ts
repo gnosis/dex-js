@@ -8,7 +8,7 @@ export function decodeSymbol(symbol: string): string {
   return decodeURIComponent(symbol).trim()
 }
 
-const dashRegex = new RegExp(/-/, 'g')
+const dashRegex = /-/g
 
 /**
  * Encodes given symbol into a URL friendly string.
