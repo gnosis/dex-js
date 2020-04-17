@@ -1,4 +1,11 @@
-const encodedDashSymbol = '%_'
+// We cannot have a dash in the symbol because:
+// 1. We use a `-` to separate token symbols in the URL
+// 2. Tokens can have dashes in their symbols
+// 3. Even if we encode dashes to `%2D`, browsers auto convert them back to `-`
+// For these reasons, we are picking a symbol that is not ambiguous with a dash
+// and it have very little chance to be used as part of a token symbol.
+// Meet, the question mark symbol https://www.fileformat.info/info/unicode/char/fffd/index.htm
+const encodedDashSymbol = '�'
 
 const dashRegex = /-/g
 const encodedDashRegex = new RegExp(encodedDashSymbol, 'g')
@@ -10,7 +17,9 @@ const encodedDashRegex = new RegExp(encodedDashSymbol, 'g')
  * @param symbol URL encoded symbol
  */
 export function decodeSymbol(symbol: string): string {
-  return decodeURIComponent(symbol.replace(encodedDashRegex, '-')).trim()
+  return decodeURIComponent(symbol)
+    .replace(encodedDashRegex, '-')
+    .trim()
 }
 
 /**
@@ -21,7 +30,7 @@ export function decodeSymbol(symbol: string): string {
  * @param symbol Symbol to URL encode
  */
 export function encodeSymbol(symbol: string): string {
-  return encodeURIComponent(symbol.trim()).replace(dashRegex, encodedDashSymbol)
+  return encodeURIComponent(symbol.trim().replace(dashRegex, encodedDashSymbol))
 }
 
 /**

@@ -5,12 +5,12 @@ describe('Decoding symbol', () => {
   })
 
   test('Special chars', () => {
-    expect(decodeSymbol("Token%20%2F21%20%_%2055%3F%20**%20%7C%_%3D%2B%23%40%25%5E%26%60'%22")).toBe(
+    expect(decodeSymbol("Token%20%2F21%20%EF%BF%BD%2055%3F%20**%20%7C%EF%BF%BD%3D%2B%23%40%25%5E%26%60'%22")).toBe(
       'Token /21 - 55? ** |-=+#@%^&`\'"',
     )
   })
   test('Dash in the symbol', () => {
-    expect(decodeSymbol('TN%_HUI')).toBe('TN-HUI')
+    expect(decodeSymbol('TN%EF%BF%BDHUI')).toBe('TN-HUI')
   })
   test('Leading and trailing spaces', () => {
     expect(decodeSymbol('%20SPACES%20HERE%20%20')).toBe('SPACES HERE')
