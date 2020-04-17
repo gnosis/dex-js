@@ -2,21 +2,21 @@ import { encodeSymbol } from '../../../src/utils'
 
 describe('Encoding symbol', () => {
   test('A-Z symbol', () => {
-    expect(encodeSymbol('DAI')).toEqual('DAI')
+    expect(encodeSymbol('DAI')).toBe('DAI')
   })
 
   test('Special chars symbol', () => {
-    expect(encodeSymbol('Token /21 - 55? ** |-=+#@%^&`\'"')).toEqual(
+    expect(encodeSymbol('Token /21 - 55? ** |-=+#@%^&`\'"')).toBe(
       "Token%20%2F21%20%2D%2055%3F%20**%20%7C%2D%3D%2B%23%40%25%5E%26%60'%22",
     )
   })
 
   test('Should encode dash char "-"', () => {
-    expect(encodeSymbol('-')).toEqual('%2D')
+    expect(encodeSymbol('-')).toBe('%2D')
   })
 
   test('Unicode emojis symbol', () => {
-    expect(encodeSymbol('Oh 💻 🧵 🔥')).toEqual('Oh%20%F0%9F%92%BB%20%F0%9F%A7%B5%20%F0%9F%94%A5')
+    expect(encodeSymbol('Oh 💻 🧵 🔥')).toBe('Oh%20%F0%9F%92%BB%20%F0%9F%A7%B5%20%F0%9F%94%A5')
   })
 
   test('Trims leading and trailing spaces', () => {
