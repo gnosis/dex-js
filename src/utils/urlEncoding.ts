@@ -11,18 +11,6 @@ const dashRegex = /-/g
 const encodedDashRegex = new RegExp(encodedDashSymbol, 'g')
 
 /**
- * Decodes symbol which is URL encoded.
- * Trims trailing and leading spaces.
- *
- * @param symbol URL encoded symbol
- */
-export function decodeSymbol(symbol: string): string {
-  return decodeURIComponent(symbol)
-    .replace(encodedDashRegex, '-')
-    .trim()
-}
-
-/**
  * Encodes given symbol into a URL friendly string.
  * Additionally, encodes chars that might be ambiguous in the URL
  * such as a dash `-`
@@ -30,7 +18,10 @@ export function decodeSymbol(symbol: string): string {
  * @param symbol Symbol to URL encode
  */
 export function encodeSymbol(symbol: string): string {
-  return encodeURIComponent(symbol.trim().replace(dashRegex, encodedDashSymbol))
+  const sanitizedSymbol = symbol
+    .trim() // Your token has leading/trailing spaces? Bad luck
+    .replace(dashRegex, encodedDashSymbol) // Your token has dashes? you won't see them for awhile
+  return encodeURIComponent(sanitizedSymbol)
 }
 
 /**
@@ -41,4 +32,16 @@ export function encodeSymbol(symbol: string): string {
  */
 export function encodeTokenSymbol(token: { symbol?: string; address: string }): string {
   return token.symbol ? encodeSymbol(token.symbol) : token.address
+}
+
+/**
+ * Decodes symbol which is URL encoded.
+ * Trims trailing and leading spaces.
+ *
+ * @param symbol URL encoded symbol
+ */
+export function decodeSymbol(symbol: string): string {
+  return decodeURIComponent(symbol)
+    .replace(encodedDashRegex, '-') // Put the dashes back
+    .trim() // Remove any leading/trailing spaces that might have sneaked in
 }
