@@ -28,7 +28,5 @@ export function encodeSymbol(symbol: string): string {
  * @param token Object containing address and optionally symbol
  */
 export function encodeTokenSymbol(token: { symbol?: string; address: string }): string {
-  const tokenSymbol = token.symbol || token.address
-
-  return encodeSymbol(tokenSymbol)
+  return token.symbol ? encodeSymbol(token.symbol) : token.address
 }
