@@ -1,10 +1,11 @@
 // We cannot have a dash in the symbol because:
-// 1. We use a `-` to separate token symbols in the URL
+// 1. We use a `-` to separate token symbols in the URL to name the market.
+//   For example "A-B", where A is the sell token and B is the buy token
 // 2. Tokens can have dashes in their symbols
 // 3. Even if we encode dashes to `%2D`, browsers auto convert them back to `-`
 // For these reasons, we are picking a symbol that is not ambiguous with a dash
-// and it have very little chance to be used as part of a token symbol.
-// Meet, the question circle dash ⊝ https://www.fileformat.info/info/unicode/char/229d/index.htm
+// and it has very little chance to be used as part of a token symbol.
+// Meet, the circle dash ⊝ https://www.fileformat.info/info/unicode/char/229d/index.htm
 const encodedDashSymbol = '\u229D'
 
 const dashRegex = /-/g
