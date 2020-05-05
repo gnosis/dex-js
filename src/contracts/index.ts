@@ -8,13 +8,17 @@ import { abi as batchExchangeAbiJson } from '@gnosis.pm/dex-contracts/build/cont
 import erc20AbiJson from './abi/Erc20.json'
 import { WethContract } from './WethContract'
 import wethAbiJson from './abi/Weth.json'
+import { TcrContract } from './TcrContract'
+import tcrAbiJson from './abi/Tcr.json'
 
 export * from './types'
 export * from './BatchExchangeContract'
 export * from './Erc20Contract'
+
 export const erc20Abi = erc20AbiJson as AbiItem[]
 export const batchExchangeAbi = batchExchangeAbiJson as AbiItem[]
 export const wethAbi = wethAbiJson as AbiItem[]
+export const tcrAbi = tcrAbiJson as AbiItem[]
 
 export function createBatchExchangeContract(web3: Web3, address?: string): BatchExchangeContract {
   const batchExchangeAddress = address || process.env.STABLE_COIN_CONTRACT_ADDRESS
@@ -35,4 +39,10 @@ export function createWrapEtherContract(web3: Web3): WethContract {
   // FIXME: There's an issue with this conversion: https://github.com/gnosis/dex-telegram/issues/14
   const unknownContract = new web3.eth.Contract(wethAbi) as any
   return unknownContract as WethContract
+}
+
+export function createTcrContract(web3: Web3): TcrContract {
+  // FIXME: There's an issue with this conversion: https://github.com/gnosis/dex-telegram/issues/14
+  const unknownContract = new web3.eth.Contract(tcrAbi) as any
+  return unknownContract as TcrContract
 }
