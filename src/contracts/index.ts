@@ -29,20 +29,20 @@ export function createBatchExchangeContract(web3: Web3, address?: string): Batch
   return unknownContract as BatchExchangeContract
 }
 
-export function createErc20Contract(web3: Web3): Erc20Contract {
+export function createErc20Contract(web3: Web3, address?: string): Erc20Contract {
   // FIXME: There's an issue with this conversion: https://github.com/gnosis/dex-telegram/issues/14
-  const unknownContract = new web3.eth.Contract(erc20Abi) as any
+  const unknownContract = new web3.eth.Contract(erc20Abi, address) as any
   return unknownContract as Erc20Contract
 }
 
-export function createWrapEtherContract(web3: Web3): WethContract {
+export function createWrapEtherContract(web3: Web3, address?: string): WethContract {
   // FIXME: There's an issue with this conversion: https://github.com/gnosis/dex-telegram/issues/14
-  const unknownContract = new web3.eth.Contract(wethAbi) as any
+  const unknownContract = new web3.eth.Contract(wethAbi, address) as any
   return unknownContract as WethContract
 }
 
-export function createTcrContract(web3: Web3): TcrContract {
+export function createTcrContract(web3: Web3, address?: string): TcrContract {
   // FIXME: There's an issue with this conversion: https://github.com/gnosis/dex-telegram/issues/14
-  const unknownContract = new web3.eth.Contract(tcrAbi) as any
+  const unknownContract = new web3.eth.Contract(tcrAbi, address) as any
   return unknownContract as TcrContract
 }
