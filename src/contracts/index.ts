@@ -42,8 +42,6 @@ export function createWrapEtherContract(web3: Web3, address?: string): WethContr
 }
 
 export function createTcrContract(web3: Web3, address?: string): TcrContract {
-  // const tcrAddress = address || process.env.TCR_CONTRACT_ADDRESS
-
   // FIXME: There's an issue with this conversion: https://github.com/gnosis/dex-telegram/issues/14
   const unknownContract = new web3.eth.Contract(tcrAbi, address) as any
   return unknownContract as TcrContract
