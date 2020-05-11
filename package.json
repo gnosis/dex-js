@@ -1,6 +1,6 @@
 {
   "name": "@gnosis.pm/dex-js",
-  "version": "0.3.0-RC.2",
+  "version": "0.3.0",
   "description": "Gnosis Protocol JS integration: utils, contracts and other goodies",
   "license": "MIT",
   "bugs": {
