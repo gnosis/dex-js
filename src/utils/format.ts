@@ -2,6 +2,8 @@ import BN from 'bn.js'
 import { TEN, DEFAULT_PRECISION } from 'const'
 import { TokenDetails } from 'types'
 import BigNumber from 'bignumber.js'
+import { toWei, fromWei } from './ethereum'
+
 const DEFAULT_DECIMALS = 4
 const ELLIPSIS = '...'
 
@@ -22,6 +24,42 @@ function _formatNumber(num: string, thousandsSymbol: string = THOUSANDS_SYMBOL):
   return num.replace(/(\d)(?=(?:\d{3})+(?!\d))/g, '$1' + thousandsSymbol)
 }
 
+function _smartFormat(integer: BN, decimals: BN, decimalSymbol: string, smallLimitAsWei: BN) {
+  const formatterFactory = (
+    options?: Intl.NumberFormatOptions & { notation?: 'standard' | 'scientific' | 'engineering' | 'compact' },
+  ) => new Intl.NumberFormat([], options)
+
+  function _format(options?: Intl.NumberFormatOptions & { notation?: 'standard' | 'scientific' | 'engineering' | 'compact' }): string {
+    const formatter = formatterFactory(options)
+    const formattedAmount = (formatter.format as (value: number | string) => string)(integer.toString())
+    return formattedAmount
+  }
+
+  const formatDecimalsForDisplay = (decimalsToConvert: BN = decimals) => decimalSymbol + fromWei(decimalsToConvert).slice(2)
+
+  // Is fraction
+  if (integer.isZero()) {
+    // if amount < 1 and fraction < smallLimit (both compared as Wei)
+    // return `< ${smallLimit}`
+    // else return decimals as is
+    return decimals.lt(smallLimitAsWei) ? `< 0${formatDecimalsForDisplay(smallLimitAsWei)}` : '0' + formatDecimalsForDisplay()
+  }
+
+  // Otherwise if integer exists, format it
+  if (integer.lt(new BN('100000000'))) {
+    // anything under 1B just return integer
+    // e.g ==> 124,034,123
+    const integerPostCheck = _format({ maximumFractionDigits: 0 })
+    // format decimals to append e.g ==> .012341555
+    return decimals.isZero() ? integerPostCheck : integerPostCheck + formatDecimalsForDisplay()
+  } else {
+  // Billions and trillions - format compaced
+  // and include max 3 large number decimals
+  // e.g ==> 1.254B
+    return _format({ notation: 'compact', maximumFractionDigits: 3 })
+  }
+}
+
 function _decomposeBn(amount: BN, amountPrecision: number, decimals: number): { integerPart: BN; decimalPart: BN } {
   // Discard the decimals we don't need
   //  i.e. for WETH (precision=18, decimals=4) --> amount / 1e14
@@ -36,6 +74,68 @@ function _decomposeBn(amount: BN, amountPrecision: number, decimals: number): { 
   //  i.e. for WETH (precision=18, decimals=4) --> amount / 1e14
   //        1, 18:  16.5*1e18 ---> 165000
   return { integerPart, decimalPart }
+}
+
+interface SmartFormatParams<T> extends Exclude<FormatAmountParams<T>, 'thousandSeparator' | 'isLocaleAware'> {
+  smallLimit?: number
+}
+
+const DEFAULT_SMALL_LIMIT_AS_WEI = new BN(toWei('0.001'))
+
+/**
+ * smartFormat
+ * @description prettier formatting based on Gnosis Safe - uses same signature as formatAmount
+ * @param amount
+ * @param amountPrecision
+ */
+export function smartFormat(amount: BN, amountPrecision: number): string
+export function smartFormat(amount: null | undefined, amountPrecision: number): null
+export function smartFormat(params: SmartFormatParams<BN>): string
+export function smartFormat(params: SmartFormatParams<null | undefined>): null
+export function smartFormat(
+  params: SmartFormatParams<BN | null | undefined> | BN | null | undefined,
+  _amountPrecision?: number,
+): string | null {
+  /*
+    1. integer part in Billion or Trillion becomes abbreviated w/4 fraction digits + decimals are DROPPED
+        ==> e.g 1.2546T
+    2. everything under is shown as is, with local thousands separator and 4 decimal points
+        ==> e.g 125,456,777.8888
+    3. anything under "smallLimit" is shown as < ${smallLimit}
+        ==> < 0.0001
+  */
+  let amount: BN
+  let precision: number
+
+  let decimals = DEFAULT_DECIMALS
+  const smallLimit = DEFAULT_SMALL_LIMIT_AS_WEI
+
+  if (!params || ('amount' in params && !params.amount)) {
+    return null
+  } else if (BN.isBN(params)) {
+    amount = params
+    precision = _amountPrecision as number
+  } else {
+    amount = params.amount as BN
+    precision = params.precision
+    decimals = params.decimals ?? decimals
+  }
+
+  // amount is already zero
+  if (amount.isZero()) return amount.toString()
+
+  // const thousandSymbol = THOUSANDS_SYMBOL
+  const decimalSymbol = DECIMALS_SYMBOL
+
+  const actualDecimals = Math.min(precision, decimals)
+  const { integerPart, decimalPart } = _decomposeBn(amount, precision, actualDecimals)
+
+  const decimalFmt = '0.' + decimalPart
+    .toString()
+    .padStart(actualDecimals, '0') // Pad the decimal part with leading zeros
+    .replace(/0+$/, '')
+
+  return _smartFormat(integerPart, new BN(toWei(decimalFmt)), decimalSymbol, smallLimit)
 }
 
 interface FormatAmountParams<T> {
