@@ -1,11 +1,18 @@
 import BN from 'bn.js'
 import BigNumber from 'bignumber.js'
+import { toWei } from 'utils/ethereum'
 
 // Some convenient numeric constant
 export const ZERO = new BN(0)
 export const ONE = new BN(1)
 export const TWO = new BN(2)
 export const TEN = new BN(10)
+export const ONE_HUNDRED_K = new BN('100000')
+export const ONE_MILLION_BN = new BN('1000000')
+export const TEN_MILLION = new BN('10000000')
+export const ONE_BILLION_BN = new BN('1000000000')
+export const ONE_TRILLION_BN = new BN('1000000000000')
+// BigNumber
 export const ONE_BIG_NUMBER = new BigNumber(1)
 export const TEN_BIG_NUMBER = new BigNumber(10)
 
@@ -15,8 +22,18 @@ export const ALLOWANCE_MAX_VALUE = TWO.pow(new BN(256)).sub(ONE) // 115792089237
 export const ALLOWANCE_FOR_ENABLED_TOKEN = TWO.pow(new BN(128)) // 340282366920938463463374607431768211456
 
 // Default formatting constants
+export const ELLIPSIS = '...'
 export const DEFAULT_DECIMALS = 4
 export const DEFAULT_PRECISION = 18
+// numbers over 1B / 1T
+// e.g 234.543B
+export const DEFAULT_LARGE_NUMBER_PRECISION = 3
+// Represented as WEI to use BN comparison
+// Why? Would not be possible otherwise, as
+// BN does not accept fractional values
+export const DEFAULT_SMALL_LIMIT_AS_WEI = new BN(toWei('0.001'))
+export const DEFAULT_THOUSANDS_SYMBOL = ','
+export const DEFAULT_DECIMALS_SYMBOL = '.'
 
 // Model constants
 export const FEE_DENOMINATOR = 1000 // Fee is 1/fee_denominator i.e. 1/1000 = 0.1%
