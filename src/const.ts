@@ -1,6 +1,5 @@
 import BN from 'bn.js'
 import BigNumber from 'bignumber.js'
-import { toWei } from 'utils/ethereum'
 
 // Some convenient numeric constant
 export const ZERO = new BN(0)
@@ -31,7 +30,7 @@ export const DEFAULT_LARGE_NUMBER_PRECISION = 3
 // Represented as WEI to use BN comparison
 // Why? Would not be possible otherwise, as
 // BN does not accept fractional values
-export const DEFAULT_SMALL_LIMIT_AS_WEI = new BN(toWei('0.001'))
+export const DEFAULT_SMALL_LIMIT = '0.001'
 export const DEFAULT_THOUSANDS_SYMBOL = ','
 export const DEFAULT_DECIMALS_SYMBOL = '.'
 
