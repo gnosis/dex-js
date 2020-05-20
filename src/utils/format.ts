@@ -4,7 +4,7 @@ import {
   TEN,
   DEFAULT_PRECISION,
   DEFAULT_DECIMALS,
-  DEFAULT_SMALL_LIMIT_AS_WEI,
+  DEFAULT_SMALL_LIMIT,
   DEFAULT_THOUSANDS_SYMBOL,
   DEFAULT_DECIMALS_SYMBOL,
   ELLIPSIS,
@@ -15,7 +15,6 @@ import {
   BN_1M,
   BN_100K,
 } from 'const'
-import { toWei, fromWei } from './ethereum'
 import { TokenDetails } from 'types'
 
 function _getLocaleSymbols(): { thousands: string; decimals: string } {
@@ -29,10 +28,10 @@ function _getLocaleSymbols(): { thousands: string; decimals: string } {
 
 const { thousands: THOUSANDS_SYMBOL, decimals: DECIMALS_SYMBOL } = _getLocaleSymbols()
 
-function _formatDecimalsFromWeiForDisplay(decimalsToConvert: BN, decimalSymbol: string = DEFAULT_DECIMALS_SYMBOL) {
+function _formatDecimalsForDisplay(decimalsToConvert: BigNumber, decimalSymbol: string = DEFAULT_DECIMALS_SYMBOL) {
   const prefix = '0'
   // e.g 00012366123
-  const decimalsWithoutIntegerOrSymbol = fromWei(decimalsToConvert).slice(2)
+  const decimalsWithoutIntegerOrSymbol = decimalsToConvert.toString(10).slice(2)
 
   return prefix + decimalSymbol + decimalsWithoutIntegerOrSymbol
 }
@@ -42,8 +41,8 @@ function _decomposeLargeNumberToString(
   baseUnitsPerRepresentationUnits: BN,
 ): string {
   // e.g TRILLION_123_123.div(ONE_TRILLION) = 123123.123123123
-  const numAsDecimal = baseUnit.mul(TEN.pow(new BN(DEFAULT_LARGE_NUMBER_PRECISION))).div(baseUnitsPerRepresentationUnits)
-  const { integerPart, decimalPart } = _decomposeBn(numAsDecimal, DEFAULT_LARGE_NUMBER_PRECISION, DEFAULT_LARGE_NUMBER_PRECISION)
+  const baseUnitAsDecimal = baseUnit.mul(TEN.pow(new BN(DEFAULT_LARGE_NUMBER_PRECISION))).div(baseUnitsPerRepresentationUnits)
+  const { integerPart, decimalPart } = _decomposeBn(baseUnitAsDecimal, DEFAULT_LARGE_NUMBER_PRECISION, DEFAULT_LARGE_NUMBER_PRECISION)
   // 123123.123123123 = 123,123.123123123
   const formattedInteger = _formatNumber(integerPart.toString(10), THOUSANDS_SYMBOL)
   // no relevant decimal section
@@ -68,16 +67,16 @@ interface DecomposedNumberParts {
 
 function _formatSmart(
   { integerPart, decimalPart, decimalsPadded }: DecomposedNumberParts,
-  smallLimitAsWei: BN,
+  smallLimit: string,
 ): string {
   // Is < 1
   if (integerPart.isZero()) {
-    // if amount < 1 and decimal < smallLimit (both compared as Wei)
+    // if amount < 1 and decimal < smallLimit
     // return `< ${smallLimit}`
     // else return decimals as is
-    // first we need to convert decimals to WEI in order to compare small values
-    const ourDecimalsAsBNWei = new BN(toWei('0.' + decimalsPadded))
-    return ourDecimalsAsBNWei.lt(smallLimitAsWei) ? `< ${_formatDecimalsFromWeiForDisplay(smallLimitAsWei, DECIMALS_SYMBOL)}` : _formatDecimalsFromWeiForDisplay(ourDecimalsAsBNWei)
+    const ourDecimalsAsBigNumber = new BigNumber('0.' + decimalsPadded)
+    const smallLimitAsBigNumber = new BigNumber(smallLimit)
+    return ourDecimalsAsBigNumber.isLessThan(smallLimitAsBigNumber) ? `< ${_formatDecimalsForDisplay(smallLimitAsBigNumber, DECIMALS_SYMBOL)}` : ourDecimalsAsBigNumber.toString(10)
   }
 
   // Number compacting logic
@@ -131,7 +130,7 @@ function _decomposeBn(amount: BN, amountPrecision: number, decimals: number): { 
 }
 
 interface SmartFormatParams<T> extends Exclude<FormatAmountParams<T>, 'thousandSeparator' | 'isLocaleAware'> {
-  smallLimit?: number
+  smallLimit?: string
 }
 
 /**
@@ -160,7 +159,7 @@ export function formatSmart(
   let precision: number
 
   let decimals = DEFAULT_DECIMALS
-  const smallLimit = DEFAULT_SMALL_LIMIT_AS_WEI
+  let smallLimit = DEFAULT_SMALL_LIMIT
 
   if (!params || ('amount' in params && !params.amount)) return null
 
@@ -171,6 +170,7 @@ export function formatSmart(
     amount = params.amount as BN
     precision = params.precision
     decimals = params.decimals ?? decimals
+    smallLimit = params.smallLimit ?? smallLimit
   }
 
   // amount is already zero
