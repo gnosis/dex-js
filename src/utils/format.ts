@@ -46,8 +46,8 @@ function _compactLargeBNNumberToString(
     decimalSymbol,
   }: CompactionOptions): string {
   // e.g TRILLION_123_123.div(ONE_TRILLION) = 123123.123123123
-  const numAsFraction = baseBN.mul(TEN.pow(new BN(precision))).div(representationBN)
-  const { integerPart, decimalPart } = _decomposeBn(numAsFraction, DEFAULT_LARGE_NUMBER_PRECISION, DEFAULT_LARGE_NUMBER_PRECISION)
+  const numAsDecimal = baseBN.mul(TEN.pow(new BN(precision))).div(representationBN)
+  const { integerPart, decimalPart } = _decomposeBn(numAsDecimal, DEFAULT_LARGE_NUMBER_PRECISION, DEFAULT_LARGE_NUMBER_PRECISION)
   // 123123.123123123 = 123,123.123123123
   const formattedInteger = _formatNumber(integerPart.toString(), thousandsSymbol)
   // no relevant decimal section
@@ -77,9 +77,9 @@ function _formatSmart(
   smallLimitAsWei: BN,
   precision: number = DEFAULT_LARGE_NUMBER_PRECISION,
 ): string {
-  // Is fraction
+  // Is < 1
   if (integerPart.isZero()) {
-    // if amount < 1 and fraction < smallLimit (both compared as Wei)
+    // if amount < 1 and decimal < smallLimit (both compared as Wei)
     // return `< ${smallLimit}`
     // else return decimals as is
     // first we need to convert decimals to WEI in order to compare small values
@@ -158,7 +158,7 @@ export function formatSmart(
   _amountPrecision?: number,
 ): string | null {
   /*
-    1. integer part in Billion or Trillion becomes abbreviated w/4 fraction digits + decimals are DROPPED
+    1. integer part in Billion or Trillion becomes abbreviated w/4 decimals + decimals are DROPPED
         ==> e.g 1.2546T
     2. everything under is shown as is, with local thousands separator and 4 decimal points
         ==> e.g 125,456,777.8888
@@ -185,13 +185,10 @@ export function formatSmart(
   // amount is already zero
   if (amount.isZero()) return amount.toString()
 
-  const thousandSymbol = THOUSANDS_SYMBOL
-  const decimalSymbol = DECIMALS_SYMBOL
-
   const actualDecimals = Math.min(precision, decimals)
   const numberParts = _decomposeBn(amount, precision, actualDecimals)
 
-  return _formatSmart(numberParts, thousandSymbol, decimalSymbol, smallLimit)
+  return _formatSmart(numberParts, THOUSANDS_SYMBOL, DECIMALS_SYMBOL, smallLimit)
 }
 
 interface FormatAmountParams<T> {
