@@ -157,19 +157,17 @@ describe('0 decimals', () => {
     expect(formatSmart({ amount, precision: 6, decimals: 0 })).toEqual('4,567,890')
   })
 
-  test('4,567,890.125555 units, round up', async () => {
+  test('4,567,890.125555 units, round down', async () => {
     const amount = new BN('4567890125555')
     expect(formatSmart({ amount, precision: 6, decimals: 0 })).toEqual('4,567,890')
   })
 })
 
 describe('Big amounts', () => {
-  // TODO: Considering showing K,M,B,...
   test('1B Ether', async () => {
     expect(formatSmart(new BN(toWei(new BN('1000000000'), 'ether')), DEFAULT_PRECISION)).toEqual('1B')
   })
 
-  // TODO: Define what for arbitrarily big amounts
   test('uint max value', async () => {
     const expected = '115,792,089,237,316,195,423,570,985,008,687,907,853,269,984,665.64T'
     expect(formatSmart(new BN(new BN(ALLOWANCE_MAX_VALUE)), DEFAULT_PRECISION)).toEqual(expected)
