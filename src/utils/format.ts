@@ -29,35 +29,31 @@ function _getLocaleSymbols(): { thousands: string; decimals: string } {
 
 const { thousands: THOUSANDS_SYMBOL, decimals: DECIMALS_SYMBOL } = _getLocaleSymbols()
 
-const _formatDecimalsFromWeiForDisplay = (decimalsToConvert: BN, decimalSymbol: string = DEFAULT_DECIMALS_SYMBOL) => '0' + decimalSymbol + fromWei(decimalsToConvert).slice(2)
+function _formatDecimalsFromWeiForDisplay(decimalsToConvert: BN, decimalSymbol: string = DEFAULT_DECIMALS_SYMBOL) {
+  const prefix = '0'
+  // e.g 00012366123
+  const decimalsWithoutIntegerOrSymbol = fromWei(decimalsToConvert).slice(2)
 
-interface CompactionOptions {
-  precision: number,
-  thousandsSymbol: string,
-  decimalSymbol: string
+  return prefix + decimalSymbol + decimalsWithoutIntegerOrSymbol
 }
 
-function _compactLargeBNNumberToString(
-  baseBN: BN,
-  representationBN: BN,
-  {
-    precision,
-    thousandsSymbol,
-    decimalSymbol,
-  }: CompactionOptions): string {
+function _decomposeLargeNumberToString(
+  baseUnit: BN,
+  baseUnitsPerRepresentationUnits: BN,
+): string {
   // e.g TRILLION_123_123.div(ONE_TRILLION) = 123123.123123123
-  const numAsDecimal = baseBN.mul(TEN.pow(new BN(precision))).div(representationBN)
+  const numAsDecimal = baseUnit.mul(TEN.pow(new BN(DEFAULT_LARGE_NUMBER_PRECISION))).div(baseUnitsPerRepresentationUnits)
   const { integerPart, decimalPart } = _decomposeBn(numAsDecimal, DEFAULT_LARGE_NUMBER_PRECISION, DEFAULT_LARGE_NUMBER_PRECISION)
   // 123123.123123123 = 123,123.123123123
-  const formattedInteger = _formatNumber(integerPart.toString(), thousandsSymbol)
+  const formattedInteger = _formatNumber(integerPart.toString(10), THOUSANDS_SYMBOL)
   // no relevant decimal section
   if (decimalPart.isZero()) return formattedInteger
 
   const formattedDecimal = decimalPart
-    .toString()
-    .padStart(precision, '0') // Pad the decimal part with leading zeros
+    .toString(10)
+    .padStart(DEFAULT_LARGE_NUMBER_PRECISION, '0') // Pad the decimal part with leading zeros
     .replace(/0+$/, '') // Remove the right zeros
-  return formattedInteger + decimalSymbol + formattedDecimal
+  return formattedInteger + DECIMALS_SYMBOL + formattedDecimal
 }
 
 function _formatNumber(num: string, thousandsSymbol: string = THOUSANDS_SYMBOL): string {
@@ -72,10 +68,7 @@ interface DecomposedNumberParts {
 
 function _formatSmart(
   { integerPart, decimalPart, decimalsPadded }: DecomposedNumberParts,
-  thousandsSymbol: string = THOUSANDS_SYMBOL,
-  decimalSymbol: string = DECIMALS_SYMBOL,
   smallLimitAsWei: BN,
-  precision: number = DEFAULT_LARGE_NUMBER_PRECISION,
 ): string {
   // Is < 1
   if (integerPart.isZero()) {
@@ -84,24 +77,22 @@ function _formatSmart(
     // else return decimals as is
     // first we need to convert decimals to WEI in order to compare small values
     const ourDecimalsAsBNWei = new BN(toWei('0.' + decimalsPadded))
-    return ourDecimalsAsBNWei.lt(smallLimitAsWei) ? `< ${_formatDecimalsFromWeiForDisplay(smallLimitAsWei, decimalSymbol)}` : _formatDecimalsFromWeiForDisplay(ourDecimalsAsBNWei)
+    return ourDecimalsAsBNWei.lt(smallLimitAsWei) ? `< ${_formatDecimalsFromWeiForDisplay(smallLimitAsWei, DECIMALS_SYMBOL)}` : _formatDecimalsFromWeiForDisplay(ourDecimalsAsBNWei)
   }
-
-  const compactionOptions = { precision, thousandsSymbol, decimalSymbol }
 
   // Number compacting logic
   // Anything > 1,000,000,000,000 denoted as <XXX,XXX.xxx>T
   if (integerPart.gte(BN_1T)) {
-    return _compactLargeBNNumberToString(integerPart, BN_1T, compactionOptions) + 'T'
+    return _decomposeLargeNumberToString(integerPart, BN_1T) + 'T'
   }
   // Anything not above 1T but > 1,000,000,000 denoted as <XXX.xxx>B
   if (integerPart.gte(BN_1B)) {
-    return _compactLargeBNNumberToString(integerPart, BN_1B, compactionOptions) + 'B'
+    return _decomposeLargeNumberToString(integerPart, BN_1B) + 'B'
   }
 
   // At this point can just return thousands separated formatted integer
   // if decimals are zero
-  if (decimalPart.isZero()) return _formatNumber(integerPart.toString())
+  if (decimalPart.isZero()) return _formatNumber(integerPart.toString(10))
 
   let finalPrecision: number
 
@@ -120,7 +111,7 @@ function _formatSmart(
     finalPrecision = 1
   }
 
-  const amountBeforePrecisionCheck = _formatNumber(integerPart.toString()) + decimalSymbol + decimalsPadded
+  const amountBeforePrecisionCheck = _formatNumber(integerPart.toString(10)) + DECIMALS_SYMBOL + decimalsPadded
   return adjustPrecision(amountBeforePrecisionCheck, finalPrecision).replace(/0+$/, '')
 }
 
@@ -134,7 +125,7 @@ function _decomposeBn(amount: BN, amountPrecision: number, decimals: number): { 
   const amountRaw = amount.divRound(TEN.pow(new BN(amountPrecision - decimals)))
   const integerPart = amountRaw.div(TEN.pow(new BN(decimals))) // 165000 / 10000 = 16
   const decimalPart = amountRaw.mod(TEN.pow(new BN(decimals))) // 165000 % 10000 = 5000
-  const decimalsPadded = decimalPart.toString().padStart(decimals, '0')
+  const decimalsPadded = decimalPart.toString(10).padStart(decimals, '0')
 
   return { integerPart, decimalPart, decimalsPadded }
 }
@@ -171,9 +162,9 @@ export function formatSmart(
   let decimals = DEFAULT_DECIMALS
   const smallLimit = DEFAULT_SMALL_LIMIT_AS_WEI
 
-  if (!params || ('amount' in params && !params.amount)) {
-    return null
-  } else if (BN.isBN(params)) {
+  if (!params || ('amount' in params && !params.amount)) return null
+
+  if (BN.isBN(params)) {
     amount = params
     precision = _amountPrecision as number
   } else {
@@ -183,12 +174,12 @@ export function formatSmart(
   }
 
   // amount is already zero
-  if (amount.isZero()) return amount.toString()
+  if (amount.isZero()) return amount.toString(10)
 
   const actualDecimals = Math.min(precision, decimals)
   const numberParts = _decomposeBn(amount, precision, actualDecimals)
 
-  return _formatSmart(numberParts, THOUSANDS_SYMBOL, DECIMALS_SYMBOL, smallLimit)
+  return _formatSmart(numberParts, smallLimit)
 }
 
 interface FormatAmountParams<T> {
@@ -215,9 +206,9 @@ export function formatAmount(
   let thousandSeparator = true
   let isLocaleAware = true
 
-  if (!params || ('amount' in params && !params.amount)) {
-    return null
-  } else if (BN.isBN(params)) {
+  if (!params || ('amount' in params && !params.amount)) return null
+
+  if (BN.isBN(params)) {
     amount = params
     precision = _amountPrecision as number
   } else {
@@ -241,14 +232,14 @@ export function formatAmount(
   const actualDecimals = Math.min(precision, decimals)
   const { integerPart, decimalPart } = _decomposeBn(amount, precision, actualDecimals)
   const integerPartFmt = thousandSeparator
-    ? _formatNumber(integerPart.toString(), thousandSymbol)
-    : integerPart.toString()
+    ? _formatNumber(integerPart.toString(10), thousandSymbol)
+    : integerPart.toString(10)
   if (decimalPart.isZero()) {
     // Return just the integer part
     return integerPartFmt
   } else {
     const decimalFmt = decimalPart
-      .toString()
+      .toString(10)
       .padStart(actualDecimals, '0') // Pad the decimal part with leading zeros
       .replace(/0+$/, '') // Remove the right zeros
     // Return the formatted integer plus the decimal
@@ -270,9 +261,9 @@ export function formatAmountFull(
   let thousandSeparator = true
   let isLocaleAware = true
 
-  if (!params || ('amount' in params && !params.amount)) {
-    return null
-  } else if (BN.isBN(params)) {
+  if (!params || ('amount' in params && !params.amount)) return null
+
+  if (BN.isBN(params)) {
     amount = params
   } else {
     amount = params.amount as BN
@@ -387,7 +378,7 @@ export function formatPrice(params: FormatPriceParams | BigNumber): string {
 
   // No much to be done regarding an infinite number
   if (!price.isFinite()) {
-    return price.toString()
+    return price.toString(10)
   }
 
   // truncate all decimals away: 5.516 => 5
@@ -403,14 +394,14 @@ export function formatPrice(params: FormatPriceParams | BigNumber): string {
     .shiftedBy(decimals)
 
   // add thousand separator, if set
-  const integerPartFmt = thousands ? _formatNumber(integerPart.toString()) : integerPart.toString()
+  const integerPartFmt = thousands ? _formatNumber(integerPart.toString(10)) : integerPart.toString(10)
 
   if (decimals <= 0 || (!zeroPadding && decimalPart.isZero())) {
     // decimals == 0 or no zeroPadding and decimal part is 0, ignore decimal part
     return integerPartFmt
   } else {
     let decimalPartFmt = decimalPart
-      .toString()
+      .toString(10)
       // Why padStart, you might ask? Funny story.
       // If the price has zeros at the start of the decimal places, they need to be added back!
       // Price 1.0003457, decimals 4: to precision => 1.0003
