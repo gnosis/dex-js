@@ -9,11 +9,11 @@ import {
   DEFAULT_DECIMALS_SYMBOL,
   ELLIPSIS,
   DEFAULT_LARGE_NUMBER_PRECISION,
-  ONE_BILLION_BN,
-  ONE_TRILLION_BN,
-  ONE_HUNDRED_K,
-  ONE_MILLION_BN,
-  TEN_MILLION,
+  BN_1T,
+  BN_1B,
+  BN_10M,
+  BN_1M,
+  BN_100K,
 } from 'const'
 import { toWei, fromWei } from './ethereum'
 import { TokenDetails } from 'types'
@@ -91,12 +91,12 @@ function _formatSmart(
 
   // Number compacting logic
   // Anything > 1,000,000,000,000 denoted as <XXX,XXX.xxx>T
-  if (integerPart.gte(ONE_TRILLION_BN)) {
-    return _compactLargeBNNumberToString(integerPart, ONE_TRILLION_BN, compactionOptions) + 'T'
+  if (integerPart.gte(BN_1T)) {
+    return _compactLargeBNNumberToString(integerPart, BN_1T, compactionOptions) + 'T'
   }
   // Anything not above 1T but > 1,000,000,000 denoted as <XXX.xxx>B
-  if (integerPart.gte(ONE_BILLION_BN)) {
-    return _compactLargeBNNumberToString(integerPart, ONE_BILLION_BN, compactionOptions) + 'B'
+  if (integerPart.gte(BN_1B)) {
+    return _compactLargeBNNumberToString(integerPart, BN_1B, compactionOptions) + 'B'
   }
 
   // At this point can just return thousands separated formatted integer
@@ -106,17 +106,17 @@ function _formatSmart(
   let finalPrecision: number
 
   // normal format + separator
-  if (integerPart.lt(ONE_HUNDRED_K)) {
-    // 100,000.3424
+  if (integerPart.lt(BN_100K)) {
+    // 99,999.3424
     finalPrecision = 4
-  } else if (integerPart.lt(ONE_MILLION_BN)) {
-    // 1,000,000.342
+  } else if (integerPart.lt(BN_1M)) {
+    // 999,999.342
     finalPrecision = 3
-  } else if (integerPart.lt(TEN_MILLION)) {
-    // 10,000,000.34
+  } else if (integerPart.lt(BN_10M)) {
+    // 9,999,999.34
     finalPrecision = 2
   } else {
-    // 100,000,000.3
+    // 99,999,999.3
     finalPrecision = 1
   }
 
