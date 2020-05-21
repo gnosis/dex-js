@@ -2,10 +2,17 @@
 /* tslint:disable */
 
 import BN from 'bn.js'
-import { Contract, ContractOptions } from 'web3-eth-contract'
+import { ContractOptions } from 'web3-eth-contract'
 import { EventLog } from 'web3-core'
 import { EventEmitter } from 'events'
-import { ContractEvent, Callback, TransactionObject, BlockType } from './types'
+import {
+  Callback,
+  PayableTransactionObject,
+  NonPayableTransactionObject,
+  BlockType,
+  ContractEventLog,
+  BaseContract,
+} from './types'
 
 interface EventOptions {
   filter?: object
@@ -13,30 +20,139 @@ interface EventOptions {
   topics?: string[]
 }
 
-export class BatchExchange extends Contract {
-  constructor(jsonInterface: any[], address?: string, options?: ContractOptions)
+export type OrderPlacement = ContractEventLog<{
+  owner: string
+  index: string
+  buyToken: string
+  sellToken: string
+  validFrom: string
+  validUntil: string
+  priceNumerator: string
+  priceDenominator: string
+  0: string
+  1: string
+  2: string
+  3: string
+  4: string
+  5: string
+  6: string
+  7: string
+}>
+export type TokenListing = ContractEventLog<{
+  token: string
+  id: string
+  0: string
+  1: string
+}>
+export type OrderCancellation = ContractEventLog<{
+  owner: string
+  id: string
+  0: string
+  1: string
+}>
+export type OrderDeletion = ContractEventLog<{
+  owner: string
+  id: string
+  0: string
+  1: string
+}>
+export type Trade = ContractEventLog<{
+  owner: string
+  orderId: string
+  sellToken: string
+  buyToken: string
+  executedSellAmount: string
+  executedBuyAmount: string
+  0: string
+  1: string
+  2: string
+  3: string
+  4: string
+  5: string
+}>
+export type TradeReversion = ContractEventLog<{
+  owner: string
+  orderId: string
+  sellToken: string
+  buyToken: string
+  executedSellAmount: string
+  executedBuyAmount: string
+  0: string
+  1: string
+  2: string
+  3: string
+  4: string
+  5: string
+}>
+export type SolutionSubmission = ContractEventLog<{
+  submitter: string
+  utility: string
+  disregardedUtility: string
+  burntFees: string
+  lastAuctionBurntFees: string
+  prices: string[]
+  tokenIdsForPrice: string[]
+  0: string
+  1: string
+  2: string
+  3: string
+  4: string
+  5: string[]
+  6: string[]
+}>
+export type Deposit = ContractEventLog<{
+  user: string
+  token: string
+  amount: string
+  batchId: string
+  0: string
+  1: string
+  2: string
+  3: string
+}>
+export type WithdrawRequest = ContractEventLog<{
+  user: string
+  token: string
+  amount: string
+  batchId: string
+  0: string
+  1: string
+  2: string
+  3: string
+}>
+export type Withdraw = ContractEventLog<{
+  user: string
+  token: string
+  amount: string
+  0: string
+  1: string
+  2: string
+}>
+
+export interface BatchExchange extends BaseContract {
+  constructor(jsonInterface: any[], address?: string, options?: ContractOptions): BatchExchange
   clone(): BatchExchange
   methods: {
-    IMPROVEMENT_DENOMINATOR(): TransactionObject<string>
+    IMPROVEMENT_DENOMINATOR(): NonPayableTransactionObject<string>
 
-    getSecondsRemainingInBatch(): TransactionObject<string>
+    getSecondsRemainingInBatch(): NonPayableTransactionObject<string>
 
-    requestWithdraw(token: string, amount: number | string): TransactionObject<void>
+    requestWithdraw(token: string, amount: number | string): NonPayableTransactionObject<void>
 
-    FEE_FOR_LISTING_TOKEN_IN_OWL(): TransactionObject<string>
+    FEE_FOR_LISTING_TOKEN_IN_OWL(): NonPayableTransactionObject<string>
 
-    deposit(token: string, amount: number | string): TransactionObject<void>
+    deposit(token: string, amount: number | string): NonPayableTransactionObject<void>
 
-    AMOUNT_MINIMUM(): TransactionObject<string>
+    AMOUNT_MINIMUM(): NonPayableTransactionObject<string>
 
-    feeToken(): TransactionObject<string>
+    feeToken(): NonPayableTransactionObject<string>
 
-    currentPrices(arg0: number | string): TransactionObject<string>
+    currentPrices(arg0: number | string): NonPayableTransactionObject<string>
 
     orders(
       arg0: string,
       arg1: number | string,
-    ): TransactionObject<{
+    ): NonPayableTransactionObject<{
       buyToken: string
       sellToken: string
       validFrom: string
@@ -53,13 +169,13 @@ export class BatchExchange extends Contract {
       6: string
     }>
 
-    UNLIMITED_ORDER_AMOUNT(): TransactionObject<string>
+    UNLIMITED_ORDER_AMOUNT(): NonPayableTransactionObject<string>
 
-    numTokens(): TransactionObject<string>
+    numTokens(): NonPayableTransactionObject<string>
 
-    lastCreditBatchId(arg0: string, arg1: string): TransactionObject<string>
+    lastCreditBatchId(arg0: string, arg1: string): NonPayableTransactionObject<string>
 
-    latestSolution(): TransactionObject<{
+    latestSolution(): NonPayableTransactionObject<{
       batchId: string
       solutionSubmitter: string
       feeReward: string
@@ -73,7 +189,7 @@ export class BatchExchange extends Contract {
     getPendingDeposit(
       user: string,
       token: string,
-    ): TransactionObject<{
+    ): NonPayableTransactionObject<{
       0: string
       1: string
     }>
@@ -81,32 +197,36 @@ export class BatchExchange extends Contract {
     getPendingWithdraw(
       user: string,
       token: string,
-    ): TransactionObject<{
+    ): NonPayableTransactionObject<{
       0: string
       1: string
     }>
 
-    getBalance(user: string, token: string): TransactionObject<string>
+    getBalance(user: string, token: string): NonPayableTransactionObject<string>
 
-    FEE_DENOMINATOR(): TransactionObject<string>
+    FEE_DENOMINATOR(): NonPayableTransactionObject<string>
 
-    ENCODED_AUCTION_ELEMENT_WIDTH(): TransactionObject<string>
+    ENCODED_AUCTION_ELEMENT_WIDTH(): NonPayableTransactionObject<string>
 
-    BATCH_TIME(): TransactionObject<string>
+    BATCH_TIME(): NonPayableTransactionObject<string>
 
-    getCurrentBatchId(): TransactionObject<string>
+    getCurrentBatchId(): NonPayableTransactionObject<string>
 
-    requestFutureWithdraw(token: string, amount: number | string, batchId: number | string): TransactionObject<void>
+    requestFutureWithdraw(
+      token: string,
+      amount: number | string,
+      batchId: number | string,
+    ): NonPayableTransactionObject<void>
 
-    hasValidWithdrawRequest(user: string, token: string): TransactionObject<boolean>
+    hasValidWithdrawRequest(user: string, token: string): NonPayableTransactionObject<boolean>
 
-    MAX_TOKENS(): TransactionObject<string>
+    MAX_TOKENS(): NonPayableTransactionObject<string>
 
-    withdraw(user: string, token: string): TransactionObject<void>
+    withdraw(user: string, token: string): NonPayableTransactionObject<void>
 
-    MAX_TOUCHED_ORDERS(): TransactionObject<string>
+    MAX_TOUCHED_ORDERS(): NonPayableTransactionObject<string>
 
-    addToken(token: string): TransactionObject<void>
+    addToken(token: string): NonPayableTransactionObject<void>
 
     placeOrder(
       buyToken: number | string,
@@ -114,7 +234,7 @@ export class BatchExchange extends Contract {
       validUntil: number | string,
       buyAmount: number | string,
       sellAmount: number | string,
-    ): TransactionObject<string>
+    ): NonPayableTransactionObject<string>
 
     placeValidFromOrders(
       buyTokens: (number | string)[],
@@ -123,9 +243,9 @@ export class BatchExchange extends Contract {
       validUntils: (number | string)[],
       buyAmounts: (number | string)[],
       sellAmounts: (number | string)[],
-    ): TransactionObject<string[]>
+    ): NonPayableTransactionObject<string[]>
 
-    cancelOrders(orderIds: (number | string)[]): TransactionObject<void>
+    cancelOrders(orderIds: (number | string)[]): NonPayableTransactionObject<void>
 
     replaceOrders(
       cancellations: (number | string)[],
@@ -135,7 +255,7 @@ export class BatchExchange extends Contract {
       validUntils: (number | string)[],
       buyAmounts: (number | string)[],
       sellAmounts: (number | string)[],
-    ): TransactionObject<string[]>
+    ): NonPayableTransactionObject<string[]>
 
     submitSolution(
       batchId: number | string,
@@ -145,145 +265,97 @@ export class BatchExchange extends Contract {
       buyVolumes: (number | string)[],
       prices: (number | string)[],
       tokenIdsForPrice: (number | string)[],
-    ): TransactionObject<string>
+    ): NonPayableTransactionObject<string>
 
-    tokenAddressToIdMap(addr: string): TransactionObject<string>
+    tokenAddressToIdMap(addr: string): NonPayableTransactionObject<string>
 
-    tokenIdToAddressMap(id: number | string): TransactionObject<string>
+    tokenIdToAddressMap(id: number | string): NonPayableTransactionObject<string>
 
-    hasToken(addr: string): TransactionObject<boolean>
+    hasToken(addr: string): NonPayableTransactionObject<boolean>
 
     getEncodedUserOrdersPaginated(
       user: string,
       offset: number | string,
       pageSize: number | string,
-    ): TransactionObject<string>
+    ): NonPayableTransactionObject<string>
 
-    getUsersPaginated(previousPageUser: string, pageSize: number | string): TransactionObject<string>
+    getUsersPaginated(previousPageUser: string, pageSize: number | string): NonPayableTransactionObject<string>
 
-    getEncodedUserOrders(user: string): TransactionObject<string>
+    getEncodedUserOrders(user: string): NonPayableTransactionObject<string>
 
     getEncodedUsersPaginated(
       previousPageUser: string,
       previousPageUserOffset: number | string,
       pageSize: number | string,
-    ): TransactionObject<string>
+    ): NonPayableTransactionObject<string>
 
-    getEncodedOrders(): TransactionObject<string>
+    getEncodedOrders(): NonPayableTransactionObject<string>
 
-    acceptingSolutions(batchId: number | string): TransactionObject<boolean>
+    acceptingSolutions(batchId: number | string): NonPayableTransactionObject<boolean>
 
-    getCurrentObjectiveValue(): TransactionObject<string>
+    getCurrentObjectiveValue(): NonPayableTransactionObject<string>
   }
   events: {
-    OrderPlacement: ContractEvent<{
-      owner: string
-      index: string
-      buyToken: string
-      sellToken: string
-      validFrom: string
-      validUntil: string
-      priceNumerator: string
-      priceDenominator: string
-      0: string
-      1: string
-      2: string
-      3: string
-      4: string
-      5: string
-      6: string
-      7: string
-    }>
-    TokenListing: ContractEvent<{
-      token: string
-      id: string
-      0: string
-      1: string
-    }>
-    OrderCancellation: ContractEvent<{
-      owner: string
-      id: string
-      0: string
-      1: string
-    }>
-    OrderDeletion: ContractEvent<{
-      owner: string
-      id: string
-      0: string
-      1: string
-    }>
-    Trade: ContractEvent<{
-      owner: string
-      orderId: string
-      sellToken: string
-      buyToken: string
-      executedSellAmount: string
-      executedBuyAmount: string
-      0: string
-      1: string
-      2: string
-      3: string
-      4: string
-      5: string
-    }>
-    TradeReversion: ContractEvent<{
-      owner: string
-      orderId: string
-      sellToken: string
-      buyToken: string
-      executedSellAmount: string
-      executedBuyAmount: string
-      0: string
-      1: string
-      2: string
-      3: string
-      4: string
-      5: string
-    }>
-    SolutionSubmission: ContractEvent<{
-      submitter: string
-      utility: string
-      disregardedUtility: string
-      burntFees: string
-      lastAuctionBurntFees: string
-      prices: string[]
-      tokenIdsForPrice: string[]
-      0: string
-      1: string
-      2: string
-      3: string
-      4: string
-      5: string[]
-      6: string[]
-    }>
-    Deposit: ContractEvent<{
-      user: string
-      token: string
-      amount: string
-      batchId: string
-      0: string
-      1: string
-      2: string
-      3: string
-    }>
-    WithdrawRequest: ContractEvent<{
-      user: string
-      token: string
-      amount: string
-      batchId: string
-      0: string
-      1: string
-      2: string
-      3: string
-    }>
-    Withdraw: ContractEvent<{
-      user: string
-      token: string
-      amount: string
-      0: string
-      1: string
-      2: string
-    }>
-    allEvents: (options?: EventOptions, cb?: Callback<EventLog>) => EventEmitter
+    OrderPlacement(cb?: Callback<OrderPlacement>): EventEmitter
+    OrderPlacement(options?: EventOptions, cb?: Callback<OrderPlacement>): EventEmitter
+
+    TokenListing(cb?: Callback<TokenListing>): EventEmitter
+    TokenListing(options?: EventOptions, cb?: Callback<TokenListing>): EventEmitter
+
+    OrderCancellation(cb?: Callback<OrderCancellation>): EventEmitter
+    OrderCancellation(options?: EventOptions, cb?: Callback<OrderCancellation>): EventEmitter
+
+    OrderDeletion(cb?: Callback<OrderDeletion>): EventEmitter
+    OrderDeletion(options?: EventOptions, cb?: Callback<OrderDeletion>): EventEmitter
+
+    Trade(cb?: Callback<Trade>): EventEmitter
+    Trade(options?: EventOptions, cb?: Callback<Trade>): EventEmitter
+
+    TradeReversion(cb?: Callback<TradeReversion>): EventEmitter
+    TradeReversion(options?: EventOptions, cb?: Callback<TradeReversion>): EventEmitter
+
+    SolutionSubmission(cb?: Callback<SolutionSubmission>): EventEmitter
+    SolutionSubmission(options?: EventOptions, cb?: Callback<SolutionSubmission>): EventEmitter
+
+    Deposit(cb?: Callback<Deposit>): EventEmitter
+    Deposit(options?: EventOptions, cb?: Callback<Deposit>): EventEmitter
+
+    WithdrawRequest(cb?: Callback<WithdrawRequest>): EventEmitter
+    WithdrawRequest(options?: EventOptions, cb?: Callback<WithdrawRequest>): EventEmitter
+
+    Withdraw(cb?: Callback<Withdraw>): EventEmitter
+    Withdraw(options?: EventOptions, cb?: Callback<Withdraw>): EventEmitter
+
+    allEvents(options?: EventOptions, cb?: Callback<EventLog>): EventEmitter
   }
+
+  once(event: 'OrderPlacement', cb: Callback<OrderPlacement>): void
+  once(event: 'OrderPlacement', options: EventOptions, cb: Callback<OrderPlacement>): void
+
+  once(event: 'TokenListing', cb: Callback<TokenListing>): void
+  once(event: 'TokenListing', options: EventOptions, cb: Callback<TokenListing>): void
+
+  once(event: 'OrderCancellation', cb: Callback<OrderCancellation>): void
+  once(event: 'OrderCancellation', options: EventOptions, cb: Callback<OrderCancellation>): void
+
+  once(event: 'OrderDeletion', cb: Callback<OrderDeletion>): void
+  once(event: 'OrderDeletion', options: EventOptions, cb: Callback<OrderDeletion>): void
+
+  once(event: 'Trade', cb: Callback<Trade>): void
+  once(event: 'Trade', options: EventOptions, cb: Callback<Trade>): void
+
+  once(event: 'TradeReversion', cb: Callback<TradeReversion>): void
+  once(event: 'TradeReversion', options: EventOptions, cb: Callback<TradeReversion>): void
+
+  once(event: 'SolutionSubmission', cb: Callback<SolutionSubmission>): void
+  once(event: 'SolutionSubmission', options: EventOptions, cb: Callback<SolutionSubmission>): void
+
+  once(event: 'Deposit', cb: Callback<Deposit>): void
+  once(event: 'Deposit', options: EventOptions, cb: Callback<Deposit>): void
+
+  once(event: 'WithdrawRequest', cb: Callback<WithdrawRequest>): void
+  once(event: 'WithdrawRequest', options: EventOptions, cb: Callback<WithdrawRequest>): void
+
+  once(event: 'Withdraw', cb: Callback<Withdraw>): void
+  once(event: 'Withdraw', options: EventOptions, cb: Callback<Withdraw>): void
 }

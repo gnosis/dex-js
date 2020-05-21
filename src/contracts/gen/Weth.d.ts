@@ -2,10 +2,17 @@
 /* tslint:disable */
 
 import BN from 'bn.js'
-import { Contract, ContractOptions } from 'web3-eth-contract'
+import { ContractOptions } from 'web3-eth-contract'
 import { EventLog } from 'web3-core'
 import { EventEmitter } from 'events'
-import { ContractEvent, Callback, TransactionObject, BlockType } from './types'
+import {
+  Callback,
+  PayableTransactionObject,
+  NonPayableTransactionObject,
+  BlockType,
+  ContractEventLog,
+  BaseContract,
+} from './types'
 
 interface EventOptions {
   filter?: object
@@ -13,27 +20,40 @@ interface EventOptions {
   topics?: string[]
 }
 
-export class Weth extends Contract {
-  constructor(jsonInterface: any[], address?: string, options?: ContractOptions)
+export type Deposit = ContractEventLog<{
+  dst: string
+  wad: string
+  0: string
+  1: string
+}>
+export type Withdrawal = ContractEventLog<{
+  src: string
+  wad: string
+  0: string
+  1: string
+}>
+
+export interface Weth extends BaseContract {
+  constructor(jsonInterface: any[], address?: string, options?: ContractOptions): Weth
   clone(): Weth
   methods: {
-    withdraw(wad: number | string): TransactionObject<void>
+    withdraw(wad: number | string): NonPayableTransactionObject<void>
 
-    deposit(): TransactionObject<void>
+    deposit(): PayableTransactionObject<void>
   }
   events: {
-    Deposit: ContractEvent<{
-      dst: string
-      wad: string
-      0: string
-      1: string
-    }>
-    Withdrawal: ContractEvent<{
-      src: string
-      wad: string
-      0: string
-      1: string
-    }>
-    allEvents: (options?: EventOptions, cb?: Callback<EventLog>) => EventEmitter
+    Deposit(cb?: Callback<Deposit>): EventEmitter
+    Deposit(options?: EventOptions, cb?: Callback<Deposit>): EventEmitter
+
+    Withdrawal(cb?: Callback<Withdrawal>): EventEmitter
+    Withdrawal(options?: EventOptions, cb?: Callback<Withdrawal>): EventEmitter
+
+    allEvents(options?: EventOptions, cb?: Callback<EventLog>): EventEmitter
   }
+
+  once(event: 'Deposit', cb: Callback<Deposit>): void
+  once(event: 'Deposit', options: EventOptions, cb: Callback<Deposit>): void
+
+  once(event: 'Withdrawal', cb: Callback<Withdrawal>): void
+  once(event: 'Withdrawal', options: EventOptions, cb: Callback<Withdrawal>): void
 }

@@ -2,10 +2,17 @@
 /* tslint:disable */
 
 import BN from 'bn.js'
-import { Contract, ContractOptions } from 'web3-eth-contract'
+import { ContractOptions } from 'web3-eth-contract'
 import { EventLog } from 'web3-core'
 import { EventEmitter } from 'events'
-import { ContractEvent, Callback, TransactionObject, BlockType } from './types'
+import {
+  Callback,
+  PayableTransactionObject,
+  NonPayableTransactionObject,
+  BlockType,
+  ContractEventLog,
+  BaseContract,
+} from './types'
 
 interface EventOptions {
   filter?: object
@@ -13,13 +20,13 @@ interface EventOptions {
   topics?: string[]
 }
 
-export class Tcr extends Contract {
-  constructor(jsonInterface: any[], address?: string, options?: ContractOptions)
+export interface Tcr extends BaseContract {
+  constructor(jsonInterface: any[], address?: string, options?: ContractOptions): Tcr
   clone(): Tcr
   methods: {
-    getTokens(_listId: number | string): TransactionObject<string[]>
+    getTokens(_listId: number | string): NonPayableTransactionObject<string[]>
   }
   events: {
-    allEvents: (options?: EventOptions, cb?: Callback<EventLog>) => EventEmitter
+    allEvents(options?: EventOptions, cb?: Callback<EventLog>): EventEmitter
   }
 }
