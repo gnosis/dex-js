@@ -174,7 +174,7 @@ export function formatSmart(
   }
 
   // amount is already zero
-  if (amount.isZero()) return amount.toString(10)
+  if (amount.isZero()) return '0'
 
   const actualDecimals = Math.min(precision, decimals)
   const numberParts = _decomposeBn(amount, precision, actualDecimals)
