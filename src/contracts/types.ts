@@ -15,24 +15,28 @@ export { EventOptions }
 type AlmostContract = Omit<Contract, 'clone' | 'once'>
 
 export interface ContractEvent<T> {
-  (cb?: Callback<ContractEventLog<T>>): Subscription<T>
-  (options?: EventOptions, cb?: Callback<ContractEventLog<T>>): Subscription<T>
+  (cb?: Callback<T>): Subscription<T>
+  (options?: EventOptions, cb?: Callback<T>): Subscription<T>
 }
 export interface TypechainContractEvent<T> {
   (cb?: Callback<ContractEventLog<T>>): EventEmitter
   (options?: any, cb?: Callback<ContractEventLog<T>>): EventEmitter
 }
 
-type EventMap<T extends AlmostContract> = Omit<T['events'], 'allEvents'>
+type EventFunctionMap<T extends AlmostContract> = Omit<T['events'], 'allEvents'>
 
-type EventArgs<T> = T extends TypechainContractEvent<infer U> ? U : never
-export type EventsExceptAllEvents<T extends AlmostContract> = EventMap<T>
+export type EventMap<T extends AlmostContract> = {
+  [E in keyof EventsExceptAllEvents<T>]: InferredCallbackArgs<T['events'][E]>
+}
+
+export type EventArgs<T> = T extends TypechainContractEvent<infer U> ? U : never
+export type EventsExceptAllEvents<T extends AlmostContract> = EventFunctionMap<T>
 
 export type AllValues<T extends object> = T[keyof T]
 
 type ChangedEvents<T extends AlmostContract> = {
-  [E in keyof EventsExceptAllEvents<T>]: ContractEvent<EventArgs<T['events'][E]>>
-} & { allEvents: ContractEvent<EventArgs<AllValues<EventsExceptAllEvents<T>>>> }
+  [E in keyof EventsExceptAllEvents<T>]: ContractEvent<InferredCallbackArgs<T['events'][E]>>
+} & { allEvents: ContractEvent<InferredCallbackArgs<AllValues<EventsExceptAllEvents<T>>>> }
 
 interface GenericCallback<T> {
   (cb?: Callback<T>): EventEmitter
@@ -42,14 +46,14 @@ interface GenericCallback<T> {
 type InferredCallbackArgs<T> = T extends GenericCallback<infer U> ? U : never
 
 interface GetPastEvents<T extends AlmostContract> {
-  <U extends keyof EventMap<T>>(event: U): Promise<InferredCallbackArgs<T['events'][U]>[]>
-  <U extends keyof EventMap<T>>(
+  <U extends keyof EventFunctionMap<T>>(event: U): Promise<InferredCallbackArgs<T['events'][U]>[]>
+  <U extends keyof EventFunctionMap<T>>(
     event: U,
     options: PastEventOptions,
     callback: (error: Error, event: InferredCallbackArgs<T['events'][U]>) => void
   ): Promise<InferredCallbackArgs<T['events'][U]>[]>
-  <U extends keyof EventMap<T>>(event: U, options: PastEventOptions): Promise<InferredCallbackArgs<T['events'][U]>[]>
-  <U extends keyof EventMap<T>>(
+  <U extends keyof EventFunctionMap<T>>(event: U, options: PastEventOptions): Promise<InferredCallbackArgs<T['events'][U]>[]>
+  <U extends keyof EventFunctionMap<T>>(
     event: U,
     callback: (error: Error, event: InferredCallbackArgs<T['events'][U]>) => void
   ): Promise<InferredCallbackArgs<T['events'][U]>[]>
