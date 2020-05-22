@@ -14,6 +14,8 @@ import tcrAbiJson from './abi/Tcr.json'
 export * from './types'
 export * from './BatchExchangeContract'
 export * from './Erc20Contract'
+export * from './WethContract'
+export * from './TcrContract'
 
 export const erc20Abi = erc20AbiJson as AbiItem[]
 export const batchExchangeAbi = batchExchangeAbiJson as AbiItem[]
