@@ -28,12 +28,13 @@ function _getLocaleSymbols(): { thousands: string; decimals: string } {
 
 const { thousands: THOUSANDS_SYMBOL, decimals: DECIMALS_SYMBOL } = _getLocaleSymbols()
 
-function _formatDecimalsForDisplay(decimalsToConvert: BigNumber, decimalSymbol: string = DEFAULT_DECIMALS_SYMBOL) {
-  const prefix = '0'
-  // e.g 00012366123
-  const decimalsWithoutIntegerOrSymbol = decimalsToConvert.toString(10).slice(2)
-
-  return prefix + decimalSymbol + decimalsWithoutIntegerOrSymbol
+function _formatDecimalsForDisplay(numberToConvert: BigNumber) {
+  // 2.00012366123.integerValue() ==> 2
+  const integer = numberToConvert.integerValue()
+  // 2.00012366123 <numberToConvert> - 2 <integer> ==> 00012366123
+  const decimalsWithoutIntegerOrSymbol = numberToConvert.minus(integer).toString(10).slice(2)
+  // 2 + <,|.> + 00012366123 ==> 2<,|.>00012366123
+  return integer + DEFAULT_DECIMALS_SYMBOL + decimalsWithoutIntegerOrSymbol
 }
 
 function _decomposeLargeNumberToString(
@@ -76,7 +77,7 @@ function _formatSmart(
     // else return decimals as is
     const ourDecimalsAsBigNumber = new BigNumber('0.' + decimalsPadded)
     const smallLimitAsBigNumber = new BigNumber(smallLimit)
-    return ourDecimalsAsBigNumber.isLessThan(smallLimitAsBigNumber) ? `< ${_formatDecimalsForDisplay(smallLimitAsBigNumber, DECIMALS_SYMBOL)}` : ourDecimalsAsBigNumber.toString(10)
+    return ourDecimalsAsBigNumber.isLessThan(smallLimitAsBigNumber) ? `< ${_formatDecimalsForDisplay(smallLimitAsBigNumber)}` : ourDecimalsAsBigNumber.toString(10)
   }
 
   // Number compacting logic
