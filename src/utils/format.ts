@@ -1,9 +1,21 @@
 import BN from 'bn.js'
-import { TEN, DEFAULT_PRECISION } from 'const'
-import { TokenDetails } from 'types'
 import BigNumber from 'bignumber.js'
-const DEFAULT_DECIMALS = 4
-const ELLIPSIS = '...'
+import {
+  TEN,
+  DEFAULT_PRECISION,
+  DEFAULT_DECIMALS,
+  DEFAULT_SMALL_LIMIT,
+  DEFAULT_THOUSANDS_SYMBOL,
+  DEFAULT_DECIMALS_SYMBOL,
+  ELLIPSIS,
+  DEFAULT_LARGE_NUMBER_PRECISION,
+  BN_1T,
+  BN_1B,
+  BN_10M,
+  BN_1M,
+  BN_100K,
+} from 'const'
+import { TokenDetails } from 'types'
 
 function _getLocaleSymbols(): { thousands: string; decimals: string } {
   // Check number representation in default locale
@@ -15,27 +27,160 @@ function _getLocaleSymbols(): { thousands: string; decimals: string } {
 }
 
 const { thousands: THOUSANDS_SYMBOL, decimals: DECIMALS_SYMBOL } = _getLocaleSymbols()
-const DEFAULT_THOUSANDS_SYMBOL = ','
-const DEFAULT_DECIMALS_SYMBOL = '.'
+
+function _formatDecimalsForDisplay(numberToConvert: BigNumber) {
+  // 2.00012366123.integerValue() ==> 2
+  const integer = numberToConvert.integerValue()
+  // 2.00012366123 <numberToConvert> - 2 <integer> ==> 00012366123
+  const decimalsWithoutIntegerOrSymbol = numberToConvert.minus(integer).toString(10).slice(2)
+  // 2 + <,|.> + 00012366123 ==> 2<,|.>00012366123
+  return integer + DEFAULT_DECIMALS_SYMBOL + decimalsWithoutIntegerOrSymbol
+}
+
+function _decomposeLargeNumberToString(
+  baseUnit: BN,
+  baseUnitsPerRepresentationUnits: BN,
+): string {
+  // e.g TRILLION_123_123.div(ONE_TRILLION) = 123123.123123123
+  const baseUnitAsDecimal = baseUnit.mul(TEN.pow(new BN(DEFAULT_LARGE_NUMBER_PRECISION))).div(baseUnitsPerRepresentationUnits)
+  const { integerPart, decimalPart } = _decomposeBn(baseUnitAsDecimal, DEFAULT_LARGE_NUMBER_PRECISION, DEFAULT_LARGE_NUMBER_PRECISION)
+  // 123123.123123123 = 123,123.123123123
+  const formattedInteger = _formatNumber(integerPart.toString(10), THOUSANDS_SYMBOL)
+  // no relevant decimal section
+  if (decimalPart.isZero()) return formattedInteger
+
+  const formattedDecimal = decimalPart
+    .toString(10)
+    .padStart(DEFAULT_LARGE_NUMBER_PRECISION, '0') // Pad the decimal part with leading zeros
+    .replace(/0+$/, '') // Remove the right zeros
+  return formattedInteger + DECIMALS_SYMBOL + formattedDecimal
+}
 
 function _formatNumber(num: string, thousandsSymbol: string = THOUSANDS_SYMBOL): string {
   return num.replace(/(\d)(?=(?:\d{3})+(?!\d))/g, '$1' + thousandsSymbol)
 }
 
-function _decomposeBn(amount: BN, amountPrecision: number, decimals: number): { integerPart: BN; decimalPart: BN } {
-  // Discard the decimals we don't need
-  //  i.e. for WETH (precision=18, decimals=4) --> amount / 1e14
-  //        16.5*1e18 ---> 165000
+interface DecomposedNumberParts {
+  integerPart: BN
+  decimalPart: BN
+  decimalsPadded: string
+}
+
+function _formatSmart(
+  { integerPart, decimalPart, decimalsPadded }: DecomposedNumberParts,
+  smallLimit: string,
+): string {
+  // Is < 1
+  if (integerPart.isZero()) {
+    // if amount < 1 and decimal < smallLimit
+    // return `< ${smallLimit}`
+    // else return decimals as is
+    const ourDecimalsAsBigNumber = new BigNumber('0.' + decimalsPadded)
+    const smallLimitAsBigNumber = new BigNumber(smallLimit)
+    return ourDecimalsAsBigNumber.isLessThan(smallLimitAsBigNumber) ? `< ${_formatDecimalsForDisplay(smallLimitAsBigNumber)}` : ourDecimalsAsBigNumber.toString(10)
+  }
+
+  // Number compacting logic
+  // Anything > 1,000,000,000,000 denoted as <XXX,XXX.xxx>T
+  if (integerPart.gte(BN_1T)) {
+    return _decomposeLargeNumberToString(integerPart, BN_1T) + 'T'
+  }
+  // Anything not above 1T but > 1,000,000,000 denoted as <XXX.xxx>B
+  if (integerPart.gte(BN_1B)) {
+    return _decomposeLargeNumberToString(integerPart, BN_1B) + 'B'
+  }
+
+  // At this point can just return thousands separated formatted integer
+  // if decimals are zero
+  if (decimalPart.isZero()) return _formatNumber(integerPart.toString(10))
+
+  let finalPrecision: number
+
+  // normal format + separator
+  if (integerPart.lt(BN_100K)) {
+    // 99,999.3424
+    finalPrecision = 4
+  } else if (integerPart.lt(BN_1M)) {
+    // 999,999.342
+    finalPrecision = 3
+  } else if (integerPart.lt(BN_10M)) {
+    // 9,999,999.34
+    finalPrecision = 2
+  } else {
+    // 99,999,999.3
+    finalPrecision = 1
+  }
+
+  const amountBeforePrecisionCheck = _formatNumber(integerPart.toString(10)) + DECIMALS_SYMBOL + decimalsPadded
+  return adjustPrecision(amountBeforePrecisionCheck, finalPrecision).replace(/0+$/, '')
+}
+
+function _decomposeBn(amount: BN, amountPrecision: number, decimals: number): { integerPart: BN; decimalPart: BN, decimalsPadded: string } {
   if (decimals > amountPrecision) {
     throw new Error('The decimals cannot be bigger than the precision')
   }
-  const amountRaw = amount.divRound(TEN.pow(new BN(amountPrecision - decimals)))
-  const integerPart = amountRaw.div(TEN.pow(new BN(decimals))) // 165000 / 10000 = 16
-  const decimalPart = amountRaw.mod(TEN.pow(new BN(decimals))) // 165000 % 10000 = 5000
   // Discard the decimals we don't need
   //  i.e. for WETH (precision=18, decimals=4) --> amount / 1e14
   //        1, 18:  16.5*1e18 ---> 165000
-  return { integerPart, decimalPart }
+  const amountRaw = amount.divRound(TEN.pow(new BN(amountPrecision - decimals)))
+  const integerPart = amountRaw.div(TEN.pow(new BN(decimals))) // 165000 / 10000 = 16
+  const decimalPart = amountRaw.mod(TEN.pow(new BN(decimals))) // 165000 % 10000 = 5000
+  const decimalsPadded = decimalPart.toString(10).padStart(decimals, '0')
+
+  return { integerPart, decimalPart, decimalsPadded }
+}
+
+interface SmartFormatParams<T> extends Exclude<FormatAmountParams<T>, 'thousandSeparator' | 'isLocaleAware'> {
+  smallLimit?: string
+}
+
+/**
+ * formatSmart
+ * @description prettier formatting based on Gnosis Safe - uses same signature as formatAmount
+ * @param amount
+ * @param amountPrecision
+ */
+export function formatSmart(amount: BN, amountPrecision: number): string
+export function formatSmart(amount: null | undefined, amountPrecision: number): null
+export function formatSmart(params: SmartFormatParams<BN>): string
+export function formatSmart(params: SmartFormatParams<null | undefined>): null
+export function formatSmart(
+  params: SmartFormatParams<BN | null | undefined> | BN | null | undefined,
+  _amountPrecision?: number,
+): string | null {
+  /*
+    1. integer part in Billion or Trillion becomes abbreviated w/4 decimals + decimals are DROPPED
+        ==> e.g 1.2546T
+    2. everything under is shown as is, with local thousands separator and 4 decimal points
+        ==> e.g 125,456,777.8888
+    3. anything under "smallLimit" is shown as < ${smallLimit}
+        ==> < 0.0001
+  */
+  let amount: BN
+  let precision: number
+
+  let decimals = DEFAULT_DECIMALS
+  let smallLimit = DEFAULT_SMALL_LIMIT
+
+  if (!params || ('amount' in params && !params.amount)) return null
+
+  if (BN.isBN(params)) {
+    amount = params
+    precision = _amountPrecision as number
+  } else {
+    amount = params.amount as BN
+    precision = params.precision
+    decimals = params.decimals ?? decimals
+    smallLimit = params.smallLimit ?? smallLimit
+  }
+
+  // amount is already zero
+  if (amount.isZero()) return '0'
+
+  const actualDecimals = Math.min(precision, decimals)
+  const numberParts = _decomposeBn(amount, precision, actualDecimals)
+
+  return _formatSmart(numberParts, smallLimit)
 }
 
 interface FormatAmountParams<T> {
@@ -62,9 +207,9 @@ export function formatAmount(
   let thousandSeparator = true
   let isLocaleAware = true
 
-  if (!params || ('amount' in params && !params.amount)) {
-    return null
-  } else if (BN.isBN(params)) {
+  if (!params || ('amount' in params && !params.amount)) return null
+
+  if (BN.isBN(params)) {
     amount = params
     precision = _amountPrecision as number
   } else {
@@ -88,14 +233,14 @@ export function formatAmount(
   const actualDecimals = Math.min(precision, decimals)
   const { integerPart, decimalPart } = _decomposeBn(amount, precision, actualDecimals)
   const integerPartFmt = thousandSeparator
-    ? _formatNumber(integerPart.toString(), thousandSymbol)
-    : integerPart.toString()
+    ? _formatNumber(integerPart.toString(10), thousandSymbol)
+    : integerPart.toString(10)
   if (decimalPart.isZero()) {
     // Return just the integer part
     return integerPartFmt
   } else {
     const decimalFmt = decimalPart
-      .toString()
+      .toString(10)
       .padStart(actualDecimals, '0') // Pad the decimal part with leading zeros
       .replace(/0+$/, '') // Remove the right zeros
     // Return the formatted integer plus the decimal
@@ -117,9 +262,9 @@ export function formatAmountFull(
   let thousandSeparator = true
   let isLocaleAware = true
 
-  if (!params || ('amount' in params && !params.amount)) {
-    return null
-  } else if (BN.isBN(params)) {
+  if (!params || ('amount' in params && !params.amount)) return null
+
+  if (BN.isBN(params)) {
     amount = params
   } else {
     amount = params.amount as BN
@@ -234,7 +379,7 @@ export function formatPrice(params: FormatPriceParams | BigNumber): string {
 
   // No much to be done regarding an infinite number
   if (!price.isFinite()) {
-    return price.toString()
+    return price.toString(10)
   }
 
   // truncate all decimals away: 5.516 => 5
@@ -250,14 +395,14 @@ export function formatPrice(params: FormatPriceParams | BigNumber): string {
     .shiftedBy(decimals)
 
   // add thousand separator, if set
-  const integerPartFmt = thousands ? _formatNumber(integerPart.toString()) : integerPart.toString()
+  const integerPartFmt = thousands ? _formatNumber(integerPart.toString(10)) : integerPart.toString(10)
 
   if (decimals <= 0 || (!zeroPadding && decimalPart.isZero())) {
     // decimals == 0 or no zeroPadding and decimal part is 0, ignore decimal part
     return integerPartFmt
   } else {
     let decimalPartFmt = decimalPart
-      .toString()
+      .toString(10)
       // Why padStart, you might ask? Funny story.
       // If the price has zeros at the start of the decimal places, they need to be added back!
       // Price 1.0003457, decimals 4: to precision => 1.0003
