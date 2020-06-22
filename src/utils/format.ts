@@ -14,6 +14,8 @@ import {
   BN_10M,
   BN_1M,
   BN_100K,
+  ONE_BIG_NUMBER,
+  ZERO_BIG_NUMBER,
 } from 'const'
 import { TokenDetails } from 'types'
 
@@ -383,16 +385,28 @@ export function formatPrice(params: FormatPriceParams | BigNumber): string {
   }
 
   // truncate all decimals away: 5.516 => 5
-  const integerPart = price.integerValue(BigNumber.ROUND_FLOOR)
+  let integerPart = price.integerValue(BigNumber.ROUND_FLOOR)
 
-  const decimalPart = price
-    // adjust decimal precision: 5.516; decimals 2 => 5.52
-    // keep in mind there's rounding
+  const priceMinusIntPart = price
+  // adjust decimal precision: 5.516; decimals 2 => 5.52
+  // keep in mind there's rounding
     .decimalPlaces(decimals, BigNumber.ROUND_HALF_CEIL)
-    // remove integer part: 5.52 => 0.52
+  // remove integer part: 5.52 => 0.52
     .minus(integerPart)
+
+  let decimalPart: BigNumber
+  // 0.99999 after .decimalPlaces() becomes 1
+  // like Math.round(0.9) === 1
+  if (priceMinusIntPart.gte(ONE_BIG_NUMBER)) {
+    // add to integer, +1
+    integerPart = integerPart.plus(priceMinusIntPart)
+    // reset decimals
+    decimalPart = ZERO_BIG_NUMBER
+  } else {
+    decimalPart = priceMinusIntPart
     // turn decimals into integer: 0.52 -> 52
-    .shiftedBy(decimals)
+      .shiftedBy(decimals)
+  }
 
   // add thousand separator, if set
   const integerPartFmt = thousands ? _formatNumber(integerPart.toString(10)) : integerPart.toString(10)
