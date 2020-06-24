@@ -109,4 +109,62 @@ describe('with single parameter', () => {
 
     expect(actual).toEqual('0.0074')
   })
+
+  test('00999 after decimal separator', () => {
+    const price = new BigNumber('0.00999')
+
+    const actual = formatPrice(price)
+
+    expect(actual).toEqual('0.0100')
+  })
+  test('09999 after decimal separator', () => {
+    const price = new BigNumber('0.09999')
+
+    const actual = formatPrice(price)
+
+    expect(actual).toEqual('0.1000')
+  })
+  test('89999 after decimal separator', () => {
+    const price = new BigNumber('0.89999')
+
+    const actual = formatPrice(price)
+
+    expect(actual).toEqual('0.9000')
+  })
+
+  test('9999 after decimal separator', () => {
+    const price = new BigNumber('0.9999')
+
+    const actual = formatPrice(price)
+
+    expect(actual).toEqual('0.9999')
+  })
+  test('99994 after decimal separator', () => {
+    const price = new BigNumber('0.99994')
+
+    const actual = formatPrice(price)
+
+    expect(actual).toEqual('0.9999')
+  })
+  test('99995 after decimal separator', () => {
+    const price = new BigNumber('0.99995')
+
+    const actual = formatPrice(price)
+
+    expect(actual).toEqual('1.0000')
+  })
+  test('rounding up 99998 after decimal separator', () => {
+    const price = new BigNumber('0.99998')
+
+    const actual = formatPrice(price)
+
+    expect(actual).toEqual('1.0000')
+  })
+  test('rounding up 1.99998', () => {
+    const price = new BigNumber('1.99998')
+
+    const actual = formatPrice(price)
+
+    expect(actual).toEqual('2.0000')
+  })
 })

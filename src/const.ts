@@ -12,6 +12,7 @@ export const BN_10M = new BN('10000000')
 export const BN_1B = new BN('1000000000')
 export const BN_1T = new BN('1000000000000')
 // BigNumber
+export const ZERO_BIG_NUMBER = new BigNumber(0)
 export const ONE_BIG_NUMBER = new BigNumber(1)
 export const TEN_BIG_NUMBER = new BigNumber(10)
 
