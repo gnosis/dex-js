@@ -82,7 +82,7 @@
     "ttypescript": "^1.5.10",
     "typechain": "^2.0.0",
     "typescript": "^3.9.3",
-    "typescript-transform-paths": "^1.1.14",
+    "typescript-transform-paths": "^2.0.0",
     "web3": "^1.2.11"
   }
 }
