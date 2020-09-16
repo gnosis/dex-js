@@ -2,6 +2,24 @@ import BN from 'bn.js'
 import BigNumber from 'bignumber.js'
 import { UNLIMITED_ORDER_AMOUNT } from 'const'
 
+export interface OrderParams {
+  sellToken: number,
+  buyToken: number,
+  sellAmount: string,
+  buyAmount: string,
+  validFrom: number,
+  validUntil: number
+}
+
+export interface PlaceValidFromOrdersParams {
+  buyTokens: number[],
+  sellTokens: number[],
+  validFroms: number[],
+  validUntils: number[],
+  buyAmounts: string[],
+  sellAmounts: string[],
+}
+
 function amountToString(amount: BN | BigNumber | string): string {
   if (typeof amount === 'string') {
     return amount
@@ -24,4 +42,25 @@ export function isOrderUnlimited(amount1: BN | BigNumber | string, amount2: BN |
   // Easier to always compare as string regardless of the type passed in
   const unlimitedAmount = amountToString(UNLIMITED_ORDER_AMOUNT)
   return amountToString(amount1) === unlimitedAmount || amountToString(amount2) === unlimitedAmount
+}
+
+export function toPlaceValidFromOrdersParams(orders: OrderParams[]) {
+  return orders.reduce((acc, order) => {
+    const { buyTokens, sellTokens, validFroms, validUntils, buyAmounts, sellAmounts } = acc
+    const { buyToken, sellToken, validFrom, validUntil, buyAmount, sellAmount } = order
+    buyTokens.push(buyToken)
+    sellTokens.push(sellToken)
+    validFroms.push(validFrom)
+    validUntils.push(validUntil)
+    buyAmounts.push(buyAmount)
+    sellAmounts.push(sellAmount)
+    return acc
+  }, {
+    buyTokens: [],
+    sellTokens: [],
+    validFroms: [],
+    validUntils: [],
+    buyAmounts: [],
+    sellAmounts: [],
+  } as PlaceValidFromOrdersParams)
 }
