@@ -45,7 +45,7 @@ export function isOrderUnlimited(amount1: BN | BigNumber | string, amount2: BN |
 }
 
 export function toPlaceValidFromOrdersParams<T extends string | BN>(orders: OrderParams<T>[]): PlaceValidFromOrdersParams<T> {
-  return orders.reduce((acc, order) => {
+  return orders.reduce<PlaceValidFromOrdersParams<T>>((acc, order) => {
     const { buyTokens, sellTokens, validFroms, validUntils, buyAmounts, sellAmounts } = acc
     const { buyToken, sellToken, validFrom, validUntil, buyAmount, sellAmount } = order
     buyTokens.push(buyToken)
@@ -62,5 +62,5 @@ export function toPlaceValidFromOrdersParams<T extends string | BN>(orders: Orde
     validUntils: [],
     buyAmounts: [],
     sellAmounts: [],
-  } as PlaceValidFromOrdersParams<T>)
+  })
 }
