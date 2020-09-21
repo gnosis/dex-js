@@ -47,7 +47,7 @@
     "web3": "^1.2.4"
   },
   "dependencies": {
-    "@gnosis.pm/dex-contracts": "^0.2.0",
+    "@gnosis.pm/dex-contracts": "^0.4.3",
     "bignumber.js": "^9.0.0"
   },
   "devDependencies": {
