@@ -452,12 +452,12 @@
     "@ethersproject/rlp" "^5.0.0"
     "@ethersproject/signing-key" "^5.0.0"
 
-"@gnosis.pm/dex-contracts@^0.2.0":
-  version "0.2.15"
-  resolved "https://registry.yarnpkg.com/@gnosis.pm/dex-contracts/-/dex-contracts-0.2.15.tgz#254314c6f8dff33a022a3d2b67035b08f0782c94"
-  integrity sha512-rvGuiHfl12F70qBiJimUv/uGdn5+Dfao2xAbhiQh9/wJBt5A5nVYONnZ13JFfIoOrSJTRT1n61SEhLfLOlG6dw==
+"@gnosis.pm/dex-contracts@^0.4.3":
+  version "0.4.3"
+  resolved "https://registry.yarnpkg.com/@gnosis.pm/dex-contracts/-/dex-contracts-0.4.3.tgz#b887eb543cae039d1e9607870232394cab5c3be7"
+  integrity sha512-ObyItfEzWRwfwWSSncPFP8aT54+Vi7VzTvqCbNYTwF+Einn9kdJvasTWkFaw5eiZE1ykD//kFB4T8xv80F2lBw==
   dependencies:
-    bn.js "^5.1.1"
+    bn.js "^5.1.3"
 
 "@istanbuljs/load-nyc-config@^1.0.0":
   version "1.1.0"
@@ -1258,6 +1258,11 @@ bn.js@^5.1.1:
   version "5.1.2"
   resolved "https://registry.yarnpkg.com/bn.js/-/bn.js-5.1.2.tgz#c9686902d3c9a27729f43ab10f9d79c2004da7b0"
   integrity sha512-40rZaf3bUNKTVYu9sIeeEGOg7g14Yvnj9kH7b50EiwX0Q7A6umbvfI5tvHaOERH0XigqKkfLkFQxzb4e6CIXnA==
+
+bn.js@^5.1.3:
+  version "5.1.3"
+  resolved "https://registry.yarnpkg.com/bn.js/-/bn.js-5.1.3.tgz#beca005408f642ebebea80b042b4d18d2ac0ee6b"
+  integrity sha512-GkTiFpjFtUzU9CbMeJ5iazkCzGL3jrhzerzZIuqLABjbwRaFt33I9tUdSNryIptM+RxDet6OKm2WnLXzW51KsQ==
 
 body-parser@1.19.0, body-parser@^1.16.0:
   version "1.19.0"
