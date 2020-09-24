@@ -8,7 +8,6 @@ export interface TokenDetails {
   decimals?: number
   address: string
   addressMainnet?: string
-  image?: string
 }
 
 export interface TokenDetailsConfig extends Omit<TokenDetails, 'address'> {
