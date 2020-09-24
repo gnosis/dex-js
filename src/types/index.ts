@@ -1,7 +1,7 @@
 export type Command = () => void
 export type AsyncCommand = () => Promise<void>
 
-export interface WithAddressMainnet {
+export interface WithAddressMainnetOpt {
   addressMainnet?: string
 }
 
@@ -23,8 +23,8 @@ export interface WithDecimals {
 }
 
 export type TokenErc20 = WithSymbolAndName & WithAddress & WithDecimals
-export type Token = TokenErc20 & WithAddressMainnet & Partial<WithId>
-export type TokenDex = TokenErc20 & WithAddressMainnet & WithId
+export type Token = TokenErc20 & WithAddressMainnetOpt & Partial<WithId>
+export type TokenDex = TokenErc20 & WithAddressMainnetOpt & WithId
 
 export interface TokenDetailsConfig extends Omit<TokenDex, 'address'> {
   addressByNetwork: { [networkId: string]?: string }
