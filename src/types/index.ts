@@ -27,5 +27,5 @@ export type Token = TokenErc20 & WithAddressMainnet & Partial<WithId>
 export type TokenDex = TokenErc20 & WithAddressMainnet & WithId
 
 export interface TokenDetailsConfig extends Omit<TokenDex, 'address'> {
-  addressByNetwork: { [networkId: string]: string | undefined }
+  addressByNetwork: { [networkId: string]?: string }
 }
