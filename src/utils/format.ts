@@ -17,7 +17,7 @@ import {
   ONE_BIG_NUMBER,
   ZERO_BIG_NUMBER,
 } from 'const'
-import { TokenDetails } from 'types'
+import { TokenDex } from 'types'
 
 function _getLocaleSymbols(): { thousands: string; decimals: string } {
   // Check number representation in default locale
@@ -327,11 +327,11 @@ export function abbreviateString(inputString: string, prefixLength: number, suff
   return prefix + ELLIPSIS + suffix
 }
 
-export function safeTokenName(token: TokenDetails): string {
+export function safeTokenName(token: TokenDex): string {
   return token.symbol || token.name || abbreviateString(token.address, 6, 4)
 }
 
-export function safeFilledToken<T extends TokenDetails>(token: T): T {
+export function safeFilledToken<T extends TokenDex>(token: T): T {
   return {
     ...token,
     name: token.name || token.symbol || abbreviateString(token.address, 6, 4),
