@@ -37,6 +37,20 @@ describe('Exact decimal amounts', () => {
   })
 })
 
+describe('.<decimal> amounts', () => {
+  test('.5 Ether', async () => {
+    expect(parseAmount('.5', DEFAULT_PRECISION)).toEqual(new BN(toWei(new BN('500'), 'milliether')))
+  })
+
+  test('.234 Ether', async () => {
+    expect(parseAmount('.234', DEFAULT_PRECISION)).toEqual(new BN(toWei(new BN('234'), 'milliether')))
+  })
+
+  test('1.2345 Ether', async () => {
+    expect(parseAmount('.2345', DEFAULT_PRECISION)).toEqual(new BN(toWei(new BN('234500'), 'microether')))
+  })
+})
+
 describe('Tokens with precision 6', () => {
   test('1 unit', async () => {
     expect(parseAmount('1', 6)).toEqual(new BN('1000000'))
