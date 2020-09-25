@@ -301,12 +301,12 @@ export function parseAmount(amountFmt: string, amountPrecision: number): BN | nu
     return null
   }
   const adjustedAmount = adjustPrecision(amountFmt, amountPrecision)
-  const groups = /^(\d+)(?:\.(\d+))?$/.exec(adjustedAmount)
+  const groups = /^(\d*)(?:\.(\d+))?$/.exec(adjustedAmount)
   if (groups) {
     const [, integerPart, decimalPart = ''] = groups
     const decimalBN = new BN(decimalPart.padEnd(amountPrecision, '0'))
     const factor = TEN.pow(new BN(amountPrecision))
-    return new BN(integerPart).mul(factor).add(decimalBN)
+    return new BN(integerPart || 0).mul(factor).add(decimalBN)
   } else {
     return null
   }
