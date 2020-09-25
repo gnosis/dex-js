@@ -21,6 +21,18 @@ describe('over precision', () => {
   })
 })
 
+describe('.<decimal> numbers', () => {
+  test('with decimals', () => {
+    expect(adjustPrecision('.1', 3)).toBe('.1')
+  })
+  test('truncating', () => {
+    expect(adjustPrecision('.2345', 3)).toBe('.234')
+  })
+  test('zero padding', () => {
+    expect(adjustPrecision('.00000000', 2)).toBe('.00')
+  })
+})
+
 describe('null values', () => {
   test('empty string', () => {
     expect(adjustPrecision('', 2)).toBe('')
