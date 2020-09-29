@@ -327,11 +327,13 @@ export function abbreviateString(inputString: string, prefixLength: number, suff
   return prefix + ELLIPSIS + suffix
 }
 
-export function safeTokenName(token: TokenDetails): string {
+type MinimalSafeToken = Pick<TokenDetails, 'symbol' | 'name'| 'address'>
+
+export function safeTokenName(token: MinimalSafeToken): string {
   return token.symbol || token.name || abbreviateString(token.address, 6, 4)
 }
 
-export function safeFilledToken<T extends TokenDetails>(token: T): T {
+export function safeFilledToken<T extends MinimalSafeToken>(token: T): T {
   return {
     ...token,
     name: token.name || token.symbol || abbreviateString(token.address, 6, 4),
