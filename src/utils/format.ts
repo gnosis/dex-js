@@ -301,12 +301,12 @@ export function parseAmount(amountFmt: string, amountPrecision: number): BN | nu
     return null
   }
   const adjustedAmount = adjustPrecision(amountFmt, amountPrecision)
-  const groups = /^(\d+)(?:\.(\d+))?$/.exec(adjustedAmount)
+  const groups = /^(\d*)(?:\.(\d+))?$/.exec(adjustedAmount)
   if (groups) {
     const [, integerPart, decimalPart = ''] = groups
     const decimalBN = new BN(decimalPart.padEnd(amountPrecision, '0'))
     const factor = TEN.pow(new BN(amountPrecision))
-    return new BN(integerPart).mul(factor).add(decimalBN)
+    return new BN(integerPart || 0).mul(factor).add(decimalBN)
   } else {
     return null
   }
@@ -327,11 +327,13 @@ export function abbreviateString(inputString: string, prefixLength: number, suff
   return prefix + ELLIPSIS + suffix
 }
 
-export function safeTokenName(token: TokenDex): string {
+type MinimalSafeToken = Pick<TokenDex, 'symbol' | 'name'| 'address'>
+
+export function safeTokenName(token: MinimalSafeToken): string {
   return token.symbol || token.name || abbreviateString(token.address, 6, 4)
 }
 
-export function safeFilledToken<T extends TokenDex>(token: T): T {
+export function safeFilledToken<T extends MinimalSafeToken>(token: T): T {
   return {
     ...token,
     name: token.name || token.symbol || abbreviateString(token.address, 6, 4),
