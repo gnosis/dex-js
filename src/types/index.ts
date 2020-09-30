@@ -31,3 +31,7 @@ export interface TokenDetailsConfig extends WithSymbolAndName, WithDecimals {
       [networkId: string]: string | undefined;
   };
 }
+
+// TODO: The ID is currently required for the config of the token list
+//   however, it shouldn't be, the ID is loaded from the contract, and can change by network
+export type TokenDetailsConfigLegacy = TokenDetailsConfig & WithId
