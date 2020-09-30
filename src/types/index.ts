@@ -6,7 +6,7 @@ export interface WithAddressMainnetOpt {
 }
 
 export interface WithId {
-  id: string
+  id: number
 }
 
 export interface WithSymbolAndName {
