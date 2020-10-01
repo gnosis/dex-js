@@ -1,4 +1,4 @@
-import { TokenDetailsConfig } from 'types'
+import { TokenDetailsConfigLegacy } from 'types'
 import tokenListJson from 'tokenList.json'
 
 // Contracts
@@ -13,4 +13,4 @@ export * from './helpers'
 export * from './utils'
 
 // Json list
-export const tokenList: TokenDetailsConfig[] = tokenListJson
+export const tokenList: TokenDetailsConfigLegacy[] = tokenListJson

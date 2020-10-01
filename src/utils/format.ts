@@ -17,7 +17,7 @@ import {
   ONE_BIG_NUMBER,
   ZERO_BIG_NUMBER,
 } from 'const'
-import { TokenDetails } from 'types'
+import { TokenDex } from 'types'
 
 function _getLocaleSymbols(): { thousands: string; decimals: string } {
   // Check number representation in default locale
@@ -327,7 +327,7 @@ export function abbreviateString(inputString: string, prefixLength: number, suff
   return prefix + ELLIPSIS + suffix
 }
 
-type MinimalSafeToken = Pick<TokenDetails, 'symbol' | 'name'| 'address'>
+type MinimalSafeToken = Pick<TokenDex, 'symbol' | 'name'| 'address'>
 
 export function safeTokenName(token: MinimalSafeToken): string {
   return token.symbol || token.name || abbreviateString(token.address, 6, 4)
