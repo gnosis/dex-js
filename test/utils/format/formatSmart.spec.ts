@@ -180,3 +180,26 @@ describe('Edge cases', () => {
     expect(formatSmart({ amount, precision: 2, decimals: 4 })).toEqual('12,345.67')
   })
 })
+
+describe('Amount is a string', () => {
+  test('12,345.67 - Precision 0 (just adjust formatting)', () => {
+    const amount = '12345.67'
+    expect(formatSmart(amount, 0)).toEqual('12,345.67')
+  })
+  test('12,345.6789 - More decimals than precision', () => {
+    const amount = '1234567.89'
+    expect(formatSmart({ amount, precision: 2, decimals: 4 })).toEqual('12,345.6789')
+  })
+  test('0 - Zero string', () => {
+    const amount = '0.00'
+    expect(formatSmart(amount, 2)).toEqual('0')
+  })
+  test('null - Empty string', () => {
+    const amount = ''
+    expect(formatSmart(amount, 5)).toEqual(null)
+  })
+  test('null - Invalid string', () => {
+    const amount = 'kfjasf'
+    expect(formatSmart(amount, 6)).toEqual(null)
+  })
+})

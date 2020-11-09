@@ -16,6 +16,7 @@ import {
   BN_100K,
   ONE_BIG_NUMBER,
   ZERO_BIG_NUMBER,
+  TEN_BIG_NUMBER,
 } from 'const'
 import { TokenDex } from 'types'
 
@@ -132,6 +133,38 @@ function _decomposeBn(amount: BN, amountPrecision: number, decimals: number): { 
   return { integerPart, decimalPart, decimalsPadded }
 }
 
+/**
+ * Transforms (possibly decimal) amount as string into a BN
+ * Takes into account original precision from amount + argument precision
+ *
+ *
+ * Internally we use BNs, but we all know BNs don't like decimals.
+ * To convert arbitrary strings, we need to make them integers.
+ * We do so by creating a BigNumber and moving the decimal separator to the right
+ * by multiplying it by 10^(amount precision).
+ * Which we then later add to regular precision to be 'compressed'.
+ * Finally, convert it to a string base 10,
+ * to avoid numbers with exponents which BN also doesn't like
+ *
+ * @param amountStr Amount with arbitrary precision
+ * @param amountPrecision precision on top of existing precision
+ */
+function _stringToBn(amountStr:string, amountPrecision:number):{ amount: BN, precision: number } {
+  const bigNumberAmount = new BigNumber(amountStr)
+
+  const originalPrecision = bigNumberAmount.precision()
+
+  const amount = new BN(bigNumberAmount
+    .multipliedBy(TEN_BIG_NUMBER
+      .pow(originalPrecision))
+    .integerValue()
+    .toString(10))
+
+  const precision = originalPrecision + (amountPrecision as number)
+
+  return { amount, precision }
+}
+
 interface SmartFormatParams<T> extends Exclude<FormatAmountParams<T>, 'thousandSeparator' | 'isLocaleAware'> {
   smallLimit?: string
 }
@@ -143,11 +176,13 @@ interface SmartFormatParams<T> extends Exclude<FormatAmountParams<T>, 'thousandS
  * @param amountPrecision
  */
 export function formatSmart(amount: BN, amountPrecision: number): string
+export function formatSmart(amount: string, amountPrecision: number): string
 export function formatSmart(amount: null | undefined, amountPrecision: number): null
 export function formatSmart(params: SmartFormatParams<BN>): string
+export function formatSmart(params: SmartFormatParams<string>): string
 export function formatSmart(params: SmartFormatParams<null | undefined>): null
 export function formatSmart(
-  params: SmartFormatParams<BN | null | undefined> | BN | null | undefined,
+  params: SmartFormatParams<BN | string | null | undefined> | BN| string| null | undefined,
   _amountPrecision?: number,
 ): string | null {
   /*
@@ -164,14 +199,24 @@ export function formatSmart(
   let decimals = DEFAULT_DECIMALS
   let smallLimit = DEFAULT_SMALL_LIMIT
 
-  if (!params || ('amount' in params && !params.amount)) return null
+  if (!params || (typeof params === 'string' && isNaN(+params)) || (typeof params !== 'string' && 'amount' in params && !params.amount)) return null
 
   if (BN.isBN(params)) {
     amount = params
     precision = _amountPrecision as number
+  } else if (typeof params === 'string') {
+    const { amount: _amount, precision: _precision } = _stringToBn(params, _amountPrecision as number)
+    amount = _amount
+    precision = _precision
   } else {
-    amount = params.amount as BN
-    precision = params.precision
+    if (typeof params.amount === 'string') {
+      const { amount: _amount, precision: _precision } = _stringToBn(params.amount, params.precision)
+      amount = _amount
+      precision = _precision
+    } else {
+      amount = params.amount as BN
+      precision = params.precision
+    }
     decimals = params.decimals ?? decimals
     smallLimit = params.smallLimit ?? smallLimit
   }
