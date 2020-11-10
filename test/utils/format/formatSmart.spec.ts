@@ -165,12 +165,12 @@ describe('0 decimals', () => {
 
 describe('Big amounts', () => {
   test('1B Ether', async () => {
-    expect(formatSmart(new BN(toWei(new BN('1000000000'), 'ether')), DEFAULT_PRECISION)).toEqual('1B')
+    expect(formatSmart(toWei(new BN('1000000000'), 'ether'), DEFAULT_PRECISION)).toEqual('1B')
   })
 
   test('uint max value', async () => {
     const expected = '115,792,089,237,316,195,423,570,985,008,687,907,853,269,984,665.64T'
-    expect(formatSmart(new BN(new BN(ALLOWANCE_MAX_VALUE)), DEFAULT_PRECISION)).toEqual(expected)
+    expect(formatSmart(new BN(ALLOWANCE_MAX_VALUE), DEFAULT_PRECISION)).toEqual(expected)
   })
 })
 
@@ -186,18 +186,42 @@ describe('Amount is a string', () => {
     const amount = '12345.67'
     expect(formatSmart(amount, 0)).toEqual('12,345.67')
   })
+
   test('12,345.6789 - More decimals than precision', () => {
-    const amount = '1234567.89'
+    const amount = '1234567.891'
     expect(formatSmart({ amount, precision: 2, decimals: 4 })).toEqual('12,345.6789')
   })
+
+  test('12,345 - No decimals, precision 0', () => {
+    const amount = '12345'
+    expect(formatSmart({ amount, precision: 0 })).toEqual('12,345')
+  })
+
+  test('1.2345 - No decimals, precision 4', () => {
+    const amount = '12345'
+    expect(formatSmart({ amount, precision: 4 })).toEqual('1.2345')
+  })
+
+  test('< 0.001 - No decimals, precision 0, tiny amount', () => {
+    const amount = '0.000001'
+    expect(formatSmart({ amount, precision: 0 })).toEqual('< 0.001')
+  })
+
+  test('1B - No decimals, precision 0, huge amount', () => {
+    const amount = '1000000000'
+    expect(formatSmart({ amount, precision: 0 })).toEqual('1B')
+  })
+
   test('0 - Zero string', () => {
     const amount = '0.00'
     expect(formatSmart(amount, 2)).toEqual('0')
   })
+
   test('null - Empty string', () => {
     const amount = ''
     expect(formatSmart(amount, 5)).toEqual(null)
   })
+
   test('null - Invalid string', () => {
     const amount = 'kfjasf'
     expect(formatSmart(amount, 6)).toEqual(null)
