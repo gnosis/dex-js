@@ -149,18 +149,14 @@ function _decomposeBn(amount: BN, amountPrecision: number, decimals: number): { 
  * @param amountStr Amount with arbitrary precision
  * @param amountPrecision precision on top of existing precision
  */
-function _stringToBn(amountStr:string, amountPrecision:number):{ amount: BN, precision: number } {
+function _stringToBn(amountStr: string, amountPrecision: number): { amount: BN; precision: number } {
   const bigNumberAmount = new BigNumber(amountStr)
 
-  const originalPrecision = bigNumberAmount.precision()
+  const decimalPlaces = bigNumberAmount.decimalPlaces()
 
-  const amount = new BN(bigNumberAmount
-    .multipliedBy(TEN_BIG_NUMBER
-      .pow(originalPrecision))
-    .integerValue()
-    .toString(10))
+  const amount = new BN(bigNumberAmount.multipliedBy(TEN_BIG_NUMBER.pow(decimalPlaces)).integerValue().toString(10))
 
-  const precision = originalPrecision + (amountPrecision as number)
+  const precision = decimalPlaces + amountPrecision
 
   return { amount, precision }
 }
