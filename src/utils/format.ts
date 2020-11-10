@@ -153,16 +153,20 @@ function _decomposeBn(
  * to avoid numbers with exponents which BN also doesn't like
  *
  * @param amountStr Amount with arbitrary precision
- * @param amountPrecision precision on top of existing precision
+ * @param additionalPrecision Optional precision to add on top of existing precision
  */
-function _stringToBn(amountStr: string, amountPrecision: number): { amount: BN; precision: number } {
+export function stringToBn(amountStr: string, additionalPrecision = 0): { amount: BN | null; precision: number } {
+  if (!amountStr || isNaN(+amountStr)) {
+    return { amount: null, precision: 0 }
+  }
+
   const bigNumberAmount = new BigNumber(amountStr)
 
   const decimalPlaces = bigNumberAmount.decimalPlaces()
 
   const amount = new BN(bigNumberAmount.multipliedBy(TEN_BIG_NUMBER.pow(decimalPlaces)).integerValue().toString(10))
 
-  const precision = decimalPlaces + amountPrecision
+  const precision = decimalPlaces + additionalPrecision
 
   return { amount, precision }
 }
@@ -213,12 +217,22 @@ export function formatSmart(
     amount = params
     precision = _amountPrecision as number
   } else if (typeof params === 'string') {
-    const { amount: _amount, precision: _precision } = _stringToBn(params, _amountPrecision as number)
+    const { amount: _amount, precision: _precision } = stringToBn(params, _amountPrecision as number)
+
+    if (!_amount) {
+      return null
+    }
+
     amount = _amount
     precision = _precision
   } else {
     if (typeof params.amount === 'string') {
-      const { amount: _amount, precision: _precision } = _stringToBn(params.amount, params.precision)
+      const { amount: _amount, precision: _precision } = stringToBn(params.amount, params.precision)
+
+      if (!_amount) {
+        return null
+      }
+
       amount = _amount
       precision = _precision
     } else {
