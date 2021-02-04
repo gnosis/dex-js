@@ -15,7 +15,7 @@ pull_request_rules:
       - author~=^dependabot(|-preview)\[bot\]$
       - label!=["WIP", "Don't merge", "On hold"]
       - check-success=Travis CI - Pull Request
-      - base=develop
+      - base=master
     actions:
       merge:
         method: squash
