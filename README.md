@@ -12,7 +12,7 @@ Develop:
 
 # Gnosis Protocol JS
 
-Gnosis Protocol JS it's library, with typescrupt support for [Gnosis Protocol](https://docs.gnosis.io/protocol).
+Gnosis Protocol JS it's library, with typescript support for [Gnosis Protocol](https://docs.gnosis.io/protocol).
 
 Gnosis Protocol introduces a new, fully decentralized exchange mechanism for ERC20 tokens with the following
 properties:
