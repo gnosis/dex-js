@@ -20,6 +20,7 @@ const id2Network = {
   4: 'Rinkeby',
   5: 'Goerli',
   42: 'Kovan',
+  100: 'xDai',
 }
 
 export const getNetworkFromId = (networkId: number): string => id2Network[networkId] || 'Unknown Network'
