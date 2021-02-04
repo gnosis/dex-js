@@ -1,6 +1,8 @@
 import assert from 'assert'
 import Web3 from 'web3'
-import { HttpProvider, WebsocketProvider } from 'web3-core'
+// TODO: check if latest version fixes
+import HttpProvider, { HttpProvider as HttpProviderType } from 'web3-providers-http'
+import WebsocketProvider, { WebsocketProvider as WebsocketProviderType } from 'web3-providers-ws'
 import Logger from 'helpers/Logger'
 
 export function createWeb3 (url?: string): Web3 {
@@ -11,7 +13,7 @@ export function createWeb3 (url?: string): Web3 {
   assert(nodeUrl && /^(http|ws)s?:\/\/.+/.test(nodeUrl), 'url param, or NODE_URL env var must be a valid url')
 
   const provider = /^wss?:\/\/.*/.test(nodeUrl)
-    ? new WebsocketProvider(nodeUrl, {
+    ? new (WebsocketProvider as unknown as typeof WebsocketProviderType)(nodeUrl, {
       timeout: 30000, // ms
       // Enable auto reconnection
       reconnect: {
@@ -20,7 +22,7 @@ export function createWeb3 (url?: string): Web3 {
         onTimeout: true,
       },
     })
-    : new HttpProvider(nodeUrl)
+    : new (HttpProvider as unknown as typeof HttpProviderType)(nodeUrl)
 
   return new Web3(provider)
 }

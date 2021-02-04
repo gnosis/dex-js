@@ -16,8 +16,9 @@ import {
   BN_100K,
   ONE_BIG_NUMBER,
   ZERO_BIG_NUMBER,
+  TEN_BIG_NUMBER,
 } from 'const'
-import { TokenDetails } from 'types'
+import { TokenDex } from 'types'
 
 function _getLocaleSymbols(): { thousands: string; decimals: string } {
   // Check number representation in default locale
@@ -39,13 +40,16 @@ function _formatDecimalsForDisplay(numberToConvert: BigNumber) {
   return integer + DEFAULT_DECIMALS_SYMBOL + decimalsWithoutIntegerOrSymbol
 }
 
-function _decomposeLargeNumberToString(
-  baseUnit: BN,
-  baseUnitsPerRepresentationUnits: BN,
-): string {
+function _decomposeLargeNumberToString(baseUnit: BN, baseUnitsPerRepresentationUnits: BN): string {
   // e.g TRILLION_123_123.div(ONE_TRILLION) = 123123.123123123
-  const baseUnitAsDecimal = baseUnit.mul(TEN.pow(new BN(DEFAULT_LARGE_NUMBER_PRECISION))).div(baseUnitsPerRepresentationUnits)
-  const { integerPart, decimalPart } = _decomposeBn(baseUnitAsDecimal, DEFAULT_LARGE_NUMBER_PRECISION, DEFAULT_LARGE_NUMBER_PRECISION)
+  const baseUnitAsDecimal = baseUnit
+    .mul(TEN.pow(new BN(DEFAULT_LARGE_NUMBER_PRECISION)))
+    .div(baseUnitsPerRepresentationUnits)
+  const { integerPart, decimalPart } = _decomposeBn(
+    baseUnitAsDecimal,
+    DEFAULT_LARGE_NUMBER_PRECISION,
+    DEFAULT_LARGE_NUMBER_PRECISION,
+  )
   // 123123.123123123 = 123,123.123123123
   const formattedInteger = _formatNumber(integerPart.toString(10), THOUSANDS_SYMBOL)
   // no relevant decimal section
@@ -68,10 +72,7 @@ interface DecomposedNumberParts {
   decimalsPadded: string
 }
 
-function _formatSmart(
-  { integerPart, decimalPart, decimalsPadded }: DecomposedNumberParts,
-  smallLimit: string,
-): string {
+function _formatSmart({ integerPart, decimalPart, decimalsPadded }: DecomposedNumberParts, smallLimit: string): string {
   // Is < 1
   if (integerPart.isZero()) {
     // if amount < 1 and decimal < smallLimit
@@ -79,7 +80,9 @@ function _formatSmart(
     // else return decimals as is
     const ourDecimalsAsBigNumber = new BigNumber('0.' + decimalsPadded)
     const smallLimitAsBigNumber = new BigNumber(smallLimit)
-    return ourDecimalsAsBigNumber.isLessThan(smallLimitAsBigNumber) ? `< ${_formatDecimalsForDisplay(smallLimitAsBigNumber)}` : ourDecimalsAsBigNumber.toString(10)
+    return ourDecimalsAsBigNumber.isLessThan(smallLimitAsBigNumber)
+      ? `< ${_formatDecimalsForDisplay(smallLimitAsBigNumber)}`
+      : ourDecimalsAsBigNumber.toString(10)
   }
 
   // Number compacting logic
@@ -117,7 +120,11 @@ function _formatSmart(
   return adjustPrecision(amountBeforePrecisionCheck, finalPrecision).replace(/0+$/, '')
 }
 
-function _decomposeBn(amount: BN, amountPrecision: number, decimals: number): { integerPart: BN; decimalPart: BN, decimalsPadded: string } {
+function _decomposeBn(
+  amount: BN,
+  amountPrecision: number,
+  decimals: number,
+): { integerPart: BN; decimalPart: BN; decimalsPadded: string } {
   if (decimals > amountPrecision) {
     throw new Error('The decimals cannot be bigger than the precision')
   }
@@ -132,6 +139,38 @@ function _decomposeBn(amount: BN, amountPrecision: number, decimals: number): { 
   return { integerPart, decimalPart, decimalsPadded }
 }
 
+/**
+ * Transforms (possibly decimal) amount as string into a BN
+ * Takes into account original precision from amount + argument precision
+ *
+ *
+ * Internally we use BNs, but we all know BNs don't like decimals.
+ * To convert arbitrary strings, we need to make them integers.
+ * We do so by creating a BigNumber and moving the decimal separator to the right
+ * by multiplying it by 10^(amount precision).
+ * Which we then later add to regular precision to be 'compressed'.
+ * Finally, convert it to a string base 10,
+ * to avoid numbers with exponents which BN also doesn't like
+ *
+ * @param amountStr Amount with arbitrary precision
+ * @param additionalPrecision Optional precision to add on top of existing precision
+ */
+export function stringToBn(amountStr: string, additionalPrecision = 0): { amount: BN | null; precision: number } {
+  if (!amountStr || isNaN(+amountStr)) {
+    return { amount: null, precision: 0 }
+  }
+
+  const bigNumberAmount = new BigNumber(amountStr)
+
+  const decimalPlaces = bigNumberAmount.decimalPlaces()
+
+  const amount = new BN(bigNumberAmount.multipliedBy(TEN_BIG_NUMBER.pow(decimalPlaces)).integerValue().toString(10))
+
+  const precision = decimalPlaces + additionalPrecision
+
+  return { amount, precision }
+}
+
 interface SmartFormatParams<T> extends Exclude<FormatAmountParams<T>, 'thousandSeparator' | 'isLocaleAware'> {
   smallLimit?: string
 }
@@ -143,11 +182,13 @@ interface SmartFormatParams<T> extends Exclude<FormatAmountParams<T>, 'thousandS
  * @param amountPrecision
  */
 export function formatSmart(amount: BN, amountPrecision: number): string
+export function formatSmart(amount: string, amountPrecision: number): string
 export function formatSmart(amount: null | undefined, amountPrecision: number): null
 export function formatSmart(params: SmartFormatParams<BN>): string
+export function formatSmart(params: SmartFormatParams<string>): string
 export function formatSmart(params: SmartFormatParams<null | undefined>): null
 export function formatSmart(
-  params: SmartFormatParams<BN | null | undefined> | BN | null | undefined,
+  params: SmartFormatParams<BN | string | null | undefined> | BN | string | null | undefined,
   _amountPrecision?: number,
 ): string | null {
   /*
@@ -164,14 +205,40 @@ export function formatSmart(
   let decimals = DEFAULT_DECIMALS
   let smallLimit = DEFAULT_SMALL_LIMIT
 
-  if (!params || ('amount' in params && !params.amount)) return null
+  if (
+    !params ||
+    (typeof params === 'string' && isNaN(+params)) ||
+    (typeof params !== 'string' && 'amount' in params && !params.amount)
+  ) {
+    return null
+  }
 
   if (BN.isBN(params)) {
     amount = params
     precision = _amountPrecision as number
+  } else if (typeof params === 'string') {
+    const { amount: _amount, precision: _precision } = stringToBn(params, _amountPrecision as number)
+
+    if (!_amount) {
+      return null
+    }
+
+    amount = _amount
+    precision = _precision
   } else {
-    amount = params.amount as BN
-    precision = params.precision
+    if (typeof params.amount === 'string') {
+      const { amount: _amount, precision: _precision } = stringToBn(params.amount, params.precision)
+
+      if (!_amount) {
+        return null
+      }
+
+      amount = _amount
+      precision = _precision
+    } else {
+      amount = params.amount as BN
+      precision = params.precision
+    }
     decimals = params.decimals ?? decimals
     smallLimit = params.smallLimit ?? smallLimit
   }
@@ -301,12 +368,12 @@ export function parseAmount(amountFmt: string, amountPrecision: number): BN | nu
     return null
   }
   const adjustedAmount = adjustPrecision(amountFmt, amountPrecision)
-  const groups = /^(\d+)(?:\.(\d+))?$/.exec(adjustedAmount)
+  const groups = /^(\d*)(?:\.(\d+))?$/.exec(adjustedAmount)
   if (groups) {
     const [, integerPart, decimalPart = ''] = groups
     const decimalBN = new BN(decimalPart.padEnd(amountPrecision, '0'))
     const factor = TEN.pow(new BN(amountPrecision))
-    return new BN(integerPart).mul(factor).add(decimalBN)
+    return new BN(integerPart || 0).mul(factor).add(decimalBN)
   } else {
     return null
   }
@@ -327,11 +394,13 @@ export function abbreviateString(inputString: string, prefixLength: number, suff
   return prefix + ELLIPSIS + suffix
 }
 
-export function safeTokenName(token: TokenDetails): string {
+type MinimalSafeToken = Pick<TokenDex, 'symbol' | 'name' | 'address'>
+
+export function safeTokenName(token: MinimalSafeToken): string {
   return token.symbol || token.name || abbreviateString(token.address, 6, 4)
 }
 
-export function safeFilledToken<T extends TokenDetails>(token: T): T {
+export function safeFilledToken<T extends MinimalSafeToken>(token: T): T {
   return {
     ...token,
     name: token.name || token.symbol || abbreviateString(token.address, 6, 4),
@@ -388,10 +457,10 @@ export function formatPrice(params: FormatPriceParams | BigNumber): string {
   let integerPart = price.integerValue(BigNumber.ROUND_FLOOR)
 
   const priceMinusIntPart = price
-  // adjust decimal precision: 5.516; decimals 2 => 5.52
-  // keep in mind there's rounding
+    // adjust decimal precision: 5.516; decimals 2 => 5.52
+    // keep in mind there's rounding
     .decimalPlaces(decimals, BigNumber.ROUND_HALF_CEIL)
-  // remove integer part: 5.52 => 0.52
+    // remove integer part: 5.52 => 0.52
     .minus(integerPart)
 
   let decimalPart: BigNumber
@@ -404,7 +473,7 @@ export function formatPrice(params: FormatPriceParams | BigNumber): string {
     decimalPart = ZERO_BIG_NUMBER
   } else {
     decimalPart = priceMinusIntPart
-    // turn decimals into integer: 0.52 -> 52
+      // turn decimals into integer: 0.52 -> 52
       .shiftedBy(decimals)
   }
 
