@@ -78,7 +78,7 @@ function _formatSmart({ integerPart, decimalPart, decimalsPadded }: DecomposedNu
     // if amount < 1 and decimal < smallLimit
     // return `< ${smallLimit}`
     // else return decimals as is
-    const ourDecimalsAsBigNumber = new BigNumber('0.' + decimalsPadded)
+    const ourDecimalsAsBigNumber = new BigNumber('0' + DEFAULT_DECIMALS_SYMBOL + decimalsPadded)
     const smallLimitAsBigNumber = new BigNumber(smallLimit)
     return ourDecimalsAsBigNumber.isLessThan(smallLimitAsBigNumber)
       ? `< ${_formatDecimalsForDisplay(smallLimitAsBigNumber)}`
