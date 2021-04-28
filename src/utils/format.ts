@@ -116,7 +116,7 @@ function _formatSmart({ integerPart, decimalPart, decimalsPadded }: DecomposedNu
     finalPrecision = 1
   }
 
-  const amountBeforePrecisionCheck = _formatNumber(integerPart.toString(10)) + DECIMALS_SYMBOL + decimalsPadded
+  const amountBeforePrecisionCheck = _formatNumber(integerPart.toString(10)) + DEFAULT_DECIMALS_SYMBOL + decimalsPadded
   return adjustPrecision(amountBeforePrecisionCheck, finalPrecision).replace(/0+$/, '')
 }
 
