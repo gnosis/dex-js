@@ -31,16 +31,21 @@ function _getLocaleSymbols(): { thousands: string; decimals: string } {
 
 const { thousands: THOUSANDS_SYMBOL, decimals: DECIMALS_SYMBOL } = _getLocaleSymbols()
 
-function _formatDecimalsForDisplay(numberToConvert: BigNumber) {
+function _formatDecimalsForDisplay(numberToConvert: BigNumber, decimalsSymbol: string) {
   // 2.00012366123.integerValue() ==> 2
   const integer = numberToConvert.integerValue(BigNumber.ROUND_DOWN)
   // 2.00012366123 <numberToConvert> - 2 <integer> ==> 00012366123
   const decimalsWithoutIntegerOrSymbol = numberToConvert.minus(integer).toString(10).slice(2)
   // 2 + <,|.> + 00012366123 ==> 2<,|.>00012366123
-  return integer + DEFAULT_DECIMALS_SYMBOL + decimalsWithoutIntegerOrSymbol
+  return integer + decimalsSymbol + decimalsWithoutIntegerOrSymbol
 }
 
-function _decomposeLargeNumberToString(baseUnit: BN, baseUnitsPerRepresentationUnits: BN): string {
+function _decomposeLargeNumberToString(
+  baseUnit: BN,
+  baseUnitsPerRepresentationUnits: BN,
+  decimalsSymbol: string,
+  thousandsSymbol: string,
+): string {
   // e.g TRILLION_123_123.div(ONE_TRILLION) = 123123.123123123
   const baseUnitAsDecimal = baseUnit
     .mul(TEN.pow(new BN(DEFAULT_LARGE_NUMBER_PRECISION)))
@@ -51,7 +56,7 @@ function _decomposeLargeNumberToString(baseUnit: BN, baseUnitsPerRepresentationU
     DEFAULT_LARGE_NUMBER_PRECISION,
   )
   // 123123.123123123 = 123,123.123123123
-  const formattedInteger = _formatNumber(integerPart.toString(10), THOUSANDS_SYMBOL)
+  const formattedInteger = _formatNumber(integerPart.toString(10), thousandsSymbol)
   // no relevant decimal section
   if (decimalPart.isZero()) return formattedInteger
 
@@ -59,7 +64,7 @@ function _decomposeLargeNumberToString(baseUnit: BN, baseUnitsPerRepresentationU
     .toString(10)
     .padStart(DEFAULT_LARGE_NUMBER_PRECISION, '0') // Pad the decimal part with leading zeros
     .replace(/0+$/, '') // Remove the right zeros
-  return formattedInteger + DECIMALS_SYMBOL + formattedDecimal
+  return formattedInteger + decimalsSymbol + formattedDecimal
 }
 
 function _formatNumber(num: string, thousandsSymbol: string = THOUSANDS_SYMBOL): string {
@@ -72,32 +77,41 @@ interface DecomposedNumberParts {
   decimalsPadded: string
 }
 
-function _formatSmart({ integerPart, decimalPart, decimalsPadded }: DecomposedNumberParts, smallLimit: string): string {
+function _formatSmart(
+  { integerPart, decimalPart, decimalsPadded }: DecomposedNumberParts,
+  smallLimit: string,
+  isLocaleAware: boolean,
+): string {
+  const decimalsSymbol = isLocaleAware ? DECIMALS_SYMBOL : DEFAULT_DECIMALS_SYMBOL
+  const thousandsSymbol = isLocaleAware ? THOUSANDS_SYMBOL : DEFAULT_THOUSANDS_SYMBOL
+
   // Is < 1
   if (integerPart.isZero()) {
     // if amount < 1 and decimal < smallLimit
     // return `< ${smallLimit}`
     // else return decimals as is
-    const ourDecimalsAsBigNumber = new BigNumber('0' + DEFAULT_DECIMALS_SYMBOL + decimalsPadded)
+    const ourDecimalsAsBigNumber = new BigNumber('0.' + decimalsPadded)
     const smallLimitAsBigNumber = new BigNumber(smallLimit)
     return ourDecimalsAsBigNumber.isLessThan(smallLimitAsBigNumber)
-      ? `< ${_formatDecimalsForDisplay(smallLimitAsBigNumber)}`
-      : ourDecimalsAsBigNumber.toString(10)
+      ? `< ${_formatDecimalsForDisplay(smallLimitAsBigNumber, decimalsSymbol)}`
+      : _formatDecimalsForDisplay(ourDecimalsAsBigNumber, decimalsSymbol)
   }
 
   // Number compacting logic
   // Anything > 1,000,000,000,000 denoted as <XXX,XXX.xxx>T
   if (integerPart.gte(BN_1T)) {
-    return _decomposeLargeNumberToString(integerPart, BN_1T) + 'T'
+    return _decomposeLargeNumberToString(integerPart, BN_1T, decimalsSymbol, thousandsSymbol) + 'T'
   }
   // Anything not above 1T but > 1,000,000,000 denoted as <XXX.xxx>B
   if (integerPart.gte(BN_1B)) {
-    return _decomposeLargeNumberToString(integerPart, BN_1B) + 'B'
+    return _decomposeLargeNumberToString(integerPart, BN_1B, decimalsSymbol, thousandsSymbol) + 'B'
   }
 
   // At this point can just return thousands separated formatted integer
   // if decimals are zero
-  if (decimalPart.isZero()) return _formatNumber(integerPart.toString(10))
+  if (decimalPart.isZero()) {
+    return _formatNumber(integerPart.toString(10), thousandsSymbol)
+  }
 
   let finalPrecision: number
 
@@ -116,8 +130,9 @@ function _formatSmart({ integerPart, decimalPart, decimalsPadded }: DecomposedNu
     finalPrecision = 1
   }
 
-  const amountBeforePrecisionCheck = _formatNumber(integerPart.toString(10)) + DEFAULT_DECIMALS_SYMBOL + decimalsPadded
-  return adjustPrecision(amountBeforePrecisionCheck, finalPrecision).replace(/0+$/, '')
+  const amountBeforePrecisionCheck =
+    _formatNumber(integerPart.toString(10), thousandsSymbol) + decimalsSymbol + decimalsPadded
+  return adjustPrecision(amountBeforePrecisionCheck, finalPrecision, decimalsSymbol).replace(/0+$/, '')
 }
 
 function _decomposeBn(
@@ -171,7 +186,7 @@ export function stringToBn(amountStr: string, additionalPrecision = 0): { amount
   return { amount, precision }
 }
 
-interface SmartFormatParams<T> extends Exclude<FormatAmountParams<T>, 'thousandSeparator' | 'isLocaleAware'> {
+interface SmartFormatParams<T> extends Exclude<FormatAmountParams<T>, 'thousandSeparator'> {
   smallLimit?: string
 }
 
@@ -204,6 +219,9 @@ export function formatSmart(
 
   let decimals = DEFAULT_DECIMALS
   let smallLimit = DEFAULT_SMALL_LIMIT
+  // `isLocaleAware` defaults to true for backwards compatibility,
+  // as it was the standard behaviour before this change
+  let isLocaleAware = true
 
   if (
     !params ||
@@ -241,6 +259,7 @@ export function formatSmart(
     }
     decimals = params.decimals ?? decimals
     smallLimit = params.smallLimit ?? smallLimit
+    isLocaleAware = params.isLocaleAware ?? isLocaleAware
   }
 
   // amount is already zero
@@ -248,8 +267,7 @@ export function formatSmart(
 
   const actualDecimals = Math.min(precision, decimals)
   const numberParts = _decomposeBn(amount, precision, actualDecimals)
-
-  return _formatSmart(numberParts, smallLimit)
+  return _formatSmart(numberParts, smallLimit, isLocaleAware)
 }
 
 interface FormatAmountParams<T> {
@@ -354,12 +372,17 @@ export function formatAmountFull(
  *
  * @param value The decimal value to be adjusted as a string
  * @param precision How many decimals should be kept
+ * @param decimalsSymbol What is used as a decimal separator symbol
  */
-export function adjustPrecision(value: string | undefined | null, precision: number): string {
+export function adjustPrecision(
+  value: string | undefined | null,
+  precision: number,
+  decimalsSymbol = DEFAULT_DECIMALS_SYMBOL,
+): string {
   if (!value) {
     return ''
   }
-  const regexp = new RegExp(`(\\.\\d{${precision}})\\d+$`)
+  const regexp = new RegExp(`(\\${decimalsSymbol}\\d{${precision}})\\d+$`)
   return value.replace(regexp, '$1')
 }
 
