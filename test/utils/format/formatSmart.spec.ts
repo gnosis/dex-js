@@ -226,4 +226,9 @@ describe('Amount is a string', () => {
     const amount = 'kfjasf'
     expect(formatSmart(amount, 6)).toEqual(null)
   })
+
+  test('Negative precision', () => {
+    const amount = '0.05'
+    expect(formatSmart({ amount, precision: -2 })).toEqual('5')
+  })
 })
