@@ -33,7 +33,7 @@ const { thousands: THOUSANDS_SYMBOL, decimals: DECIMALS_SYMBOL } = _getLocaleSym
 
 function _formatDecimalsForDisplay(numberToConvert: BigNumber) {
   // 2.00012366123.integerValue() ==> 2
-  const integer = numberToConvert.integerValue()
+  const integer = numberToConvert.integerValue(BigNumber.ROUND_DOWN)
   // 2.00012366123 <numberToConvert> - 2 <integer> ==> 00012366123
   const decimalsWithoutIntegerOrSymbol = numberToConvert.minus(integer).toString(10).slice(2)
   // 2 + <,|.> + 00012366123 ==> 2<,|.>00012366123
