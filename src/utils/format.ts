@@ -17,19 +17,10 @@ import {
   ONE_BIG_NUMBER,
   ZERO_BIG_NUMBER,
   TEN_BIG_NUMBER,
+  THOUSANDS_SYMBOL,
+  DECIMALS_SYMBOL,
 } from 'const'
 import { TokenDex } from 'types'
-
-function _getLocaleSymbols(): { thousands: string; decimals: string } {
-  // Check number representation in default locale
-  const formattedNumber = new Intl.NumberFormat(undefined).format(10000.1)
-  return {
-    thousands: formattedNumber[2],
-    decimals: formattedNumber[6],
-  }
-}
-
-const { thousands: THOUSANDS_SYMBOL, decimals: DECIMALS_SYMBOL } = _getLocaleSymbols()
 
 function _formatDecimalsForDisplay(numberToConvert: BigNumber, decimalsSymbol: string) {
   // 2.00012366123.integerValue() ==> 2
