@@ -98,4 +98,11 @@ describe('With optional parameters', () => {
       expect(stringToBn('12345', 1)).toEqual(response)
     })
   })
+
+  describe('negative precision', () => {
+    test('-1', () => {
+      const response = { amount: new BN('5'), precision: 0 }
+      expect(stringToBn('0.5', -1)).toEqual(response)
+    })
+  })
 })

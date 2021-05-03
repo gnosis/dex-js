@@ -1,5 +1,12 @@
 import BN from 'bn.js'
 import { formatSmart, toWei, ZERO, ONE, ALLOWANCE_MAX_VALUE, DEFAULT_PRECISION } from '../../../src'
+import * as constants from '../../../src/const'
+
+// Mocking default consts with a hack to force test with the standard symbols, no matter the user locale
+beforeEach(() => {
+  Object.defineProperty(constants, 'DECIMALS_SYMBOL', { value: '.' })
+  Object.defineProperty(constants, 'THOUSANDS_SYMBOL', { value: ',' })
+})
 
 describe('Integer amounts', () => {
   test('0 wei', async () => {
@@ -225,5 +232,26 @@ describe('Amount is a string', () => {
   test('null - Invalid string', () => {
     const amount = 'kfjasf'
     expect(formatSmart(amount, 6)).toEqual(null)
+  })
+
+  test('Negative precision', () => {
+    const amount = '0.05'
+    expect(formatSmart({ amount, precision: -2 })).toEqual('5')
+  })
+})
+
+describe('Non-standard locale', () => {
+  beforeEach(() => {
+    Object.defineProperty(constants, 'DECIMALS_SYMBOL', { value: ',' })
+    Object.defineProperty(constants, 'THOUSANDS_SYMBOL', { value: '.' })
+  })
+
+  test('Locale aware', () => {
+    const amount = '1234567.891'
+    expect(formatSmart({ amount, precision: 2, decimals: 4, isLocaleAware: true })).toEqual('12.345,6789')
+  })
+  test('Not locale aware', () => {
+    const amount = '1234567.891'
+    expect(formatSmart({ amount, precision: 2, decimals: 4, isLocaleAware: false })).toEqual('12,345.6789')
   })
 })
