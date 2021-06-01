@@ -73,7 +73,7 @@
     "prettier": "^2.0.2",
     "rimraf": "^3.0.0",
     "ts-jest": "^25.2.0",
-    "ts-node": "^8.4.1",
+    "ts-node": "^9.1.1",
     "tsconfig-paths": "^3.9.0",
     "ttypescript": "^1.5.10",
     "typechain": "^2.0.0",
