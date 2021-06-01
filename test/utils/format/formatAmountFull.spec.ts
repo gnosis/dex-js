@@ -1,6 +1,14 @@
 import BN from 'bn.js'
 import { formatAmountFull, toWei, ZERO, ONE, ALLOWANCE_MAX_VALUE } from '../../../src'
 
+import * as constants from '../../../src/const'
+
+// Mocking default consts with a hack to force test with the standard symbols, no matter the user locale
+beforeEach(() => {
+  Object.defineProperty(constants, 'DECIMALS_SYMBOL', { value: '.' })
+  Object.defineProperty(constants, 'THOUSANDS_SYMBOL', { value: ',' })
+})
+
 describe('Integer amounts', () => {
   test('1 Ether', async () => {
     expect(formatAmountFull(new BN(toWei(new BN('1'), 'ether')))).toEqual('1')
@@ -15,9 +23,7 @@ describe('Integer amounts', () => {
   })
 
   test('123,456,789,012 Ether', async () => {
-    expect(formatAmountFull(new BN(toWei(new BN('123456789012'), 'ether')))).toEqual(
-      '123,456,789,012',
-    )
+    expect(formatAmountFull(new BN(toWei(new BN('123456789012'), 'ether')))).toEqual('123,456,789,012')
   })
 })
 
@@ -90,6 +96,22 @@ describe('Big amounts', () => {
 
 describe('Not locale aware', () => {
   test('12,345.123 units', async () => {
+    const amount = new BN('12345123000')
+    expect(formatAmountFull({ amount, precision: 6, isLocaleAware: false })).toEqual('12,345.123')
+  })
+})
+
+describe('Non-standard locale', () => {
+  beforeEach(() => {
+    Object.defineProperty(constants, 'DECIMALS_SYMBOL', { value: ',' })
+    Object.defineProperty(constants, 'THOUSANDS_SYMBOL', { value: '.' })
+  })
+
+  test('Locale aware', () => {
+    const amount = new BN('12345123000')
+    expect(formatAmountFull({ amount, precision: 6, isLocaleAware: true })).toEqual('12.345,123')
+  })
+  test('Not locale aware', () => {
     const amount = new BN('12345123000')
     expect(formatAmountFull({ amount, precision: 6, isLocaleAware: false })).toEqual('12,345.123')
   })
