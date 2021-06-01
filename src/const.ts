@@ -34,6 +34,8 @@ export const DEFAULT_LARGE_NUMBER_PRECISION = 3
 export const DEFAULT_SMALL_LIMIT = '0.001'
 export const DEFAULT_THOUSANDS_SYMBOL = ','
 export const DEFAULT_DECIMALS_SYMBOL = '.'
+// Export symbols based on user locale
+export const { thousands: THOUSANDS_SYMBOL, decimals: DECIMALS_SYMBOL } = _getLocaleSymbols()
 
 // Model constants
 export const FEE_DENOMINATOR = 1000 // Fee is 1/fee_denominator i.e. 1/1000 = 0.1%
@@ -46,3 +48,12 @@ export const UNLIMITED_ORDER_AMOUNT = TWO.pow(new BN(128)).sub(ONE)
 
 // Furthest batch id possible (uint32), must be a js Number
 export const MAX_BATCH_ID = 2 ** 32 - 1
+
+function _getLocaleSymbols(): { thousands: string; decimals: string } {
+  // Check number representation in default locale
+  const formattedNumber = new Intl.NumberFormat(undefined).format(10000.1)
+  return {
+    thousands: formattedNumber[2],
+    decimals: formattedNumber[6],
+  }
+}
