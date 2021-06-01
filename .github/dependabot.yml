@@ -1,0 +1,28 @@
+version: 2
+updates:
+- package-ecosystem: npm
+  directory: "/"
+  schedule:
+    interval: monthly
+    time: "02:00"
+  open-pull-requests-limit: 10
+  reviewers:
+  - anxolin
+  - alfetopito
+  ignore:
+  - dependency-name: ini
+    versions:
+    - 1.3.7
+  - dependency-name: eslint-plugin-jest
+    versions:
+    - 24.1.3
+  - dependency-name: "@types/jest"
+    versions:
+    - 26.0.19
+  - dependency-name: "@types/node"
+    versions:
+    - 14.14.17
+  - dependency-name: typescript-transform-paths
+    versions:
+    - 2.1.0
+  rebase-strategy: disabled
