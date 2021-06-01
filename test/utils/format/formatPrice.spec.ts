@@ -1,6 +1,11 @@
 import BigNumber from 'bignumber.js'
 
 import { formatPrice } from '../../../src'
+import * as constants from '../../../src/const'
+
+// Mocking default consts with a hack to force test with the standard symbols, no matter the user locale
+Object.defineProperty(constants, 'DECIMALS_SYMBOL', { value: '.' })
+Object.defineProperty(constants, 'THOUSANDS_SYMBOL', { value: ',' })
 
 describe('No thousands separator', () => {
   test('price without decimals, zero decimals expected', () => {
@@ -166,5 +171,18 @@ describe('with single parameter', () => {
     const actual = formatPrice(price)
 
     expect(actual).toEqual('2.0000')
+  })
+})
+
+describe('Non-standard locale', () => {
+  test('decimals_symbol = , thousands_symbol = .', () => {
+    Object.defineProperty(constants, 'DECIMALS_SYMBOL', { value: ',' })
+    Object.defineProperty(constants, 'THOUSANDS_SYMBOL', { value: '.' })
+
+    const price = new BigNumber('1000.1')
+
+    const actual = formatPrice({ price, thousands: true })
+
+    expect(actual).toEqual('1.000,1000')
   })
 })
