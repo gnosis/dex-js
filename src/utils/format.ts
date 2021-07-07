@@ -72,9 +72,10 @@ function _formatSmart(
   { integerPart, decimalPart, decimalsPadded }: DecomposedNumberParts,
   smallLimit: string,
   isLocaleAware: boolean,
+  thousandSeparator?: boolean,
 ): string {
   const decimalsSymbol = isLocaleAware ? DECIMALS_SYMBOL : DEFAULT_DECIMALS_SYMBOL
-  const thousandsSymbol = isLocaleAware ? THOUSANDS_SYMBOL : DEFAULT_THOUSANDS_SYMBOL
+  const thousandsSymbol = !thousandSeparator ? '' : isLocaleAware ? THOUSANDS_SYMBOL : DEFAULT_THOUSANDS_SYMBOL
 
   // Is < 1
   if (integerPart.isZero()) {
@@ -177,7 +178,7 @@ export function stringToBn(amountStr: string, additionalPrecision = 0): { amount
   return { amount, precision }
 }
 
-interface SmartFormatParams<T> extends Exclude<FormatAmountParams<T>, 'thousandSeparator'> {
+interface SmartFormatParams<T> extends FormatAmountParams<T> {
   smallLimit?: string
 }
 
@@ -213,6 +214,7 @@ export function formatSmart(
   // `isLocaleAware` defaults to true for backwards compatibility,
   // as it was the standard behaviour before this change
   let isLocaleAware = true
+  let thousandSeparator = true
 
   if (
     !params ||
@@ -251,6 +253,7 @@ export function formatSmart(
     decimals = params.decimals ?? decimals
     smallLimit = params.smallLimit ?? smallLimit
     isLocaleAware = params.isLocaleAware ?? isLocaleAware
+    thousandSeparator = params.thousandSeparator === undefined ? thousandSeparator : params.thousandSeparator
   }
 
   // amount is already zero
@@ -258,7 +261,7 @@ export function formatSmart(
 
   const actualDecimals = Math.min(precision, decimals)
   const numberParts = _decomposeBn(amount, precision, actualDecimals)
-  return _formatSmart(numberParts, smallLimit, isLocaleAware)
+  return _formatSmart(numberParts, smallLimit, isLocaleAware, thousandSeparator)
 }
 
 interface FormatAmountParams<T> {
