@@ -255,3 +255,23 @@ describe('Non-standard locale', () => {
     expect(formatSmart({ amount, precision: 2, decimals: 4, isLocaleAware: false })).toEqual('12,345.6789')
   })
 })
+
+describe('Thousand separator option', () => {
+  beforeEach(() => {
+    Object.defineProperty(constants, 'DECIMALS_SYMBOL', { value: ',' })
+    Object.defineProperty(constants, 'THOUSANDS_SYMBOL', { value: '.' })
+  })
+
+  test('Shows thousand separator by default', () => {
+    const amount = '1234567.891'
+    expect(formatSmart({ amount, precision: 2, decimals: 4 })).toEqual('12.345,6789')
+  })
+  test('Explicitly set thousandSeparator TRUE and it shows', () => {
+    const amount = '1234567.891'
+    expect(formatSmart({ amount, precision: 2, decimals: 4, thousandSeparator: true })).toEqual('12.345,6789')
+  })
+  test('Explicitly set thousandSeparator FALSE and it doesnt show', () => {
+    const amount = '1234567.891'
+    expect(formatSmart({ amount, precision: 2, decimals: 4, thousandSeparator: false })).toEqual('12345,6789')
+  })
+})
