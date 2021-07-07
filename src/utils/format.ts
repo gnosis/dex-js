@@ -253,7 +253,7 @@ export function formatSmart(
     decimals = params.decimals ?? decimals
     smallLimit = params.smallLimit ?? smallLimit
     isLocaleAware = params.isLocaleAware ?? isLocaleAware
-    thousandSeparator = params.thousandSeparator === undefined ? thousandSeparator : params.thousandSeparator
+    thousandSeparator = params.thousandSeparator ?? thousandSeparator
   }
 
   // amount is already zero
