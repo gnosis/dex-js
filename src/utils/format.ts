@@ -31,6 +31,10 @@ function _formatDecimalsForDisplay(numberToConvert: BigNumber, decimalsSymbol: s
   return integer + decimalsSymbol + decimalsWithoutIntegerOrSymbol
 }
 
+function _getSign(isNegative:boolean):string {
+  return isNegative ? '-' : ''
+}
+
 function _decomposeLargeNumberToString(
   baseUnit: BN,
   baseUnitsPerRepresentationUnits: BN,
@@ -46,16 +50,17 @@ function _decomposeLargeNumberToString(
     DEFAULT_LARGE_NUMBER_PRECISION,
     DEFAULT_LARGE_NUMBER_PRECISION,
   )
+  const sign = _getSign(isNegative)
   // 123123.123123123 = 123,123.123123123
   const formattedInteger = _formatNumber(integerPart.toString(10), thousandsSymbol)
   // no relevant decimal section
-  if (decimalPart.isZero()) return formattedInteger
+  if (decimalPart.isZero()) return `${sign}${formattedInteger}`
 
   const formattedDecimal = decimalPart
     .toString(10)
     .padStart(DEFAULT_LARGE_NUMBER_PRECISION, '0') // Pad the decimal part with leading zeros
     .replace(/0+$/, '') // Remove the right zeros
-  return formattedInteger + decimalsSymbol + formattedDecimal
+  return sign + formattedInteger + decimalsSymbol + formattedDecimal
 }
 
 function _formatNumber(num: string, thousandsSymbol: string = THOUSANDS_SYMBOL): string {
@@ -77,6 +82,7 @@ function _formatSmart(
 ): string {
   const decimalsSymbol = isLocaleAware ? DECIMALS_SYMBOL : DEFAULT_DECIMALS_SYMBOL
   const thousandsSymbol = !thousandSeparator ? '' : isLocaleAware ? THOUSANDS_SYMBOL : DEFAULT_THOUSANDS_SYMBOL
+  const sign = _getSign(isNegative)
 
   // Is < 1
   if (integerPart.isZero()) {
@@ -87,7 +93,7 @@ function _formatSmart(
     const smallLimitAsBigNumber = new BigNumber(smallLimit)
     return ourDecimalsAsBigNumber.isLessThan(smallLimitAsBigNumber)
       ? `< ${_formatDecimalsForDisplay(smallLimitAsBigNumber, decimalsSymbol)}`
-      : _formatDecimalsForDisplay(ourDecimalsAsBigNumber, decimalsSymbol)
+      : `${sign}${_formatDecimalsForDisplay(ourDecimalsAsBigNumber, decimalsSymbol)}`
   }
 
   // Number compacting logic
@@ -103,7 +109,7 @@ function _formatSmart(
   // At this point can just return thousands separated formatted integer
   // if decimals are zero
   if (decimalPart.isZero()) {
-    return _formatNumber(integerPart.toString(10), thousandsSymbol)
+    return `${sign}${_formatNumber(integerPart.toString(10), thousandsSymbol)}`
   }
 
   let finalPrecision: number
@@ -125,7 +131,7 @@ function _formatSmart(
 
   const amountBeforePrecisionCheck =
     _formatNumber(integerPart.toString(10), thousandsSymbol) + decimalsSymbol + decimalsPadded
-  return adjustPrecision(amountBeforePrecisionCheck, finalPrecision, decimalsSymbol).replace(/0+$/, '')
+  return `${sign}${adjustPrecision(amountBeforePrecisionCheck, finalPrecision, decimalsSymbol).replace(/0+$/, '')}`
 }
 
 function _decomposeBn(
@@ -314,19 +320,20 @@ export function formatAmount(
 
   const actualDecimals = Math.min(precision, decimals)
   const { integerPart, decimalPart, isNegative } = _decomposeBn(amount, precision, actualDecimals)
+  const sign = _getSign(isNegative)
   const integerPartFmt = thousandSeparator
     ? _formatNumber(integerPart.toString(10), thousandSymbol)
     : integerPart.toString(10)
   if (decimalPart.isZero()) {
     // Return just the integer part
-    return integerPartFmt
+    return sign + integerPartFmt
   } else {
     const decimalFmt = decimalPart
       .toString(10)
       .padStart(actualDecimals, '0') // Pad the decimal part with leading zeros
       .replace(/0+$/, '') // Remove the right zeros
     // Return the formatted integer plus the decimal
-    return integerPartFmt + decimalSymbol + decimalFmt
+    return sign + integerPartFmt + decimalSymbol + decimalFmt
   }
 }
 
