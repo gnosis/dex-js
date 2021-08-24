@@ -41,7 +41,7 @@ function _decomposeLargeNumberToString(
   const baseUnitAsDecimal = baseUnit
     .mul(TEN.pow(new BN(DEFAULT_LARGE_NUMBER_PRECISION)))
     .div(baseUnitsPerRepresentationUnits)
-  const { integerPart, decimalPart } = _decomposeBn(
+  const { integerPart, decimalPart, isNegative } = _decomposeBn(
     baseUnitAsDecimal,
     DEFAULT_LARGE_NUMBER_PRECISION,
     DEFAULT_LARGE_NUMBER_PRECISION,
@@ -66,10 +66,11 @@ interface DecomposedNumberParts {
   integerPart: BN
   decimalPart: BN
   decimalsPadded: string
+  isNegative:boolean
 }
 
 function _formatSmart(
-  { integerPart, decimalPart, decimalsPadded }: DecomposedNumberParts,
+  { integerPart, decimalPart, decimalsPadded, isNegative }: DecomposedNumberParts,
   smallLimit: string,
   isLocaleAware: boolean,
   thousandSeparator?: boolean,
@@ -131,7 +132,7 @@ function _decomposeBn(
   amount: BN,
   amountPrecision: number,
   decimals: number,
-): { integerPart: BN; decimalPart: BN; decimalsPadded: string } {
+): DecomposedNumberParts {
   if (decimals > amountPrecision) {
     throw new Error('The decimals cannot be bigger than the precision')
   }
@@ -139,11 +140,11 @@ function _decomposeBn(
   //  i.e. for WETH (precision=18, decimals=4) --> amount / 1e14
   //        1, 18:  16.5*1e18 ---> 165000
   const amountRaw = amount.divRound(TEN.pow(new BN(amountPrecision - decimals)))
-  const integerPart = amountRaw.div(TEN.pow(new BN(decimals))) // 165000 / 10000 = 16
-  const decimalPart = amountRaw.mod(TEN.pow(new BN(decimals))) // 165000 % 10000 = 5000
+  const integerPart = amountRaw.div(TEN.pow(new BN(decimals))).abs() // 165000 / 10000 = 16
+  const decimalPart = amountRaw.mod(TEN.pow(new BN(decimals))).abs() // 165000 % 10000 = 5000
   const decimalsPadded = decimalPart.toString(10).padStart(decimals, '0')
 
-  return { integerPart, decimalPart, decimalsPadded }
+  return { integerPart, decimalPart, decimalsPadded, isNegative: amount.isNeg() }
 }
 
 /**
@@ -312,7 +313,7 @@ export function formatAmount(
   }
 
   const actualDecimals = Math.min(precision, decimals)
-  const { integerPart, decimalPart } = _decomposeBn(amount, precision, actualDecimals)
+  const { integerPart, decimalPart, isNegative } = _decomposeBn(amount, precision, actualDecimals)
   const integerPartFmt = thousandSeparator
     ? _formatNumber(integerPart.toString(10), thousandSymbol)
     : integerPart.toString(10)
