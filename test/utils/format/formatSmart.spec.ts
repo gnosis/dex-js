@@ -28,6 +28,10 @@ describe('Integer amounts', () => {
   test('123,456,789,012 Ether', async () => {
     expect(formatSmart(new BN(toWei(new BN('123456789012'), 'ether')), DEFAULT_PRECISION)).toEqual('123.456B')
   })
+
+  test('-1 wei', () => {
+    expect(formatSmart('-1', 0)).toEqual('-1')
+  })
 })
 
 describe('Exact decimal amounts', () => {
@@ -41,6 +45,10 @@ describe('Exact decimal amounts', () => {
 
   test('1.2345 Ether', async () => {
     expect(formatSmart(new BN(toWei(new BN('1234500'), 'microether')), DEFAULT_PRECISION)).toEqual('1.2345')
+  })
+
+  test('-1.2345', () => {
+    expect(formatSmart('-1.2345', 0)).toEqual('-1.2345')
   })
 })
 
@@ -237,6 +245,16 @@ describe('Amount is a string', () => {
   test('Negative precision', () => {
     const amount = '0.05'
     expect(formatSmart({ amount, precision: -2 })).toEqual('5')
+  })
+
+  test('Negative amount', () => {
+    const amount = '-0.323'
+    expect(formatSmart({ amount, precision: 0, decimals: 2 })).toEqual('-0.32')
+  })
+
+  test('Tiny negative amount', () => {
+    const amount = '-0.00001'
+    expect(formatSmart({ amount, precision: 0 })).toEqual('< 0.001')
   })
 })
 
