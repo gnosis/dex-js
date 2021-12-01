@@ -52,7 +52,7 @@
     "@types/debug": "^4.1.5",
     "@types/dotenv": "^8.2.0",
     "@types/jest": "^26.0.3",
-    "@types/node": "^15.0.1",
+    "@types/node": "^16.11.11",
     "@typescript-eslint/eslint-plugin": "^2.6.1",
     "@typescript-eslint/parser": "^2.6.1",
     "coveralls": "^3.0.7",
