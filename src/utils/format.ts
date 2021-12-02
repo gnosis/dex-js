@@ -131,7 +131,7 @@ function _formatSmart(
 
   const amountBeforePrecisionCheck =
     _formatNumber(integerPart.toString(10), thousandsSymbol) + decimalsSymbol + decimalsPadded
-  return `${sign}${adjustPrecision(amountBeforePrecisionCheck, finalPrecision, decimalsSymbol).replace(/0+$/, '')}`
+  return `${sign}${adjustPrecision(amountBeforePrecisionCheck, finalPrecision, decimalsSymbol).replace(/\.?0*$/, '')}`
 }
 
 function _decomposeBn(
