@@ -194,6 +194,11 @@ describe('Edge cases', () => {
     const amount = new BN('1234567')
     expect(formatSmart({ amount, precision: 2, decimals: 4 })).toEqual('12,345.67')
   })
+
+  test('Do not return values with trailing dots', () => {
+    const amount = '353276954043779'
+    expect(formatSmart({ amount, precision: 6, decimals: 4, smallLimit: '0.0001', thousandSeparator: false, isLocaleAware: false })).toEqual('353276954')
+  })
 })
 
 describe('Amount is a string', () => {
